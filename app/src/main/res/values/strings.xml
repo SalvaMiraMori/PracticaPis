@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Example3</string>
+    <string name="new_note">New note</string>
+    <string name="new_note_description">Add new note</string>
+    <string name="element_text">Item text</string>
+    <string name="add_description_msg">Note description</string>
+    <string name="save_note">Save note</string>
+    <string name="play_button_description">Play audio button</string>
+</resources>
