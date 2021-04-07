@@ -10,6 +10,7 @@
         android:id="@+id/noteLayout"
         android:layout_width="145dp"
         android:layout_height="134dp"
+        android:layout_marginTop="60dp"
         android:orientation="vertical"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -18,12 +19,13 @@
             android:id="@+id/noteTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="yourNote" />
+            android:textSize="20dp"
+            android:text="Title" />
 
         <TextView
             android:id="@+id/bodyText"
             android:layout_width="match_parent"
             android:layout_height="96dp"
-            android:text="bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla ..." />
+            android:text="Body" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

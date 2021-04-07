@@ -15,21 +15,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-//public class CustomAdapter extends RecyclerView.Adapter<com.example.PracticaPis.CustomAdapter.ViewHolder> {
 public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.CustomAdapter.ViewHolder> {
-    private final ArrayList<String> localDataSet;
+    private ArrayList<NoteThumbnail> localDataSet;
     private final Context parentContext;
-    private final playerInterface listener;
-
 
     /**
      * Provide a reference to the type of views that you are using
      * (custom ViewHolder).
      */
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        private final TextView title;
+        private final TextView title, body;
         private final LinearLayout noteLayout;
-        private final TextView body;
 
         public ViewHolder(View view) {
             super(view);
@@ -57,26 +53,21 @@ public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.
      * @param dataSet String[] containing the data to populate views to be used
      * by RecyclerView.
      */
-    public CustomAdapter(Context current, ArrayList<String> dataSet, playerInterface listener) {
+    public CustomAdapter(Context current, ArrayList<NoteThumbnail> dataSet) {
         parentContext = current;
         localDataSet = dataSet;
-        this.listener = listener;
-
     }
-
+    public void setLocalDataSet(ArrayList<NoteThumbnail> dataSet){
+        localDataSet = dataSet;
+    }
     // Create new views (invoked by the layout manager)
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         // Create a new view, which defines the UI of the list item
-        View view = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.note_item, viewGroup, false);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.note_item, null, false);
 
         return new ViewHolder(view);
-    }
-
-    public interface playerInterface{
-        void startPlaying(String fileName);
     }
 
     // Replace the contents of a view (invoked by the layout manager)
@@ -85,8 +76,11 @@ public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.
 
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
+        System.out.println("onBind");
         int color = ContextCompat.getColor(parentContext, R.color.note);
         viewHolder.getLayout().setBackgroundColor(color);
+        viewHolder.getTitleNote().setText(localDataSet.get(position).getTitle());
+        viewHolder.getBodyNote().setText(localDataSet.get(position).getBody());
     }
 
     // Return the size of your dataset (invoked by the layout manager)
