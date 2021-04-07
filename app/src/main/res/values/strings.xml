@@ -13,5 +13,6 @@
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="action_delete">Delete</string>
     <string name="action_reminder">Reminder</string>
+    <string name="buttonAdd">Add Note</string>
 
 </resources>
