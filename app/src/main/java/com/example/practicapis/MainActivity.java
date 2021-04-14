@@ -1,14 +1,19 @@
 package com.example.practicapis;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.practicapis.ui.login.LoginActivity;
 
 import java.util.ArrayList;
 
@@ -16,6 +21,8 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<NoteThumbnail> recyclerList;
     RecyclerView mRecyclerView;
     CustomAdapter adapter;
+    AppStatus appStatus;
+    TextView username;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,6 +34,15 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView = findViewById(R.id.recyclerView);
         mRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         adapter = new CustomAdapter(this, recyclerList);
+        username = findViewById(R.id.userName);
+
+        appStatus = AppStatus.getInstance();
+
+        if(appStatus.checkStarted()){
+            goToLoginActivity();
+            appStatus.appStarted();
+        }
+        getFromLoginActivity();
     }
     public void addNote(View view) {
         recyclerList.add(new NoteThumbnail("Title", "asñdkjvbnaujfdbnvaoisdjnv iw dfiwdnfcwpaiusdavfqnwasud ... "));
@@ -53,5 +69,18 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void goToLoginActivity(){
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+    }
+
+    public void getFromLoginActivity(){
+        Bundle bundle = getIntent().getExtras();
+        if(bundle != null){
+            username.setText(bundle.getString("username"));
+            Log.d("Name", username.getText().toString());
+        }
     }
 }
