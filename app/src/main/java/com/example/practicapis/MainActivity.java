@@ -1,19 +1,26 @@
 package com.example.practicapis;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.practicapis.nota.DataBase;
+import com.example.practicapis.nota.NotaActivity;
 import com.example.practicapis.ui.login.LoginActivity;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
@@ -23,6 +30,9 @@ public class MainActivity extends AppCompatActivity {
     CustomAdapter adapter;
     AppStatus appStatus;
     TextView username;
+    TextView title;
+    TextView text;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,19 +46,25 @@ public class MainActivity extends AppCompatActivity {
         adapter = new CustomAdapter(this, recyclerList);
         username = findViewById(R.id.userName);
 
-        appStatus = AppStatus.getInstance();
 
+        appStatus = AppStatus.getInstance();
         if(appStatus.checkStarted()){
             goToLoginActivity();
             appStatus.appStarted();
         }
         getFromLoginActivity();
+        getFromNotaActivity();
+
     }
     public void addNote(View view) {
-        recyclerList.add(new NoteThumbnail("Title", "asñdkjvbnaujfdbnvaoisdjnv iw dfiwdnfcwpaiusdavfqnwasud ... "));
+        goToNotaActivity();
+        //recyclerList.add(new NoteThumbnail(title.getText().toString(), text.getText().toString()));
         adapter.setLocalDataSet(recyclerList);
         mRecyclerView.setAdapter(adapter);
+        recyclerList.add(new NoteThumbnail("aefafaf", "adfafaf"));
     }
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -67,7 +83,6 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_share) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -81,6 +96,21 @@ public class MainActivity extends AppCompatActivity {
         if(bundle != null){
             username.setText(bundle.getString("username"));
             Log.d("Name", username.getText().toString());
+        }
+    }
+
+    public void goToNotaActivity(){
+        Intent intent = new Intent(this, NotaActivity.class);
+        startActivity(intent);
+    }
+
+    public void getFromNotaActivity(){
+        Bundle bundle = getIntent().getExtras();
+        if(bundle != null){
+            /*title.setText(bundle.getString("noteTitle"));
+            text.setText(bundle.getString("noteBody"));*/
+            recyclerList.add(new NoteThumbnail(bundle.getString("noteTitle"), bundle.getString("noteBody")));
+            Log.d("Title",title.getText().toString());
         }
     }
 }

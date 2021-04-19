@@ -29,9 +29,9 @@ public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.
             super(view);
             // Define click listener for the ViewHolder's View
 
-            title = view.findViewById(R.id.noteTitle);
+            title = view.findViewById(R.id.NotaNoteTitle);
             noteLayout = view.findViewById(R.id.noteLayout);
-            body = view.findViewById(R.id.bodyText);
+            body = view.findViewById(R.id.NotaBodyText);
         }
 
         public TextView getTitleNote() {
