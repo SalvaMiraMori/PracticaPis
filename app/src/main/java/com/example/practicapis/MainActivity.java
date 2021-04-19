@@ -17,7 +17,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.practicapis.nota.DataBase;
+//import com.example.practicapis.nota.DataBase;
 import com.example.practicapis.nota.NotaActivity;
 import com.example.practicapis.ui.login.LoginActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -30,8 +30,6 @@ public class MainActivity extends AppCompatActivity {
     CustomAdapter adapter;
     AppStatus appStatus;
     TextView username;
-    TextView title;
-    TextView text;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,22 +44,37 @@ public class MainActivity extends AppCompatActivity {
         adapter = new CustomAdapter(this, recyclerList);
         username = findViewById(R.id.userName);
 
-
         appStatus = AppStatus.getInstance();
+
+        // TODO Recuperar dades recyclerview de appstatus
+        
+
+
         if(appStatus.checkStarted()){
             goToLoginActivity();
             appStatus.appStarted();
         }
-        getFromLoginActivity();
-        getFromNotaActivity();
+
+        try{
+            getFromLoginActivity();
+        }catch(Exception e){
+
+        }
+
+        try{
+            getFromNotaActivity();
+        }catch(Exception e){
+
+        }
+
 
     }
     public void addNote(View view) {
         goToNotaActivity();
         //recyclerList.add(new NoteThumbnail(title.getText().toString(), text.getText().toString()));
-        adapter.setLocalDataSet(recyclerList);
+        /*adapter.setLocalDataSet(recyclerList);
         mRecyclerView.setAdapter(adapter);
-        recyclerList.add(new NoteThumbnail("aefafaf", "adfafaf"));
+        recyclerList.add(new NoteThumbnail("aefafaf", "adfafaf"));*/
     }
 
 
@@ -110,7 +123,9 @@ public class MainActivity extends AppCompatActivity {
             /*title.setText(bundle.getString("noteTitle"));
             text.setText(bundle.getString("noteBody"));*/
             recyclerList.add(new NoteThumbnail(bundle.getString("noteTitle"), bundle.getString("noteBody")));
-            Log.d("Title",title.getText().toString());
+            adapter.setLocalDataSet(recyclerList);
+            mRecyclerView.setAdapter(adapter);
+            Log.d("Title",bundle.getString("noteTitle"));
         }
     }
 }

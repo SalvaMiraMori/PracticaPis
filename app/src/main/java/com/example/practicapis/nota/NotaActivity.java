@@ -69,8 +69,6 @@ public class NotaActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if(item.getItemId() == R.id.save){
             if(title.getText().length() != 0){
-
-
                 onBackPressed();
             } else{
                 title.setError("Title can't be blank");
