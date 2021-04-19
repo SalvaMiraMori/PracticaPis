@@ -118,6 +118,7 @@ public class LoginActivity extends AppCompatActivity {
                 loginViewModel.login(usernameEditText.getText().toString(),
                         passwordEditText.getText().toString());
                 intentUserName();
+                finish();
             }
         });
     }

@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
     CustomAdapter adapter;
     AppStatus appStatus;
     TextView username;
+    boolean start = true;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,10 +39,12 @@ public class MainActivity extends AppCompatActivity {
 
         appStatus = AppStatus.getInstance();
 
-        if(appStatus.checkStarted()){
+        /*if(appStatus.checkStarted()){
             goToLoginActivity();
             appStatus.appStarted();
         }
+        getFromLoginActivity();*/
+        goToLoginActivity();
         getFromLoginActivity();
     }
     public void addNote(View view) {
