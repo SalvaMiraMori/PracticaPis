@@ -39,13 +39,18 @@ public class MainActivity extends AppCompatActivity {
 
         appStatus = AppStatus.getInstance();
 
-        /*if(appStatus.checkStarted()){
+        if(appStatus.checkStarted()){
             goToLoginActivity();
             appStatus.appStarted();
         }
-        getFromLoginActivity();*/
-        goToLoginActivity();
-        getFromLoginActivity();
+
+        try{
+            getFromLoginActivity();
+        }catch(Exception e){
+
+        }
+
+
     }
     public void addNote(View view) {
         recyclerList.add(new NoteThumbnail("Title", "asñdkjvbnaujfdbnvaoisdjnv iw dfiwdnfcwpaiusdavfqnwasud ... "));

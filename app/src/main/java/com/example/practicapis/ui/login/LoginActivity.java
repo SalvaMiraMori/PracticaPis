@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.example.practicapis.MainActivity;
 import com.example.practicapis.R;
+import com.example.practicapis.RegisterActivity;
 import com.example.practicapis.ui.login.LoginViewModel;
 import com.example.practicapis.ui.login.LoginViewModelFactory;
 
@@ -42,7 +43,10 @@ public class LoginActivity extends AppCompatActivity {
         final EditText usernameEditText = findViewById(R.id.username);
         final EditText passwordEditText = findViewById(R.id.password);
         final Button loginButton = findViewById(R.id.login);
+        final Button registerButton = findViewById(R.id.registerBtn);
         final ProgressBar loadingProgressBar = findViewById(R.id.loading);
+
+        registerButton.setEnabled(true);
 
         loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
             @Override
@@ -117,8 +121,15 @@ public class LoginActivity extends AppCompatActivity {
                 loadingProgressBar.setVisibility(View.VISIBLE);
                 loginViewModel.login(usernameEditText.getText().toString(),
                         passwordEditText.getText().toString());
-                intentUserName();
+                goToMainActivity();
                 finish();
+            }
+        });
+
+        registerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goToRegisterActivity();
             }
         });
     }
@@ -133,11 +144,16 @@ public class LoginActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
     }
 
-    private void intentUserName(){
+    private void goToMainActivity(){
         Intent intentMain = new Intent(this, MainActivity.class);
         intentMain.putExtra("username", loginViewModel.getLoginRepository().getUserName());
         System.out.println(loginViewModel.getLoginRepository().getUserName());
         //intentMain.putExtra("username", loginViewModel.getLoginRepository().getUserName());
         startActivity(intentMain);
+    }
+
+    private void goToRegisterActivity(){
+        Intent intentRegister = new Intent(this, RegisterActivity.class);
+        startActivity(intentRegister);
     }
 }
