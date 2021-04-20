@@ -11,6 +11,7 @@
         android:layout_marginStart="30dp"
         android:layout_marginTop="60dp"
         android:orientation="vertical"
+        android:onClick="editNote"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 

@@ -1,6 +1,7 @@
 package com.example.practicapis;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,11 +12,14 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.practicapis.nota.NotaActivity;
+
 import java.util.ArrayList;
 
 public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.CustomAdapter.ViewHolder> {
     private ArrayList<NoteThumbnail> localDataSet;
     private final Context parentContext;
+    AppStatus appStatus = AppStatus.getInstance();
 
     /**
      * Provide a reference to the type of views that you are using
@@ -33,6 +37,7 @@ public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.
             noteLayout = view.findViewById(R.id.noteLayout);
             body = view.findViewById(R.id.NotaBodyText);
         }
+
 
         public TextView getTitleNote() {
             return title;
@@ -79,7 +84,21 @@ public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.
         viewHolder.getLayout().setBackgroundColor(color);
         viewHolder.getTitleNote().setText(localDataSet.get(position).getTitle());
         viewHolder.getBodyNote().setText(localDataSet.get(position).getBody());
+
+
+        // TODO Ir al notaActivity en concreto
+        LinearLayout layout =viewHolder.getLayout();
+        layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NoteThumbnail nota = appStatus.getNoteByPosition(position);
+                System.out.println(nota.getBody());
+
+            }
+        });
+
     }
+
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
@@ -89,5 +108,7 @@ public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.
         }
         return 0;
     }
+
+
 
 }

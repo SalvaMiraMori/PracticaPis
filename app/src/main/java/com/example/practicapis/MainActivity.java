@@ -43,11 +43,9 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         adapter = new CustomAdapter(this, recyclerList);
         username = findViewById(R.id.userName);
-
         appStatus = AppStatus.getInstance();
 
         // TODO Recuperar dades recyclerview de appstatus
-        
 
 
         if(appStatus.checkStarted()){
@@ -63,14 +61,17 @@ public class MainActivity extends AppCompatActivity {
 
         try{
             getFromNotaActivity();
+            recyclerList = appStatus.getAllNotes();
+            System.out.println("RecycleList: "+recyclerList.size());
+            adapter.setLocalDataSet(recyclerList);
+            mRecyclerView.setAdapter(adapter);
         }catch(Exception e){
 
         }
-
-
     }
     public void addNote(View view) {
         goToNotaActivity();
+
         //recyclerList.add(new NoteThumbnail(title.getText().toString(), text.getText().toString()));
         /*adapter.setLocalDataSet(recyclerList);
         mRecyclerView.setAdapter(adapter);
@@ -106,10 +107,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void getFromLoginActivity(){
         Bundle bundle = getIntent().getExtras();
+        System.out.println("Bundle de Login: "+bundle.toString());
         if(bundle != null){
             username.setText(bundle.getString("username"));
             Log.d("Name", username.getText().toString());
         }
+
     }
 
     public void goToNotaActivity(){
@@ -119,13 +122,26 @@ public class MainActivity extends AppCompatActivity {
 
     public void getFromNotaActivity(){
         Bundle bundle = getIntent().getExtras();
-        if(bundle != null){
-            /*title.setText(bundle.getString("noteTitle"));
-            text.setText(bundle.getString("noteBody"));*/
-            recyclerList.add(new NoteThumbnail(bundle.getString("noteTitle"), bundle.getString("noteBody")));
-            adapter.setLocalDataSet(recyclerList);
-            mRecyclerView.setAdapter(adapter);
+        NoteThumbnail noteThumbnail;
+
+        // TODO Mirarnoslo mas tarde
+        if((boolean)bundle.get("delete") == false){
+            /*noteThumbnail = new NoteThumbnail(bundle.getString("noteTitle"), bundle.getString("noteBody"));
+            recyclerList.add(0, noteThumbnail);*/
+            appStatus.addNotaToList(bundle.getString("noteTitle"), bundle.getString("noteBody"));
+
+
+
             Log.d("Title",bundle.getString("noteTitle"));
         }
+
+    }
+
+    // TODO Abrir un NotaActivity en especifico
+    public void editNote(View view){
+        /*Intent intent = new Intent(this, NotaActivity.class);
+        intent.putExtra("noteTitle",title.getText().toString());
+        intent.putExtra("noteBody",text.getText().toString());*/
+        System.out.println("Desde el MAIN");
     }
 }

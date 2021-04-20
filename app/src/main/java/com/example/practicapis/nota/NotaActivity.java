@@ -33,7 +33,6 @@ public class NotaActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("New Note");
 
-        Log.d("asasfasf","afonsfokandfoanf");
         title = findViewById(R.id.noteTitle);
         text = findViewById(R.id.noteBody);
 
@@ -69,14 +68,14 @@ public class NotaActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if(item.getItemId() == R.id.save){
             if(title.getText().length() != 0){
+                System.out.println("Texto de nota actual: "+text.getText().toString());
                 onBackPressed();
             } else{
                 title.setError("Title can't be blank");
             }
 
         } else if(item.getItemId() == R.id.delete) {
-            Toast.makeText(this, "Canceled", Toast.LENGTH_SHORT).show();
-            onBackPressed();
+            delete();
         }
 
         return super.onOptionsItemSelected(item);
@@ -89,6 +88,14 @@ public class NotaActivity extends AppCompatActivity {
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("noteTitle",title.getText().toString());
         intent.putExtra("noteBody",text.getText().toString());
+        intent.putExtra("delete", false);
+        startActivity(intent);
+    }
+
+    public void delete(){
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("delete", true);
+
         startActivity(intent);
     }
 }
