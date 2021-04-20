@@ -14,7 +14,7 @@
     <string name="action_delete">Delete</string>
     <string name="action_reminder">Reminder</string>
     <string name="buttonAdd">Add Note</string>
-    <string name="title">Nota</string>
+    <string name="title">Title</string>
     <string name="body">Body</string>
     <string name="title_activity_login">LoginActivity</string>
     <string name="prompt_email">Email</string>

@@ -7,7 +7,7 @@
     <LinearLayout
         android:id="@+id/noteLayout"
         android:layout_width="145dp"
-        android:layout_height="134dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
         android:layout_marginTop="60dp"
         android:orientation="vertical"
@@ -24,8 +24,8 @@
         <TextView
             android:id="@+id/NotaBodyText"
             android:layout_width="match_parent"
-            android:layout_height="88dp"
+            android:layout_height="wrap_content"
+            android:maxHeight="88dp"
             android:text="@string/body" />
-
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
