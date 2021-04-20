@@ -25,16 +25,23 @@ public class AppStatus {
 
     public boolean checkStarted(){ return start; }
 
+    // TODO: ELIMINAR
     public void addNotaToList(String title, String body){
         id++;
         listWithID.add(0, new Note(title, body));
+    }
 
+    public void editNote(Note note, int position){
+        listWithID.remove(position);
+        listWithID.add(0, note);
+    }
 
-        /*for(Note note1 : listWithID){
-            System.out.println("Elemento: "+note1.getId()+", "+note1.getTitle()+", "+note1.getBody());
-        }*/
+    public void deleteNote(int position){
+        listWithID.remove(position);
+    }
 
-
+    public void addNote(Note note){
+        listWithID.add(0, note);
     }
 
     public ArrayList<Note> getAllNotes(){

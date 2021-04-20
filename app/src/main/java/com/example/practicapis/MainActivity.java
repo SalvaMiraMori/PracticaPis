@@ -2,10 +2,12 @@ package com.example.practicapis;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 //import com.example.practicapis.nota.DataBase;
 import com.example.practicapis.nota.NotaActivity;
 import com.example.practicapis.ui.login.LoginActivity;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
@@ -25,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     CustomAdapter adapter;
     AppStatus appStatus;
     TextView username;
+    FloatingActionButton addNotebtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,9 +43,14 @@ public class MainActivity extends AppCompatActivity {
         adapter = new CustomAdapter(this, recyclerList);
         username = findViewById(R.id.userName);
         appStatus = AppStatus.getInstance();
+        addNotebtn = findViewById(R.id.addNoteBtn);
 
-        // TODO Recuperar dades recyclerview de appstatus
-
+        addNotebtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addNote();
+            }
+        });
 
         if(appStatus.checkStarted()){
             goToLoginActivity();
@@ -65,13 +74,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void addNote(View view) {
+    public void addNote() {
         goToNotaActivity();
-
-        //recyclerList.add(new Note(title.getText().toString(), text.getText().toString()));
-        /*adapter.setLocalDataSet(recyclerList);
-        mRecyclerView.setAdapter(adapter);
-        recyclerList.add(new Note("aefafaf", "adfafaf"));*/
     }
 
 
@@ -119,29 +123,19 @@ public class MainActivity extends AppCompatActivity {
 
     public void getFromNotaActivity(){
         Bundle bundle = getIntent().getExtras();
-        Note note;
 
         // TODO Mirarnoslo mas tarde
 
-        if((boolean)bundle.get("delete") == false){
-            /*note = new Note(bundle.getString("noteTitle"), bundle.getString("noteBody"));
-            recyclerList.add(0, note);*/
+        Note note = bundle.getParcelable("note");
 
-            appStatus.addNotaToList(bundle.getString("noteTitle"), bundle.getString("noteBody"));
-
-            Log.d("Title",bundle.getString("noteTitle"));
-        } else{
-
+        if((boolean)bundle.get("delete")){
+            if((int)bundle.get("position") != -1){
+                appStatus.deleteNote((int)bundle.get("position"));
+            }
+        }else if((int)bundle.get("position") == -1){
+            appStatus.addNote(note);
+        }else{
+            appStatus.editNote(note, bundle.getInt("position"));
         }
-
-
-    }
-
-    // TODO Abrir un NotaActivity en especifico
-    public void editNote(View view){
-        /*Intent intent = new Intent(this, NotaActivity.class);
-        intent.putExtra("noteTitle",title.getText().toString());
-        intent.putExtra("noteBody",text.getText().toString());*/
-        System.out.println("Desde el MAIN");
     }
 }

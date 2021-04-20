@@ -1,7 +1,9 @@
 package com.example.practicapis;
 
-public class Note {
-    private int id;
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Note implements Parcelable {
     private String title;
     private String body;
 
@@ -10,15 +12,22 @@ public class Note {
         this.body = body;
     }
 
-    /*public Note(int id, String title, String body) {
-        this.id = id;
-        this.title = title;
-        this.body = body;
+    protected Note(Parcel in) {
+        title = in.readString();
+        body = in.readString();
     }
 
-    public int getId() { return id; }
+    public static final Creator<Note> CREATOR = new Creator<Note>() {
+        @Override
+        public Note createFromParcel(Parcel in) {
+            return new Note(in);
+        }
 
-    public void setId(int id) { this.id = id; }*/
+        @Override
+        public Note[] newArray(int size) {
+            return new Note[size];
+        }
+    };
 
     public String getTitle() {
         return title;
@@ -34,5 +43,16 @@ public class Note {
 
     public void setBody(String body) {
         this.body = body;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(title);
+        dest.writeString(body);
     }
 }

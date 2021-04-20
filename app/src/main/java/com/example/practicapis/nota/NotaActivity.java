@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
@@ -69,13 +70,15 @@ public class NotaActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if(item.getItemId() == R.id.save){
             if(title.getText().length() != 0){
-                onBackPressed();
+                onSavePressed();
             } else{
                 title.setError("Title can't be blank");
             }
 
         } else if(item.getItemId() == R.id.delete) {
-            delete();
+            onDeletePressed();
+        } else {
+            onBackPressed();
         }
 
         return super.onOptionsItemSelected(item);
@@ -84,16 +87,19 @@ public class NotaActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        //super.onBackPressed();
+        super.onBackPressed();
+    }
+
+    public void onSavePressed(){
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("noteTitle",title.getText().toString());
-        intent.putExtra("noteBody",text.getText().toString());
+        Note note = new Note(title.getText().toString(), text.getText().toString());
+        intent.putExtra("note", note);
         intent.putExtra("position", position);
         intent.putExtra("delete", false);
         startActivity(intent);
     }
 
-    public void delete(){
+    public void onDeletePressed(){
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("delete", true);
         intent.putExtra("position", position);
