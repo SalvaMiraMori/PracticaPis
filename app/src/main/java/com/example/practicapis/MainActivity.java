@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     AppStatus appStatus;
     TextView username;
     FloatingActionButton addNotebtn;
+    boolean start = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,8 +124,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void getFromNotaActivity(){
         Bundle bundle = getIntent().getExtras();
-
-        // TODO Mirarnoslo mas tarde
 
         Note note = bundle.getParcelable("note");
 
