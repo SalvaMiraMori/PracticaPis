@@ -6,6 +6,7 @@ import android.os.Parcelable;
 public class Note implements Parcelable {
     private String title;
     private String body;
+    private boolean favorite;
 
     public Note(String title, String body) {
         this.title = title;
@@ -15,6 +16,14 @@ public class Note implements Parcelable {
     protected Note(Parcel in) {
         title = in.readString();
         body = in.readString();
+    }
+
+    public boolean isFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        this.favorite = favorite;
     }
 
     public static final Creator<Note> CREATOR = new Creator<Note>() {

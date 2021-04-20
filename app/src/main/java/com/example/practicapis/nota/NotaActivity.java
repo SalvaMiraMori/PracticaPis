@@ -11,7 +11,9 @@ import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import androidx.appcompat.widget.Toolbar;
 
@@ -62,7 +64,7 @@ public class NotaActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.save_menu, menu);
+        inflater.inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -75,10 +77,10 @@ public class NotaActivity extends AppCompatActivity {
                 title.setError("Title can't be blank");
             }
 
-        } else if(item.getItemId() == R.id.delete) {
+        } else if(item.getItemId() == R.id.action_delete) {
             onDeletePressed();
         } else {
-            onBackPressed();
+            onSavePressed();
         }
 
         return super.onOptionsItemSelected(item);
