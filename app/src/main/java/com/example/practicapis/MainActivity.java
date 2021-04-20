@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
     CustomAdapter adapter;
     AppStatus appStatus;
     TextView username;
+    boolean start = true;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,7 +43,14 @@ public class MainActivity extends AppCompatActivity {
             goToLoginActivity();
             appStatus.appStarted();
         }
-        getFromLoginActivity();
+
+        try{
+            getFromLoginActivity();
+        }catch(Exception e){
+
+        }
+
+
     }
     public void addNote(View view) {
         recyclerList.add(new NoteThumbnail("Title", "asñdkjvbnaujfdbnvaoisdjnv iw dfiwdnfcwpaiusdavfqnwasud ... "));
