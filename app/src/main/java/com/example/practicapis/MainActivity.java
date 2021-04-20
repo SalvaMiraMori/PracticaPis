@@ -1,16 +1,12 @@
 package com.example.practicapis;
 
-import android.content.ContentValues;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -20,12 +16,11 @@ import androidx.recyclerview.widget.RecyclerView;
 //import com.example.practicapis.nota.DataBase;
 import com.example.practicapis.nota.NotaActivity;
 import com.example.practicapis.ui.login.LoginActivity;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    ArrayList<NoteThumbnail> recyclerList;
+    ArrayList<Note> recyclerList;
     RecyclerView mRecyclerView;
     CustomAdapter adapter;
     AppStatus appStatus;
@@ -73,10 +68,10 @@ public class MainActivity extends AppCompatActivity {
     public void addNote(View view) {
         goToNotaActivity();
 
-        //recyclerList.add(new NoteThumbnail(title.getText().toString(), text.getText().toString()));
+        //recyclerList.add(new Note(title.getText().toString(), text.getText().toString()));
         /*adapter.setLocalDataSet(recyclerList);
         mRecyclerView.setAdapter(adapter);
-        recyclerList.add(new NoteThumbnail("aefafaf", "adfafaf"));*/
+        recyclerList.add(new Note("aefafaf", "adfafaf"));*/
     }
 
 
@@ -118,27 +113,27 @@ public class MainActivity extends AppCompatActivity {
 
     public void goToNotaActivity(){
         Intent intent = new Intent(this, NotaActivity.class);
+        intent.putExtra("position", -1);
         startActivity(intent);
     }
 
     public void getFromNotaActivity(){
         Bundle bundle = getIntent().getExtras();
-        NoteThumbnail noteThumbnail;
+        Note note;
 
         // TODO Mirarnoslo mas tarde
+
         if((boolean)bundle.get("delete") == false){
-            /*noteThumbnail = new NoteThumbnail(bundle.getString("noteTitle"), bundle.getString("noteBody"));
-            recyclerList.add(0, noteThumbnail);*/
+            /*note = new Note(bundle.getString("noteTitle"), bundle.getString("noteBody"));
+            recyclerList.add(0, note);*/
+
             appStatus.addNotaToList(bundle.getString("noteTitle"), bundle.getString("noteBody"));
 
-
-
             Log.d("Title",bundle.getString("noteTitle"));
+        } else{
+
         }
 
-        if((int)bundle.get("position") <= recyclerList.size()){
-            
-        }
 
     }
 

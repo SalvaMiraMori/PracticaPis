@@ -7,23 +7,23 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.EditText;
-import android.widget.Toast;
+
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.practicapis.MainActivity;
-import com.example.practicapis.NoteThumbnail;
+import com.example.practicapis.Note;
 import com.example.practicapis.R;
 
 public class NotaActivity extends AppCompatActivity {
 
     Toolbar toolbar;
     EditText title, text;
-    NoteThumbnail noteThumbnail;
+    Note note;
+    int position;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +35,7 @@ public class NotaActivity extends AppCompatActivity {
 
         title = findViewById(R.id.noteTitle);
         text = findViewById(R.id.noteBody);
+        getNoteDataBundle();
 
         title.addTextChangedListener(new TextWatcher() {
             @Override
@@ -68,7 +69,6 @@ public class NotaActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if(item.getItemId() == R.id.save){
             if(title.getText().length() != 0){
-                System.out.println("Texto de nota actual: "+text.getText().toString());
                 onBackPressed();
             } else{
                 title.setError("Title can't be blank");
@@ -88,6 +88,7 @@ public class NotaActivity extends AppCompatActivity {
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("noteTitle",title.getText().toString());
         intent.putExtra("noteBody",text.getText().toString());
+        intent.putExtra("position", position);
         intent.putExtra("delete", false);
         startActivity(intent);
     }
@@ -95,7 +96,14 @@ public class NotaActivity extends AppCompatActivity {
     public void delete(){
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("delete", true);
-
+        intent.putExtra("position", position);
         startActivity(intent);
+    }
+
+    public void getNoteDataBundle(){
+        Bundle bundle = getIntent().getExtras();
+        title.setText(bundle.getString("title"));
+        text.setText(bundle.getString("body"));
+        position = bundle.getInt("position");
     }
 }

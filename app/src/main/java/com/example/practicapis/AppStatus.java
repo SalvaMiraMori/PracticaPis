@@ -1,15 +1,11 @@
 package com.example.practicapis;
 
-import android.os.Bundle;
-
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class AppStatus {
     private Boolean start;
     private static AppStatus instance;
-    private ArrayList<NoteThumbnail> listWithID= new ArrayList<>();
+    private ArrayList<Note> listWithID= new ArrayList<>();
     private int id = 0;
 
     public AppStatus(){
@@ -31,21 +27,21 @@ public class AppStatus {
 
     public void addNotaToList(String title, String body){
         id++;
-        listWithID.add(0, new NoteThumbnail(title, body));
+        listWithID.add(0, new Note(title, body));
 
 
-        /*for(NoteThumbnail note1 : listWithID){
+        /*for(Note note1 : listWithID){
             System.out.println("Elemento: "+note1.getId()+", "+note1.getTitle()+", "+note1.getBody());
         }*/
 
 
     }
 
-    public ArrayList<NoteThumbnail> getAllNotes(){
+    public ArrayList<Note> getAllNotes(){
         return listWithID;
     }
 
-    public NoteThumbnail getNoteByPosition(int position){
+    public Note getNoteByPosition(int position){
         return listWithID.get(position);
     }
 

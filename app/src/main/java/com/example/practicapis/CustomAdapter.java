@@ -17,7 +17,7 @@ import com.example.practicapis.nota.NotaActivity;
 import java.util.ArrayList;
 
 public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.CustomAdapter.ViewHolder> {
-    private ArrayList<NoteThumbnail> localDataSet;
+    private ArrayList<Note> localDataSet;
     private final Context parentContext;
     AppStatus appStatus = AppStatus.getInstance();
 
@@ -56,11 +56,11 @@ public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.
      * @param dataSet String[] containing the data to populate views to be used
      * by RecyclerView.
      */
-    public CustomAdapter(Context current, ArrayList<NoteThumbnail> dataSet) {
+    public CustomAdapter(Context current, ArrayList<Note> dataSet) {
         parentContext = current;
         localDataSet = dataSet;
     }
-    public void setLocalDataSet(ArrayList<NoteThumbnail> dataSet){
+    public void setLocalDataSet(ArrayList<Note> dataSet){
         localDataSet = dataSet;
     }
     // Create new views (invoked by the layout manager)
@@ -91,13 +91,12 @@ public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.
         layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NoteThumbnail nota = appStatus.getNoteByPosition(position);
+                Note nota = appStatus.getNoteByPosition(position);
                 Intent intent = new Intent(v.getContext(), NotaActivity.class);
                 intent.putExtra("position", position);
+                intent.putExtra("title", nota.getTitle());
+                intent.putExtra("body", nota.getBody());
                 v.getContext().startActivity(intent);
-
-
-
             }
         });
 
