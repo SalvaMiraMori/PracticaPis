@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
+
     public void addNote(View view) {
         goToNotaActivity();
 
@@ -133,6 +134,10 @@ public class MainActivity extends AppCompatActivity {
 
 
             Log.d("Title",bundle.getString("noteTitle"));
+        }
+
+        if((int)bundle.get("position") <= recyclerList.size()){
+            
         }
 
     }

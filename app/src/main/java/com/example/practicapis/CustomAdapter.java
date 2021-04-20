@@ -92,7 +92,11 @@ public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.
             @Override
             public void onClick(View v) {
                 NoteThumbnail nota = appStatus.getNoteByPosition(position);
-                System.out.println(nota.getBody());
+                Intent intent = new Intent(v.getContext(), NotaActivity.class);
+                intent.putExtra("position", position);
+                v.getContext().startActivity(intent);
+
+
 
             }
         });
@@ -108,6 +112,8 @@ public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.
         }
         return 0;
     }
+
+
 
 
 
