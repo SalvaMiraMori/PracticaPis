@@ -3,10 +3,12 @@ package com.example.practicapis;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,7 +20,10 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+//import com.example.practicapis.nota.DataBase;
+import com.example.practicapis.nota.NotaActivity;
 import com.example.practicapis.ui.login.LoginActivity;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
@@ -46,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         adapter = new CustomAdapter(this, recyclerList);
         username = findViewById(R.id.userName);
-
         appStatus = AppStatus.getInstance();
         addNotebtn = findViewById(R.id.addNoteBtn);
         parentContext = this.getBaseContext();
@@ -55,6 +59,15 @@ public class MainActivity extends AppCompatActivity {
         setLiveDataObservers();
 
         appStatus = AppStatus.getInstance();
+
+
+        addNotebtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addNote();
+            }
+        });
+
 
         if(appStatus.checkStarted()){
             goToLoginActivity();
@@ -67,7 +80,14 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-
+        try{
+            getFromNotaActivity();
+            recyclerList = appStatus.getAllNotes();
+            System.out.println("RecycleList: "+recyclerList.size());
+            adapter.setLocalDataSet(recyclerList);
+            mRecyclerView.setAdapter(adapter);
+        }catch(Exception e) {
+        }
         try{ getFromNotaActivity(); }catch(Exception e){}
 
         //appStatus.setAllNotes(viewModel.getNotes().getValue());
@@ -89,9 +109,20 @@ public class MainActivity extends AppCompatActivity {
         viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
         //viewModel = new MainActivityViewModel();
 
-        final Observer<MutableLiveData<ArrayList<Note>>> observer = new Observer<MutableLiveData<ArrayList<Note>>>() {
+        /*final Observer<MutableLiveData<ArrayList<Note>>> observer = new Observer<MutableLiveData<ArrayList<Note>>>() {
             @Override
             public void onChanged(MutableLiveData<ArrayList<Note>> arrayListMutableLiveData) {
+                CustomAdapter newAdapter = new CustomAdapter(parentContext, arrayListMutableLiveData);
+                mRecyclerView.swapAdapter(newAdapter, false);
+                appStatus.setAllNotes(viewModel.getNotes().getValue());
+                recyclerList = appStatus.getAllNotes();
+                newAdapter.notifyDataSetChanged();
+            }
+        };*/
+
+        final Observer<ArrayList<Note>> observer = new Observer<ArrayList<Note>>() {
+            @Override
+            public void onChanged(ArrayList<Note> arrayListMutableLiveData) {
                 CustomAdapter newAdapter = new CustomAdapter(parentContext, arrayListMutableLiveData);
                 mRecyclerView.swapAdapter(newAdapter, false);
                 appStatus.setAllNotes(viewModel.getNotes().getValue());
@@ -109,13 +140,13 @@ public class MainActivity extends AppCompatActivity {
 
         viewModel.getNotes().observe(this, observer);
         //viewModel.getToast().observe(this, observerToast);
+    }
 
+    public void addNote() {
+        goToNotaActivity();
     }
-    public void addNote(View view) {
-        recyclerList.add(new NoteThumbnail("Title", "asñdkjvbnaujfdbnvaoisdjnv iw dfiwdnfcwpaiusdavfqnwasud ... "));
-        adapter.setLocalDataSet(recyclerList);
-        mRecyclerView.setAdapter(adapter);
-    }
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -134,7 +165,6 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_share) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -145,10 +175,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void getFromLoginActivity(){
         Bundle bundle = getIntent().getExtras();
+        System.out.println("Bundle de Login: "+bundle.toString());
         if(bundle != null){
             username.setText(bundle.getString("username"));
             Log.d("Name", username.getText().toString());
         }
+
     }
 
     public void goToNotaActivity(){

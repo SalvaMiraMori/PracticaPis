@@ -1,6 +1,7 @@
 package com.example.practicapis;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,12 +13,16 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.practicapis.nota.NotaActivity;
+
 import java.util.ArrayList;
 
 public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.CustomAdapter.ViewHolder> {
 
-    private MutableLiveData<ArrayList<Note>> localDataSet;
+    //private MutableLiveData<ArrayList<Note>> localDataSet;
+    private ArrayList<Note> localDataSet;
     private final Context parentContext;
+    AppStatus appStatus = AppStatus.getInstance();
 
     /**
      * Provide a reference to the type of views that you are using
@@ -31,10 +36,11 @@ public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.
             super(view);
             // Define click listener for the ViewHolder's View
 
-            title = view.findViewById(R.id.noteTitle);
+            title = view.findViewById(R.id.NotaNoteTitle);
             noteLayout = view.findViewById(R.id.noteLayout);
-            body = view.findViewById(R.id.bodyText);
+            body = view.findViewById(R.id.NotaBodyText);
         }
+
 
         public TextView getTitleNote() {
             return title;
@@ -54,12 +60,20 @@ public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.
      * by RecyclerView.
      */
 
-    public CustomAdapter(Context current, MutableLiveData<ArrayList<Note>> dataSet) {
+
+    //public CustomAdapter(Context current, MutableLiveData<ArrayList<Note>> dataSet) {
+
+    public CustomAdapter(Context current, ArrayList<Note> dataSet) {
+
         parentContext = current;
         localDataSet = dataSet;
     }
     public void setLocalDataSet(ArrayList<Note> dataSet){
-        localDataSet.setValue(dataSet);
+
+        //localDataSet.setValue(dataSet);
+
+        localDataSet = dataSet;
+
     }
     // Create new views (invoked by the layout manager)
     @NonNull
@@ -80,8 +94,13 @@ public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.
         System.out.println("onBind");
         int color = ContextCompat.getColor(parentContext, R.color.note);
         viewHolder.getLayout().setBackgroundColor(color);
-        viewHolder.getTitleNote().setText(localDataSet.getValue().get(position).getTitle());
-        viewHolder.getBodyNote().setText(localDataSet.getValue().get(position).getBody());
+
+        //viewHolder.getTitleNote().setText(localDataSet.getValue().get(position).getTitle());
+        //viewHolder.getBodyNote().setText(localDataSet.getValue().get(position).getBody());
+
+        viewHolder.getTitleNote().setText(localDataSet.get(position).getTitle());
+        viewHolder.getBodyNote().setText(localDataSet.get(position).getBody());
+
 
 
         // TODO Ir al notaActivity en concreto
@@ -99,13 +118,20 @@ public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.
         });
     }
 
+
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
+        //if(localDataSet.getValue() != null){
         if (localDataSet != null) {
-            return localDataSet.getValue().size();
+            //return localDataSet.getValue().size();
+            return localDataSet.size();
         }
         return 0;
     }
+
+
+
+
 
 }

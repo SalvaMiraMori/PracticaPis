@@ -1,9 +1,12 @@
 package com.example.practicapis;
 
+import java.util.ArrayList;
+
 public class AppStatus {
     private Boolean start;
     private static AppStatus instance;
     private ArrayList<Note> notesList = new ArrayList<>();
+
     private int id = 0;
 
     public AppStatus(){
@@ -22,6 +25,7 @@ public class AppStatus {
     }
 
     public boolean checkStarted(){ return start; }
+
 
     public void editNote(Note note, int position){
         notesList.remove(position);
@@ -45,4 +49,5 @@ public class AppStatus {
     public Note getNoteByPosition(int position){
         return notesList.get(position);
     }
+
 }

@@ -9,7 +9,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PracticaPis">
+
+        <activity android:name=".nota.NotaActivity"></activity>
         <activity android:name=".RegisterActivity"></activity>
+
         <activity
             android:name=".ui.login.LoginActivity"
             android:label="@string/title_activity_login" />

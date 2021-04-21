@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.widget.EditText;
 
 import androidx.appcompat.widget.Toolbar;
+
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.practicapis.MainActivity;
@@ -28,6 +29,7 @@ public class NotaActivity extends AppCompatActivity {
     private EditText title, text;
     private int position;
     private NoteActivityViewModel viewModel;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

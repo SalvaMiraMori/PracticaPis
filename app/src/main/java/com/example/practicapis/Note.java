@@ -4,10 +4,10 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+
 public class Note implements Parcelable {
     private String title;
     private String body;
-
 
     public Note(String title, String body) {
         this.title = title;
@@ -63,4 +63,5 @@ public class Note implements Parcelable {
         //TODO savedocument
         adapter.saveNote(this);
     }*/
+
 }

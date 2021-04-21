@@ -15,14 +15,14 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/noteTitle"
+            android:id="@+id/NotaNoteTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/title"
             android:textSize="20sp" />
 
         <TextView
-            android:id="@+id/bodyText"
+            android:id="@+id/NotaBodyText"
             android:layout_width="match_parent"
             android:layout_height="88dp"
             android:text="@string/body" />
