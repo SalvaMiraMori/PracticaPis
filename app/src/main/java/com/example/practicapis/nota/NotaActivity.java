@@ -5,15 +5,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
 
 import androidx.appcompat.widget.Toolbar;
 
@@ -66,7 +63,7 @@ public class NotaActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_main, menu);
+        inflater.inflate(R.menu.menu_note, menu);
         return true;
     }
 
@@ -86,7 +83,6 @@ public class NotaActivity extends AppCompatActivity {
     }
 
     private void onSharePressed() {
-
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         String toShare = title.getText().toString()+"\n"+text.getText().toString();
         shareIntent.setType("text/plain");

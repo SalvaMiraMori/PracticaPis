@@ -5,8 +5,8 @@ import java.util.ArrayList;
 public class AppStatus {
     private Boolean start;
     private static AppStatus instance;
-    private ArrayList<Note> listWithID= new ArrayList<>();
-    private int id = 0;
+    private ArrayList<Note> notes = new ArrayList<>();
+    private ArrayList<Note> archiveNotes = new ArrayList<>();
 
     public AppStatus(){
         start = true;
@@ -25,32 +25,35 @@ public class AppStatus {
 
     public boolean checkStarted(){ return start; }
 
-    // TODO: ELIMINAR
-    public void addNotaToList(String title, String body){
-        id++;
-        listWithID.add(0, new Note(title, body));
-    }
-
     public void editNote(Note note, int position){
-        listWithID.remove(position);
-        listWithID.add(0, note);
+        this.notes.remove(position);
+        this.notes.add(0, note);
     }
 
     public void deleteNote(int position){
-        listWithID.remove(position);
+        notes.remove(position);
     }
 
     public void addNote(Note note){
-        listWithID.add(0, note);
+        this.notes.add(0, note);
     }
 
     public ArrayList<Note> getAllNotes(){
-        return listWithID;
+        return notes;
     }
 
     public Note getNoteByPosition(int position){
-        return listWithID.get(position);
+        return notes.get(position);
     }
 
-
+    //TODO create metodes to archive and unarchive notes
+    public ArrayList<Note> getArchiveNotes(){return archiveNotes;}
+    public void archiveNote(Note note) {
+        this.notes.remove(note);
+        this.archiveNotes.add(0, note);
+    }
+    public void unarchiveNote(Note note) {
+        this.archiveNotes.remove(note);
+        this.notes.add(note);
+    }
 }
