@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -28,11 +29,12 @@ public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView title, body;
         private final LinearLayout noteLayout;
+        private ImageView favorite;
 
         public ViewHolder(View view) {
             super(view);
             // Define click listener for the ViewHolder's View
-
+            favorite = view.findViewById(R.id.imageView);
             title = view.findViewById(R.id.NotaNoteTitle);
             noteLayout = view.findViewById(R.id.noteLayout);
             body = view.findViewById(R.id.NotaBodyText);
@@ -48,6 +50,7 @@ public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.
         }
 
         public TextView getBodyNote() {return body;}
+        public ImageView getFavorite() {return favorite;}
     }
 
     /**
@@ -79,25 +82,24 @@ public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.
 
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
-        System.out.println("onBind");
         int color = ContextCompat.getColor(parentContext, R.color.note);
         viewHolder.getLayout().setBackgroundColor(color);
         viewHolder.getTitleNote().setText(localDataSet.get(position).getTitle());
         viewHolder.getBodyNote().setText(localDataSet.get(position).getBody());
+        if (localDataSet.get(position).isFavorite())
+            viewHolder.getFavorite().setVisibility(View.VISIBLE);
+        else
+            viewHolder.getFavorite().setVisibility(View.INVISIBLE);
 
-
-        // TODO Ir al notaActivity en concreto
         LinearLayout layout =viewHolder.getLayout();
-        layout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Note nota = appStatus.getNoteByPosition(position);
-                Intent intent = new Intent(v.getContext(), NotaActivity.class);
-                intent.putExtra("position", position);
-                intent.putExtra("title", nota.getTitle());
-                intent.putExtra("body", nota.getBody());
-                v.getContext().startActivity(intent);
-            }
+        layout.setOnClickListener(v -> {
+            Note nota = appStatus.getNoteByPosition(position);
+            Intent intent = new Intent(v.getContext(), NotaActivity.class);
+            intent.putExtra("position", position);
+            intent.putExtra("title", nota.getTitle());
+            intent.putExtra("body", nota.getBody());
+            intent.putExtra("favorite", nota.isFavorite());
+            v.getContext().startActivity(intent);
         });
 
     }
@@ -111,9 +113,4 @@ public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.
         }
         return 0;
     }
-
-
-
-
-
 }

@@ -136,5 +136,6 @@ public class MainActivity extends AppCompatActivity {
         }else{
             appStatus.editNote(note, bundle.getInt("position"));
         }
+        note.setFavorite((boolean)bundle.get("favorite"));
     }
 }

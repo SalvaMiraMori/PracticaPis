@@ -27,6 +27,7 @@ public class NotaActivity extends AppCompatActivity {
     EditText title, text;
     Note note;
     int position;
+    boolean isFavorite;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +37,7 @@ public class NotaActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("New Note");
 
+        isFavorite = false;
         title = findViewById(R.id.noteTitle);
         text = findViewById(R.id.noteBody);
         getNoteDataBundle();
@@ -70,13 +72,8 @@ public class NotaActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if(item.getItemId() == R.id.save){
-            if(title.getText().length() != 0){
-                onSavePressed();
-            } else{
-                title.setError("Title can't be blank");
-            }
-
+        if(item.getItemId() == R.id.action_favorite){
+            onFavoritePressed();
         } else if(item.getItemId() == R.id.action_delete) {
             onDeletePressed();
         } else {
@@ -84,6 +81,11 @@ public class NotaActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void onFavoritePressed() {
+        isFavorite = !isFavorite;
+        System.out.println("favorite: "+isFavorite);
     }
 
 
@@ -98,6 +100,7 @@ public class NotaActivity extends AppCompatActivity {
         intent.putExtra("note", note);
         intent.putExtra("position", position);
         intent.putExtra("delete", false);
+        intent.putExtra("favorite", isFavorite);
         startActivity(intent);
     }
 
@@ -113,5 +116,6 @@ public class NotaActivity extends AppCompatActivity {
         title.setText(bundle.getString("title"));
         text.setText(bundle.getString("body"));
         position = bundle.getInt("position");
+        isFavorite = bundle.getBoolean("favorite");
     }
 }
