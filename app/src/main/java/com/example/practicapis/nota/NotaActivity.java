@@ -72,7 +72,9 @@ public class NotaActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if(item.getItemId() == R.id.action_favorite){
+        if (item.getItemId() == R.id.action_share) {
+            onSharePressed();
+        } else if(item.getItemId() == R.id.action_favorite){
             onFavoritePressed();
         } else if(item.getItemId() == R.id.action_delete) {
             onDeletePressed();
@@ -81,6 +83,16 @@ public class NotaActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void onSharePressed() {
+
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        String toShare = title.getText().toString()+"\n"+text.getText().toString();
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, toShare);
+        //TODO put maps and files of the note
+        startActivity(Intent.createChooser(shareIntent, "Share using..."));
     }
 
     private void onFavoritePressed() {
