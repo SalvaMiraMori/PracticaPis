@@ -17,17 +17,23 @@ public class NoteActivityViewModel extends ViewModel {
 
     public NoteActivityViewModel(){
         mNotes = new MutableLiveData<>();
-        //mNotes.setValue(adapter.getCollection());
         mToast = new MutableLiveData<>();
-        /*DatabaseAdapter da = new DatabaseAdapter(this);
-        da.getCollection();*/
     }
 
     public void addNote(Note note){
-        //mNotes.getValue().add(note);
-        //mNotes.setValue(mNotes.getValue());
-        //note.saveNoteToDb();
         Log.d("saveCard", "saveCard-> saveDocument");
         adapter.saveNote(note);
+    }
+
+    public void deleteNote(Note note){
+        adapter.deleteNote(note);
+    }
+
+    public void editNote(Note note){
+        adapter.editNote(note);
+    }
+
+    public LiveData<ArrayList<Note>> getNotes(){
+        return mNotes;
     }
 }

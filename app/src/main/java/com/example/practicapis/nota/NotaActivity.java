@@ -27,7 +27,7 @@ public class NotaActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private EditText title, text;
-    private int position;
+    private Note note;
     private NoteActivityViewModel viewModel;
 
 
@@ -98,29 +98,30 @@ public class NotaActivity extends AppCompatActivity {
     }
 
     public void onSavePressed(){
-        /*Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("note", note);
-        intent.putExtra("position", position);
-        intent.putExtra("delete", false);
-        startActivity(intent);*/
-
-        Note note = new Note(title.getText().toString(), text.getText().toString());
-        viewModel.addNote(note);
-        //onBackPressed();
+        note.setTitle(title.getText().toString());
+        note.setBody(text.getText().toString());
+        if(note.getId() == null){
+            viewModel.addNote(note);
+        }else{
+            viewModel.editNote(note);
+        }
         this.finish();
     }
 
     public void onDeletePressed(){
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("delete", true);
-        intent.putExtra("position", position);
-        startActivity(intent);
+        try{ viewModel.deleteNote(note); }catch(Exception e){ }
+        this.finish();
     }
 
     public void getNoteDataBundle(){
         Bundle bundle = getIntent().getExtras();
-        title.setText(bundle.getString("title"));
-        text.setText(bundle.getString("body"));
-        position = bundle.getInt("position");
+        if(bundle != null){
+            note = (Note) bundle.get("note");
+        }else{
+            note = new Note();
+        }
+
+        if(note.getTitle() != null){ title.setText(note.getTitle()); }
+        if(note.getBody() != null){ text.setText(note.getBody()); }
     }
 }

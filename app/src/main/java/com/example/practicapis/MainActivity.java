@@ -74,25 +74,9 @@ public class MainActivity extends AppCompatActivity {
             appStatus.appStarted();
         }
 
-        try{
-            getFromLoginActivity();
-        }catch(Exception e){
+        try{ getFromLoginActivity(); }catch(Exception e){ }
 
-        }
-
-        try{
-            getFromNotaActivity();
-            recyclerList = appStatus.getAllNotes();
-            System.out.println("RecycleList: "+recyclerList.size());
-            adapter.setLocalDataSet(recyclerList);
-            mRecyclerView.setAdapter(adapter);
-        }catch(Exception e) {
-        }
-        try{ getFromNotaActivity(); }catch(Exception e){}
-
-        //appStatus.setAllNotes(viewModel.getNotes().getValue());
         recyclerList = appStatus.getAllNotes();
-        //System.out.println("RecycleList: "+recyclerList.size());
         adapter.setLocalDataSet(recyclerList);
         mRecyclerView.setAdapter(adapter);
     }
@@ -107,23 +91,11 @@ public class MainActivity extends AppCompatActivity {
     public void setLiveDataObservers() {
         // Subscribe the activity to the observable
         viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
-        //viewModel = new MainActivityViewModel();
-
-        /*final Observer<MutableLiveData<ArrayList<Note>>> observer = new Observer<MutableLiveData<ArrayList<Note>>>() {
-            @Override
-            public void onChanged(MutableLiveData<ArrayList<Note>> arrayListMutableLiveData) {
-                CustomAdapter newAdapter = new CustomAdapter(parentContext, arrayListMutableLiveData);
-                mRecyclerView.swapAdapter(newAdapter, false);
-                appStatus.setAllNotes(viewModel.getNotes().getValue());
-                recyclerList = appStatus.getAllNotes();
-                newAdapter.notifyDataSetChanged();
-            }
-        };*/
 
         final Observer<ArrayList<Note>> observer = new Observer<ArrayList<Note>>() {
             @Override
-            public void onChanged(ArrayList<Note> arrayListMutableLiveData) {
-                CustomAdapter newAdapter = new CustomAdapter(parentContext, arrayListMutableLiveData);
+            public void onChanged(ArrayList<Note> arrayList) {
+                CustomAdapter newAdapter = new CustomAdapter(parentContext, arrayList);
                 mRecyclerView.swapAdapter(newAdapter, false);
                 appStatus.setAllNotes(viewModel.getNotes().getValue());
                 recyclerList = appStatus.getAllNotes();
@@ -185,24 +157,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void goToNotaActivity(){
         Intent intent = new Intent(this, NotaActivity.class);
-        intent.putExtra("position", -1);
         startActivity(intent);
-    }
-
-    public void getFromNotaActivity(){
-        Bundle bundle = getIntent().getExtras();
-
-        Note note = bundle.getParcelable("note");
-
-        if((boolean)bundle.get("delete")){
-            if((int)bundle.get("position") != -1){
-                appStatus.deleteNote((int)bundle.get("position"));
-            }
-        }else if((int)bundle.get("position") == -1){
-            appStatus.addNote(note);
-            viewModel.addNote(note);
-        }else{
-            appStatus.editNote(note, bundle.getInt("position"));
-        }
     }
 }

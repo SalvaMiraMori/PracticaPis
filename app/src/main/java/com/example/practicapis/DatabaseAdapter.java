@@ -45,6 +45,7 @@ public class DatabaseAdapter {
         databaseAdapter = this;
         FirebaseFirestore.setLoggingEnabled(true);
         //initFirebase();
+        listenChanges();
     }
 
     public interface vmInterface{
@@ -104,7 +105,7 @@ public class DatabaseAdapter {
                 if(task.isSuccessful()){
                     ArrayList<Note> retrieved_notes = new ArrayList<>();
                     for(QueryDocumentSnapshot document : task.getResult()){
-                        retrieved_notes.add(new Note(document.getString("title"), document.getString("body")));
+                        retrieved_notes.add(new Note(document.getString("title"), document.getString("body"), document.getId()));
                     }
                     listener.setCollection(retrieved_notes);
                 } else{
@@ -134,6 +135,20 @@ public class DatabaseAdapter {
         });
     }
 
+    public void deleteNote(Note note){
+        db.collection("notes").document(note.getId()).delete();
+    }
 
+    public void editNote(Note note){
+        Map<String, Object> noteDbMap = new HashMap<>();
+        noteDbMap.put("title", note.getTitle());
+        noteDbMap.put("body", note.getBody());
+        db.collection("notes").document(note.getId()).update(noteDbMap);
+    }
 
+    public void listenChanges(){
+        db.collection("notes").addSnapshotListener((snapshots, e) -> {
+                    DatabaseAdapter.this.getCollection();
+        });
+    }
 }

@@ -8,15 +8,25 @@ import android.util.Log;
 public class Note implements Parcelable {
     private String title;
     private String body;
+    private String id;
 
     public Note(String title, String body) {
         this.title = title;
         this.body = body;
     }
 
+    public Note(){}
+
+    public Note(String title, String body, String id) {
+        this.title = title;
+        this.body = body;
+        this.id = id;
+    }
+
     protected Note(Parcel in) {
         title = in.readString();
         body = in.readString();
+        id = in.readString();
     }
 
     public static final Creator<Note> CREATOR = new Creator<Note>() {
@@ -39,6 +49,8 @@ public class Note implements Parcelable {
         return body;
     }
 
+    public String getId(){ return id; }
+
     public void setTitle(String title) {
         this.title = title;
     }
@@ -56,12 +68,7 @@ public class Note implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(title);
         dest.writeString(body);
+        dest.writeString(id);
     }
-
-    /*public void saveNoteToDb(){
-        Log.d("saveCard", "saveCard-> saveDocument");
-        //TODO savedocument
-        adapter.saveNote(this);
-    }*/
 
 }
