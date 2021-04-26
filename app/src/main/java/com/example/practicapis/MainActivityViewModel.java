@@ -17,6 +17,7 @@ public class MainActivityViewModel extends ViewModel implements DatabaseAdapter.
         mNotes = new MutableLiveData<>();
         mToast = new MutableLiveData<>();
         DatabaseAdapter da = new DatabaseAdapter(this);
+        da.setListener(this);
         da.getCollection();
     }
 

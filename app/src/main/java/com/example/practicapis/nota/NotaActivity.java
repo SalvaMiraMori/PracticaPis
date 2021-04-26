@@ -105,7 +105,7 @@ public class NotaActivity extends AppCompatActivity {
         }else{
             viewModel.editNote(note);
         }
-        this.finish();
+        onBackPressed();
     }
 
     public void onDeletePressed(){

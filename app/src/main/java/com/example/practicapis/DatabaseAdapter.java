@@ -12,6 +12,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -41,11 +42,23 @@ public class DatabaseAdapter {
     public static DatabaseAdapter databaseAdapter;
 
     public DatabaseAdapter(vmInterface listener){
+
+        databaseAdapter = this;
+        FirebaseFirestore.setLoggingEnabled(true);
         this.listener = listener;
+        user = mAuth.getCurrentUser();
+        listenChanges();
+    }
+
+    public DatabaseAdapter(){
         databaseAdapter = this;
         FirebaseFirestore.setLoggingEnabled(true);
         //initFirebase();
-        listenChanges();
+        //listenChanges();
+    }
+
+    public void setListener(vmInterface listener){
+        this.listener = listener;
     }
 
     public interface vmInterface{
@@ -97,15 +110,97 @@ public class DatabaseAdapter {
         }
     }
 
+    public void setUser(FirebaseUser user){
+        this.user = user;
+        /*if(userIsInDb(user.getUid())){
+
+        }*/
+        Log.d(TAG, "setUser");
+        if(!userIsInDb(user.getUid())){
+            Map<String, String> userMap = new HashMap<>();
+            userMap.put("userId", user.getUid());
+
+            DocumentReference usersCollection = db.collection("users").document(user.getUid());
+            usersCollection.set(userMap);
+            usersCollection.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if(task.isSuccessful()){
+                        Log.d(TAG, "User added with ID: " + user.getUid());
+                    }else{
+
+                    }
+                }
+            });
+            /*db.collection("users").add(userMap).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                @Override
+                public void onSuccess(DocumentReference documentReference) {
+                    Log.d(TAG, "User added with ID: " + documentReference.getId());
+
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.w(TAG, "Error adding user", e);
+                }
+            });*/
+        }
+    }
+
+    private boolean userIsInDb(String uId){
+        final boolean[] isInDb = new boolean[1];
+        db.collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+                    for(QueryDocumentSnapshot document : task.getResult()){
+                        Log.d(TAG, "User with ID: " + document.getString("userId"));
+                        if(document.getString("userId").equals(uId)){
+                            isInDb[0] = true;
+                            return;
+                        }
+                    }
+                    isInDb[0] = false;
+                    return;
+                }
+            }
+        });
+
+        return isInDb[0];
+    }
+
+    private String getUserCollectionId(String uId){
+        final String[] isInDb = new String[1];
+        db.collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+                    for(QueryDocumentSnapshot document : task.getResult()){
+                        Log.d(TAG, "User with ID: " + document.getString("userId"));
+                        if(document.getString("userId").equals(uId)){
+                            isInDb[0] = document.getId();
+                            return;
+                        }
+                    }
+                }
+            }
+        });
+
+        return isInDb[0];
+    }
+
     public void getCollection(){
-        Log.d(TAG,"updatenotes");
-        DatabaseAdapter.db.collection("notes").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+
+        //try{
+        Log.d(TAG,"updatenotes with user");
+        db.collection("users").document(user.getUid()).collection("notes").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if(task.isSuccessful()){
                     ArrayList<Note> retrieved_notes = new ArrayList<>();
                     for(QueryDocumentSnapshot document : task.getResult()){
                         retrieved_notes.add(new Note(document.getString("title"), document.getString("body"), document.getId()));
+                        Log.d(TAG, "Getting documents: " + document.getString("title") + document.getString("body"));
                     }
                     listener.setCollection(retrieved_notes);
                 } else{
@@ -122,7 +217,10 @@ public class DatabaseAdapter {
 
         Log.d(TAG, "saveDocument");
 
-        db.collection("notes").add(noteDbMap).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+        db.collection("users")
+                .document(user.getUid())
+                .collection("notes")
+                .add(noteDbMap).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
             @Override
             public void onSuccess(DocumentReference documentReference) {
                 Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
@@ -136,19 +234,19 @@ public class DatabaseAdapter {
     }
 
     public void deleteNote(Note note){
-        db.collection("notes").document(note.getId()).delete();
+        db.collection("users").document(user.getUid()).collection("notes").document(note.getId()).delete();
     }
 
     public void editNote(Note note){
         Map<String, Object> noteDbMap = new HashMap<>();
         noteDbMap.put("title", note.getTitle());
         noteDbMap.put("body", note.getBody());
-        db.collection("notes").document(note.getId()).update(noteDbMap);
+        db.collection("users").document(user.getUid()).collection("notes").document(note.getId()).update(noteDbMap);
     }
 
     public void listenChanges(){
-        db.collection("notes").addSnapshotListener((snapshots, e) -> {
-                    DatabaseAdapter.this.getCollection();
+        db.collection("users").document(user.getUid()).collection("notes").addSnapshotListener((snapshots, e) -> {
+            DatabaseAdapter.this.getCollection();
         });
     }
 }

@@ -68,12 +68,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-        if(appStatus.checkStarted()){
-            goToLoginActivity();
-            appStatus.appStarted();
-        }
-
         try{ getFromLoginActivity(); }catch(Exception e){ }
 
         recyclerList = appStatus.getAllNotes();
