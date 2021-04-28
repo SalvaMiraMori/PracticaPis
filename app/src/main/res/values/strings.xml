@@ -4,13 +4,9 @@
     <string name="action_favorite">Favorite</string>
     <string name="action_archive">Archive</string>
     <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
 
-    <string name="hello_first_fragment">Hello first fragment</string>
-    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="archive_notes">Archive || Note</string>
+
     <string name="action_delete">Delete</string>
     <string name="action_reminder">Reminder</string>
     <string name="buttonAdd">Add Note</string>
@@ -27,5 +23,7 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="favoritestar">favoriteStar</string>
+    <string name="notes">Notes</string>
+    <string name="sing_out">Sing Out</string>
 
 </resources>

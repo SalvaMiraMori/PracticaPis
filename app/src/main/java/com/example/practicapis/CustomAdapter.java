@@ -20,6 +20,7 @@ import java.util.ArrayList;
 public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.CustomAdapter.ViewHolder> {
     private ArrayList<Note> localDataSet;
     private final Context parentContext;
+    private boolean archive;
     AppStatus appStatus = AppStatus.getInstance();
 
     /**
@@ -59,10 +60,14 @@ public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.
      * @param dataSet String[] containing the data to populate views to be used
      * by RecyclerView.
      */
-    public CustomAdapter(Context current, ArrayList<Note> dataSet) {
+     CustomAdapter(Context current, ArrayList<Note> dataSet) {
         parentContext = current;
         localDataSet = dataSet;
-    }
+     }
+    public void setArchive(boolean archive) {
+         this.archive = archive;
+        System.out.println("archive " + archive);
+     }
     public void setLocalDataSet(ArrayList<Note> dataSet){
         localDataSet = dataSet;
     }
@@ -93,12 +98,19 @@ public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.
 
         LinearLayout layout =viewHolder.getLayout();
         layout.setOnClickListener(v -> {
-            Note nota = appStatus.getNoteByPosition(position);
+            Note nota;
+            System.out.println("onclic archive: " + archive);
+            if (archive)
+                nota = appStatus.getNoteArchivedByPosition(position);
+            else
+                nota = appStatus.getNoteByPosition(position);
+
             Intent intent = new Intent(v.getContext(), NotaActivity.class);
             intent.putExtra("position", position);
             intent.putExtra("title", nota.getTitle());
             intent.putExtra("body", nota.getBody());
             intent.putExtra("favorite", nota.isFavorite());
+            intent.putExtra("prevArchive", archive);
             v.getContext().startActivity(intent);
         });
 

@@ -29,6 +29,10 @@ public class AppStatus {
         this.notes.remove(position);
         this.notes.add(0, note);
     }
+    public void editArchiveNote(Note note, int position) {
+        this.archiveNotes.remove(position);
+        this.notes.add(0, note);
+    }
 
     public void deleteNote(int position){
         notes.remove(position);
@@ -45,15 +49,25 @@ public class AppStatus {
     public Note getNoteByPosition(int position){
         return notes.get(position);
     }
+    public Note getNoteArchivedByPosition(int position){
+        return archiveNotes.get(position);
+    }
 
     //TODO create metodes to archive and unarchive notes
     public ArrayList<Note> getArchiveNotes(){return archiveNotes;}
+
     public void archiveNote(Note note) {
         this.notes.remove(note);
         this.archiveNotes.add(0, note);
     }
-    public void unarchiveNote(Note note) {
-        this.archiveNotes.remove(note);
-        this.notes.add(note);
+    public void unarchiveNote(int position) {
+        this.archiveNotes.remove(position);
+    }
+    public boolean isNoteArchived(Note note) {
+        for (int i = 0; i < archiveNotes.size(); i++) {
+            if (archiveNotes.get(i).equals(note))
+                return true;
+        }
+        return false;
     }
 }

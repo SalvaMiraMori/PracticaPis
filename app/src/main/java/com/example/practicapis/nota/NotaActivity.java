@@ -18,23 +18,26 @@ import com.example.practicapis.MainActivity;
 import com.example.practicapis.Note;
 import com.example.practicapis.R;
 
+import java.util.Objects;
+
 public class NotaActivity extends AppCompatActivity {
 
     Toolbar toolbar;
     EditText title, text;
     Note note;
     int position;
-    boolean isFavorite;
+    boolean isFavorite, toArchive, prevArchive;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nota);
         toolbar = findViewById(R.id.toolbarNote);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("New Note");
 
         isFavorite = false;
+        toArchive = false;
         title = findViewById(R.id.noteTitle);
         text = findViewById(R.id.noteBody);
         getNoteDataBundle();
@@ -48,7 +51,7 @@ public class NotaActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if(s.length() != 0){
-                    getSupportActionBar().setTitle(s);
+                    Objects.requireNonNull(getSupportActionBar()).setTitle(s);
                 }
             }
 
@@ -75,11 +78,18 @@ public class NotaActivity extends AppCompatActivity {
             onFavoritePressed();
         } else if(item.getItemId() == R.id.action_delete) {
             onDeletePressed();
+        } else if (item.getItemId() == R.id.action_archive){
+            onArchivePressed();
         } else {
             onSavePressed();
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void onArchivePressed() {
+        toArchive = !toArchive;
+        System.out.println("archive: "+toArchive);
     }
 
     private void onSharePressed() {
@@ -109,6 +119,8 @@ public class NotaActivity extends AppCompatActivity {
         intent.putExtra("position", position);
         intent.putExtra("delete", false);
         intent.putExtra("favorite", isFavorite);
+        intent.putExtra("archive", toArchive);
+        intent.putExtra("prevArchive", prevArchive);
         startActivity(intent);
     }
 
@@ -116,6 +128,7 @@ public class NotaActivity extends AppCompatActivity {
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("delete", true);
         intent.putExtra("position", position);
+        intent.putExtra("prevArchive", prevArchive);
         startActivity(intent);
     }
 
@@ -125,5 +138,6 @@ public class NotaActivity extends AppCompatActivity {
         text.setText(bundle.getString("body"));
         position = bundle.getInt("position");
         isFavorite = bundle.getBoolean("favorite");
+        prevArchive = bundle.getBoolean("prevArchive");
     }
 }

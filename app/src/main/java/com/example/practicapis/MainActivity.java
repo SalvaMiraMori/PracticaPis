@@ -6,6 +6,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,17 +19,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.practicapis.nota.NotaActivity;
 import com.example.practicapis.ui.login.LoginActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    ArrayList<Note> recyclerList;
-    ArrayList<Note> archiveNotes;
+    //ArrayList<Note> recyclerList;
+    //ArrayList<Note> archiveNotes;
     RecyclerView mRecyclerView;
     CustomAdapter adapter;
     AppStatus appStatus;
     TextView username;
     FloatingActionButton addNotebtn;
+    MenuItem switchArchive;
     boolean start = true;
 
     @Override
@@ -37,22 +41,18 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        recyclerList = new ArrayList<>();
+        //recyclerList = new ArrayList<>();
         mRecyclerView = findViewById(R.id.recyclerView);
         mRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-        adapter = new CustomAdapter(this, recyclerList);
         username = findViewById(R.id.userName);
         appStatus = AppStatus.getInstance();
+        adapter = new CustomAdapter(this, appStatus.getAllNotes());
+        mRecyclerView.setAdapter(adapter);
         addNotebtn = findViewById(R.id.addNoteBtn);
 
-        addNotebtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addNote();
-            }
-        });
+        addNotebtn.setOnClickListener(v -> addNote());
 
-        if(appStatus.checkStarted()){
+        if(appStatus.checkStarted()) {
             goToLoginActivity();
             appStatus.appStarted();
         }
@@ -65,10 +65,6 @@ public class MainActivity extends AppCompatActivity {
 
         try{
             getFromNotaActivity();
-            recyclerList = appStatus.getAllNotes();
-            System.out.println("RecycleList: "+recyclerList.size());
-            adapter.setLocalDataSet(recyclerList);
-            mRecyclerView.setAdapter(adapter);
         }catch(Exception e){
 
         }
@@ -82,7 +78,24 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_note, menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        switchArchive = menu.findItem(R.id.app_bar_switch);
+        switchArchive.setActionView(R.layout.switch_item);
+        final Switch swch = (Switch) menu.findItem(R.id.app_bar_switch).getActionView().findViewById(R.id.action_switch);
+
+        swch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    adapter.setLocalDataSet(appStatus.getArchiveNotes());
+                    adapter.setArchive(true);
+                } else {
+                    adapter.setLocalDataSet(appStatus.getAllNotes());
+                    adapter.setArchive(false);
+                }
+                mRecyclerView.setAdapter(adapter);
+            }
+        });
         return true;
     }
 
@@ -94,8 +107,8 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_share) {
-            return true;
+        if (id == R.id.singOut) {
+            goToLoginActivity();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -122,19 +135,46 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getFromNotaActivity(){
+        System.out.println("Bundle de Notas");
         Bundle bundle = getIntent().getExtras();
-
         Note note = bundle.getParcelable("note");
+        int pos = (int)bundle.get("position");
 
-        if((boolean)bundle.get("delete")){
-            if((int)bundle.get("position") != -1){
-                appStatus.deleteNote((int)bundle.get("position"));
+        if((boolean)bundle.get("delete")){                      //Si está marcat per eliminar
+            if((int)bundle.get("position") != -1){              //I és una nota editada
+                System.out.println("delete");                   //S'ha d'eliminar
+                if ((boolean)bundle.get("prevArchive"))
+                    appStatus.unarchiveNote(pos);               //Del arxiu
+                else
+                    appStatus.deleteNote(pos);                  //O de les notes
             }
-        }else if((int)bundle.get("position") == -1){
-            appStatus.addNote(note);
+        }else if(pos == -1){                                    //Si és una nota nova
+            System.out.println("add");
+            appStatus.addNote(note);                            //S'afegeix a les notes
         }else{
-            appStatus.editNote(note, bundle.getInt("position"));
+            System.out.println("edit");                         //Si no és nova
+            if ((boolean)bundle.get("prevArchive"))             //S'edita
+                appStatus.editArchiveNote(note, pos);           //De l'arxiu
+            else
+                appStatus.editNote(note, pos);                  //O de les notes
         }
-        note.setFavorite((boolean)bundle.get("favorite"));
+
+        if ((boolean)bundle.get("archive")) {                   //Si està marcada l'opció d'arvivar
+            System.out.println("to archive");
+            appStatus.archiveNote(note);                        //Es guarda a l'arxiu
+        } else {
+            System.out.println("no to archive");                //Sinó
+            if ((boolean)bundle.get("prevArchive")) {           //I a més estava a l'arxiu
+                System.out.println("unarchive");
+                appStatus.unarchiveNote(pos);                   //S'elimina de l'arxiu
+                appStatus.addNote(note);                        //I es guarda a notes
+            }
+        }
+
+        note.setFavorite((boolean)bundle.get("favorite"));      //Es marca com a favorit si és necesari
+
+        adapter.setLocalDataSet(appStatus.getAllNotes());
+        adapter.setArchive(false);
+        mRecyclerView.setAdapter(adapter);
     }
 }

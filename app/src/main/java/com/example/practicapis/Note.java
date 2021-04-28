@@ -4,6 +4,7 @@ import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 public class Note implements Parcelable {
@@ -66,5 +67,11 @@ public class Note implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(title);
         dest.writeString(body);
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        Note note = (Note) obj;
+        return this.body.equals(note.body) && this.title.equals(note.title);
     }
 }
