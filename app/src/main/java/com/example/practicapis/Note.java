@@ -3,13 +3,19 @@ package com.example.practicapis;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+    
+import java.time.*;
 
-public class Note implements Parcelable {
+
+public class Note implements Parcelable, Comparable<Note> {
     private String title;
     private String body;
+    private String id;
+    private LocalDateTime date;
     private boolean favorite;
 
     public Note(String title, String body) {
@@ -17,9 +23,25 @@ public class Note implements Parcelable {
         this.body = body;
     }
 
+    public Note(){}
+
+    public Note(String title, String body, String id) {
+        this.title = title;
+        this.body = body;
+        this.id = id;
+    }
+
+    public Note(String title, String body, String id, LocalDateTime date) {
+        this.title = title;
+        this.body = body;
+        this.id = id;
+        this.date = date;
+    }
+
     protected Note(Parcel in) {
         title = in.readString();
         body = in.readString();
+        id = in.readString();
     }
 
     public boolean isFavorite() {
@@ -50,6 +72,10 @@ public class Note implements Parcelable {
         return body;
     }
 
+    public String getId(){ return id; }
+
+    public LocalDateTime getDate(){ return date; }
+
     public void setTitle(String title) {
         this.title = title;
     }
@@ -57,6 +83,8 @@ public class Note implements Parcelable {
     public void setBody(String body) {
         this.body = body;
     }
+
+    public void setDate(LocalDateTime date){ this.date = date; }
 
     @Override
     public int describeContents() {
@@ -67,6 +95,13 @@ public class Note implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(title);
         dest.writeString(body);
+        dest.writeString(id);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
+    public int compareTo(Note note) {
+        return this.getDate().compareTo(note.getDate());
     }
 
     @Override

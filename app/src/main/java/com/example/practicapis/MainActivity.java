@@ -1,5 +1,6 @@
 package com.example.practicapis;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,9 +10,13 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,15 +29,16 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    //ArrayList<Note> recyclerList;
-    //ArrayList<Note> archiveNotes;
-    RecyclerView mRecyclerView;
-    CustomAdapter adapter;
-    AppStatus appStatus;
-    TextView username;
-    FloatingActionButton addNotebtn;
-    MenuItem switchArchive;
-    boolean start = true;
+
+    private MenuItem switchArchive;
+    private ArrayList<Note> recyclerList;
+    private RecyclerView mRecyclerView;
+    private CustomAdapter adapter;
+    private AppStatus appStatus;
+    private TextView username;
+    private FloatingActionButton addNotebtn;
+    private MainActivityViewModel viewModel;
+    private Context parentContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,25 +55,56 @@ public class MainActivity extends AppCompatActivity {
         adapter = new CustomAdapter(this, appStatus.getAllNotes());
         mRecyclerView.setAdapter(adapter);
         addNotebtn = findViewById(R.id.addNoteBtn);
+        parentContext = this.getBaseContext();
+
+        setLiveDataObservers();
+
 
         addNotebtn.setOnClickListener(v -> addNote());
 
-        if(appStatus.checkStarted()) {
-            goToLoginActivity();
-            appStatus.appStarted();
-        }
+        appStatus = AppStatus.getInstance();
 
-        try{
-            getFromLoginActivity();
-        }catch(Exception e){
+        recyclerList = appStatus.getAllNotes();
+        adapter.setLocalDataSet(recyclerList);
+        mRecyclerView.setAdapter(adapter);
+    }
 
-        }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        appStatus.setAllNotes(viewModel.getNotes().getValue());
+        recyclerList = appStatus.getAllNotes();
+    }
+
+    public void setLiveDataObservers() {
+        // Subscribe the activity to the observable
+        viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
+
+        final Observer<ArrayList<Note>> observer = new Observer<ArrayList<Note>>() {
+            @Override
+            public void onChanged(ArrayList<Note> arrayList) {
+                CustomAdapter newAdapter = new CustomAdapter(parentContext, arrayList);
+                mRecyclerView.swapAdapter(newAdapter, false);
+                appStatus.setAllNotes(viewModel.getNotes().getValue());
+                recyclerList = appStatus.getAllNotes();
+                newAdapter.notifyDataSetChanged();
+            }
+        };
 
         try{
             getFromNotaActivity();
         }catch(Exception e){
 
-        }
+        final Observer<String> observerToast = new Observer<String>() {
+            @Override
+            public void onChanged(String t) {
+                Toast.makeText(parentContext, t, Toast.LENGTH_SHORT).show();
+            }
+        };
+
+
+        viewModel.getNotes().observe(this, observer);
+        //viewModel.getToast().observe(this, observerToast);
     }
 
     public void addNote() {
@@ -113,24 +150,8 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void goToLoginActivity(){
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
-    }
-
-    public void getFromLoginActivity(){
-        Bundle bundle = getIntent().getExtras();
-        System.out.println("Bundle de Login: "+bundle.toString());
-        if(bundle != null){
-            username.setText(bundle.getString("username"));
-            Log.d("Name", username.getText().toString());
-        }
-
-    }
-
     public void goToNotaActivity(){
         Intent intent = new Intent(this, NotaActivity.class);
-        intent.putExtra("position", -1);
         startActivity(intent);
     }
 

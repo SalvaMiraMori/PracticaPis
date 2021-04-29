@@ -5,8 +5,12 @@ import java.util.ArrayList;
 public class AppStatus {
     private Boolean start;
     private static AppStatus instance;
-    private ArrayList<Note> notes = new ArrayList<>();
+
     private ArrayList<Note> archiveNotes = new ArrayList<>();
+    private ArrayList<Note> notesList = new ArrayList<>();
+
+    private int id = 0;
+
 
     public AppStatus(){
         start = true;
@@ -26,29 +30,28 @@ public class AppStatus {
     public boolean checkStarted(){ return start; }
 
     public void editNote(Note note, int position){
-        this.notes.remove(position);
-        this.notes.add(0, note);
-    }
-    public void editArchiveNote(Note note, int position) {
-        this.archiveNotes.remove(position);
-        this.notes.add(0, note);
+        notesList.remove(position);
+        notesList.add(0, note);
     }
 
     public void deleteNote(int position){
-        notes.remove(position);
+        notesList.remove(position);
     }
 
     public void addNote(Note note){
-        this.notes.add(0, note);
+        notesList.add(0, note);
     }
 
     public ArrayList<Note> getAllNotes(){
-        return notes;
+        return notesList;
     }
 
+    public void setAllNotes(ArrayList<Note> notesList){ this.notesList = notesList; }
+
     public Note getNoteByPosition(int position){
-        return notes.get(position);
+      return notesList.get(position);
     }
+
     public Note getNoteArchivedByPosition(int position){
         return archiveNotes.get(position);
     }
@@ -57,7 +60,7 @@ public class AppStatus {
     public ArrayList<Note> getArchiveNotes(){return archiveNotes;}
 
     public void archiveNote(Note note) {
-        this.notes.remove(note);
+        this.notesList.remove(note);
         this.archiveNotes.add(0, note);
     }
     public void unarchiveNote(int position) {

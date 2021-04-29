@@ -11,17 +11,21 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.practicapis.nota.NotaActivity;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.CustomAdapter.ViewHolder> {
+
     private ArrayList<Note> localDataSet;
     private final Context parentContext;
     private boolean archive;
-    AppStatus appStatus = AppStatus.getInstance();
+    private AppStatus appStatus = AppStatus.getInstance();
 
     /**
      * Provide a reference to the type of views that you are using
@@ -63,14 +67,18 @@ public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.
      CustomAdapter(Context current, ArrayList<Note> dataSet) {
         parentContext = current;
         localDataSet = dataSet;
+        Collections.sort(localDataSet, Collections.reverseOrder());
      }
     public void setArchive(boolean archive) {
          this.archive = archive;
         System.out.println("archive " + archive);
-     }
+    }
+
     public void setLocalDataSet(ArrayList<Note> dataSet){
         localDataSet = dataSet;
+        Collections.sort(localDataSet, Collections.reverseOrder());
     }
+
     // Create new views (invoked by the layout manager)
     @NonNull
     @Override
@@ -89,6 +97,7 @@ public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.
         // contents of the view with that element
         int color = ContextCompat.getColor(parentContext, R.color.note);
         viewHolder.getLayout().setBackgroundColor(color);
+
         viewHolder.getTitleNote().setText(localDataSet.get(position).getTitle());
         viewHolder.getBodyNote().setText(localDataSet.get(position).getBody());
         if (localDataSet.get(position).isFavorite())
@@ -96,26 +105,20 @@ public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.
         else
             viewHolder.getFavorite().setVisibility(View.INVISIBLE);
 
+
+        // TODO Ir al notaActivity en concreto
         LinearLayout layout =viewHolder.getLayout();
-        layout.setOnClickListener(v -> {
-            Note nota;
-            System.out.println("onclic archive: " + archive);
-            if (archive)
-                nota = appStatus.getNoteArchivedByPosition(position);
-            else
-                nota = appStatus.getNoteByPosition(position);
+        layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Note note = appStatus.getNoteByPosition(position);
+                Intent intent = new Intent(v.getContext(), NotaActivity.class);
+                intent.putExtra("note", note);
+                v.getContext().startActivity(intent);
+            }
 
-            Intent intent = new Intent(v.getContext(), NotaActivity.class);
-            intent.putExtra("position", position);
-            intent.putExtra("title", nota.getTitle());
-            intent.putExtra("body", nota.getBody());
-            intent.putExtra("favorite", nota.isFavorite());
-            intent.putExtra("prevArchive", archive);
-            v.getContext().startActivity(intent);
         });
-
     }
-
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
