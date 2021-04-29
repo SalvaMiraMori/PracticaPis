@@ -1,5 +1,6 @@
 package com.example.practicapis;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -9,9 +10,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,13 +28,15 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    ArrayList<Note> recyclerList;
-    RecyclerView mRecyclerView;
-    CustomAdapter adapter;
-    AppStatus appStatus;
-    TextView username;
-    FloatingActionButton addNotebtn;
-    boolean start = true;
+
+    private ArrayList<Note> recyclerList;
+    private RecyclerView mRecyclerView;
+    private CustomAdapter adapter;
+    private AppStatus appStatus;
+    private TextView username;
+    private FloatingActionButton addNotebtn;
+    private MainActivityViewModel viewModel;
+    private Context parentContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +52,11 @@ public class MainActivity extends AppCompatActivity {
         username = findViewById(R.id.userName);
         appStatus = AppStatus.getInstance();
         addNotebtn = findViewById(R.id.addNoteBtn);
+        parentContext = this.getBaseContext();
 
+        setLiveDataObservers();
+
+        appStatus = AppStatus.getInstance();
         addNotebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -53,26 +64,42 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        if(appStatus.checkStarted()){
-            goToLoginActivity();
-            appStatus.appStarted();
-        }
+        recyclerList = appStatus.getAllNotes();
+        adapter.setLocalDataSet(recyclerList);
+        mRecyclerView.setAdapter(adapter);
+    }
 
-        try{
-            getFromLoginActivity();
-        }catch(Exception e){
+    @Override
+    protected void onResume() {
+        super.onResume();
+        appStatus.setAllNotes(viewModel.getNotes().getValue());
+        recyclerList = appStatus.getAllNotes();
+    }
 
-        }
+    public void setLiveDataObservers() {
+        // Subscribe the activity to the observable
+        viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
 
-        try{
-            getFromNotaActivity();
-            recyclerList = appStatus.getAllNotes();
-            System.out.println("RecycleList: "+recyclerList.size());
-            adapter.setLocalDataSet(recyclerList);
-            mRecyclerView.setAdapter(adapter);
-        }catch(Exception e){
+        final Observer<ArrayList<Note>> observer = new Observer<ArrayList<Note>>() {
+            @Override
+            public void onChanged(ArrayList<Note> arrayList) {
+                CustomAdapter newAdapter = new CustomAdapter(parentContext, arrayList);
+                mRecyclerView.swapAdapter(newAdapter, false);
+                appStatus.setAllNotes(viewModel.getNotes().getValue());
+                recyclerList = appStatus.getAllNotes();
+                newAdapter.notifyDataSetChanged();
+            }
+        };
 
-        }
+        final Observer<String> observerToast = new Observer<String>() {
+            @Override
+            public void onChanged(String t) {
+                Toast.makeText(parentContext, t, Toast.LENGTH_SHORT).show();
+            }
+        };
+
+        viewModel.getNotes().observe(this, observer);
+        //viewModel.getToast().observe(this, observerToast);
     }
 
     public void addNote() {
@@ -101,40 +128,8 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void goToLoginActivity(){
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
-    }
-
-    public void getFromLoginActivity(){
-        Bundle bundle = getIntent().getExtras();
-        System.out.println("Bundle de Login: "+bundle.toString());
-        if(bundle != null){
-            username.setText(bundle.getString("username"));
-            Log.d("Name", username.getText().toString());
-        }
-
-    }
-
     public void goToNotaActivity(){
         Intent intent = new Intent(this, NotaActivity.class);
-        intent.putExtra("position", -1);
         startActivity(intent);
-    }
-
-    public void getFromNotaActivity(){
-        Bundle bundle = getIntent().getExtras();
-
-        Note note = bundle.getParcelable("note");
-
-        if((boolean)bundle.get("delete")){
-            if((int)bundle.get("position") != -1){
-                appStatus.deleteNote((int)bundle.get("position"));
-            }
-        }else if((int)bundle.get("position") == -1){
-            appStatus.addNote(note);
-        }else{
-            appStatus.editNote(note, bundle.getInt("position"));
-        }
     }
 }

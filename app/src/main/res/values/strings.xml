@@ -26,5 +26,7 @@
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
-
+    <string name="sign_in_google">Have a Google account?</string>
+    <string name="server_client_id">277878564756-v0m4rganho3q8b6mv1qp8cs8lik48ub2.apps.googleusercontent.com</string>
+    <string name="client_secret">uYQNNmsv1NxbnMXmh_ch0Rfb</string>
 </resources>

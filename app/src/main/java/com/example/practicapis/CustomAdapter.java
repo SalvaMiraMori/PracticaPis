@@ -10,16 +10,20 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.practicapis.nota.NotaActivity;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.CustomAdapter.ViewHolder> {
+
     private ArrayList<Note> localDataSet;
     private final Context parentContext;
-    AppStatus appStatus = AppStatus.getInstance();
+    private AppStatus appStatus = AppStatus.getInstance();
 
     /**
      * Provide a reference to the type of views that you are using
@@ -59,10 +63,13 @@ public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.
     public CustomAdapter(Context current, ArrayList<Note> dataSet) {
         parentContext = current;
         localDataSet = dataSet;
+        Collections.sort(localDataSet, Collections.reverseOrder());
     }
     public void setLocalDataSet(ArrayList<Note> dataSet){
         localDataSet = dataSet;
+        Collections.sort(localDataSet, Collections.reverseOrder());
     }
+
     // Create new views (invoked by the layout manager)
     @NonNull
     @Override
@@ -82,8 +89,10 @@ public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.
         System.out.println("onBind");
         int color = ContextCompat.getColor(parentContext, R.color.note);
         viewHolder.getLayout().setBackgroundColor(color);
+
         viewHolder.getTitleNote().setText(localDataSet.get(position).getTitle());
         viewHolder.getBodyNote().setText(localDataSet.get(position).getBody());
+
 
 
         // TODO Ir al notaActivity en concreto
@@ -91,17 +100,13 @@ public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.
         layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Note nota = appStatus.getNoteByPosition(position);
+                Note note = appStatus.getNoteByPosition(position);
                 Intent intent = new Intent(v.getContext(), NotaActivity.class);
-                intent.putExtra("position", position);
-                intent.putExtra("title", nota.getTitle());
-                intent.putExtra("body", nota.getBody());
+                intent.putExtra("note", note);
                 v.getContext().startActivity(intent);
             }
         });
-
     }
-
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
@@ -111,9 +116,4 @@ public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.
         }
         return 0;
     }
-
-
-
-
-
 }
