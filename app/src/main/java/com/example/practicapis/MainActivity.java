@@ -91,10 +91,6 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        try{
-            getFromNotaActivity();
-        }catch(Exception e){
-
         final Observer<String> observerToast = new Observer<String>() {
             @Override
             public void onChanged(String t) {
@@ -145,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.singOut) {
-            goToLoginActivity();
+            signOut();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -197,5 +193,9 @@ public class MainActivity extends AppCompatActivity {
         adapter.setLocalDataSet(appStatus.getAllNotes());
         adapter.setArchive(false);
         mRecyclerView.setAdapter(adapter);
+    }
+
+    void signOut(){
+        // TODO: Sign out.
     }
 }

@@ -34,6 +34,11 @@ public class AppStatus {
         notesList.add(0, note);
     }
 
+    public void editArchiveNote(Note note, int position){
+        archiveNotes.remove(position);
+        archiveNotes.add(0, note);
+    }
+
     public void deleteNote(int position){
         notesList.remove(position);
     }
