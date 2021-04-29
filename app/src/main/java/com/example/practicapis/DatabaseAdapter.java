@@ -1,8 +1,10 @@
 package com.example.practicapis;
 
+import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -24,6 +26,8 @@ import com.google.firebase.storage.UploadTask;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -87,22 +91,6 @@ public class DatabaseAdapter {
                     }
                 }
             });
-                    /*.addOnCompleteListener((Executor) this, new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                // Sign in success, update UI with the signed-in user's information
-                                Log.d(TAG, "signInAnonymously:success");
-                                listener.setToast("Authentication successful.");
-                                user = mAuth.getCurrentUser();
-                            } else {
-                                // If sign in fails, display a message to the user.
-                                Log.w(TAG, "signInAnonymously:failure", task.getException());
-                                listener.setToast("Authentication failed.");
-
-                            }
-                        }
-                    });*/
         }
         else{
             listener.setToast("Authentication with current user.");
@@ -132,18 +120,6 @@ public class DatabaseAdapter {
                     }
                 }
             });
-            /*db.collection("users").add(userMap).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                @Override
-                public void onSuccess(DocumentReference documentReference) {
-                    Log.d(TAG, "User added with ID: " + documentReference.getId());
-
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.w(TAG, "Error adding user", e);
-                }
-            });*/
         }
     }
 
@@ -169,38 +145,23 @@ public class DatabaseAdapter {
         return isInDb[0];
     }
 
-    private String getUserCollectionId(String uId){
-        final String[] isInDb = new String[1];
-        db.collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()){
-                    for(QueryDocumentSnapshot document : task.getResult()){
-                        Log.d(TAG, "User with ID: " + document.getString("userId"));
-                        if(document.getString("userId").equals(uId)){
-                            isInDb[0] = document.getId();
-                            return;
-                        }
-                    }
-                }
-            }
-        });
-
-        return isInDb[0];
-    }
-
     public void getCollection(){
 
         //try{
         Log.d(TAG,"updatenotes with user");
         db.collection("users").document(user.getUid()).collection("notes").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if(task.isSuccessful()){
                     ArrayList<Note> retrieved_notes = new ArrayList<>();
                     for(QueryDocumentSnapshot document : task.getResult()){
-                        retrieved_notes.add(new Note(document.getString("title"), document.getString("body"), document.getId()));
-                        Log.d(TAG, "Getting documents: " + document.getString("title") + document.getString("body"));
+                        String title = document.getString("title");
+                        String body = document.getString("body");
+                        String id = document.getId();
+                        LocalDateTime datetime = LocalDateTime.parse(document.getString("datetime"));
+                        retrieved_notes.add(new Note(title, body, id, datetime));
+                        Log.d(TAG, "Getting documents: " + title + body + datetime.toString());
                     }
                     listener.setCollection(retrieved_notes);
                 } else{
@@ -214,6 +175,7 @@ public class DatabaseAdapter {
         Map<String, Object> noteDbMap = new HashMap<>();
         noteDbMap.put("title", note.getTitle());
         noteDbMap.put("body", note.getBody());
+        noteDbMap.put("datetime", note.getDate().toString());
 
         Log.d(TAG, "saveDocument");
 
@@ -241,6 +203,7 @@ public class DatabaseAdapter {
         Map<String, Object> noteDbMap = new HashMap<>();
         noteDbMap.put("title", note.getTitle());
         noteDbMap.put("body", note.getBody());
+        noteDbMap.put("datetime", note.getDate().toString());
         db.collection("users").document(user.getUid()).collection("notes").document(note.getId()).update(noteDbMap);
     }
 

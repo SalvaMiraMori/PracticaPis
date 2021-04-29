@@ -209,6 +209,7 @@ public class LoginActivity extends AppCompatActivity {
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask){
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+            String idToken = account.getIdToken();
             Log.d("E-mail: ", account.getEmail());
 
             // Signed in successfully, show authenticated UI.
@@ -220,8 +221,7 @@ public class LoginActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d(TAG, "signInWithCredential:success");
-                        FirebaseUser user = mAuth.getCurrentUser();
-                        Log.d("E-mail: ", user.getEmail());
+                        //FirebaseUser user = mAuth.getCurrentUser();
                         //viewModel.setUser(user);
                         goToMainActivity();
                     } else {
@@ -254,6 +254,7 @@ public class LoginActivity extends AppCompatActivity {
         Intent intentMain = new Intent(this, MainActivity.class);
         Log.d(TAG, "Going to main activity");
         startActivity(intentMain);
+        this.finish();
     }
 
     private void goToRegisterActivity(){

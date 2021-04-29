@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.practicapis.nota.NotaActivity;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.CustomAdapter.ViewHolder> {
 
@@ -62,8 +63,12 @@ public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.
     public CustomAdapter(Context current, ArrayList<Note> dataSet) {
         parentContext = current;
         localDataSet = dataSet;
+        Collections.sort(localDataSet, Collections.reverseOrder());
     }
-    public void setLocalDataSet(ArrayList<Note> dataSet){ localDataSet = dataSet; }
+    public void setLocalDataSet(ArrayList<Note> dataSet){
+        localDataSet = dataSet;
+        Collections.sort(localDataSet, Collections.reverseOrder());
+    }
 
     // Create new views (invoked by the layout manager)
     @NonNull

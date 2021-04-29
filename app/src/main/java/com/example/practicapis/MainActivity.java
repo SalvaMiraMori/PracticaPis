@@ -37,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton addNotebtn;
     private MainActivityViewModel viewModel;
     private Context parentContext;
-    private AppCompatActivity mActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,21 +53,16 @@ public class MainActivity extends AppCompatActivity {
         appStatus = AppStatus.getInstance();
         addNotebtn = findViewById(R.id.addNoteBtn);
         parentContext = this.getBaseContext();
-        mActivity = this;
 
         setLiveDataObservers();
 
         appStatus = AppStatus.getInstance();
-
-
         addNotebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 addNote();
             }
         });
-
-        try{ getFromLoginActivity(); }catch(Exception e){ }
 
         recyclerList = appStatus.getAllNotes();
         adapter.setLocalDataSet(recyclerList);
@@ -132,21 +126,6 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    public void goToLoginActivity(){
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
-    }
-
-    public void getFromLoginActivity(){
-        Bundle bundle = getIntent().getExtras();
-        System.out.println("Bundle de Login: "+bundle.toString());
-        if(bundle != null){
-            username.setText(bundle.getString("username"));
-            Log.d("Name", username.getText().toString());
-        }
-
     }
 
     public void goToNotaActivity(){

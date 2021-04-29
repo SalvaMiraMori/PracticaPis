@@ -1,14 +1,20 @@
 package com.example.practicapis;
 
+import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import androidx.annotation.RequiresApi;
 
-public class Note implements Parcelable {
+import java.time.*;
+
+
+public class Note implements Parcelable, Comparable<Note> {
     private String title;
     private String body;
     private String id;
+    private LocalDateTime date;
 
     public Note(String title, String body) {
         this.title = title;
@@ -21,6 +27,13 @@ public class Note implements Parcelable {
         this.title = title;
         this.body = body;
         this.id = id;
+    }
+
+    public Note(String title, String body, String id, LocalDateTime date) {
+        this.title = title;
+        this.body = body;
+        this.id = id;
+        this.date = date;
     }
 
     protected Note(Parcel in) {
@@ -51,6 +64,8 @@ public class Note implements Parcelable {
 
     public String getId(){ return id; }
 
+    public LocalDateTime getDate(){ return date; }
+
     public void setTitle(String title) {
         this.title = title;
     }
@@ -58,6 +73,8 @@ public class Note implements Parcelable {
     public void setBody(String body) {
         this.body = body;
     }
+
+    public void setDate(LocalDateTime date){ this.date = date; }
 
     @Override
     public int describeContents() {
@@ -71,4 +88,9 @@ public class Note implements Parcelable {
         dest.writeString(id);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
+    public int compareTo(Note note) {
+        return this.getDate().compareTo(note.getDate());
+    }
 }

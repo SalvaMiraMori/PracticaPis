@@ -1,13 +1,16 @@
 package com.example.practicapis.nota;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -23,12 +26,15 @@ import com.example.practicapis.Note;
 import com.example.practicapis.NoteActivityViewModel;
 import com.example.practicapis.R;
 
+import java.time.LocalDateTime;
+
 public class NotaActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private EditText title, text;
     private Note note;
     private NoteActivityViewModel viewModel;
+    public static final String TAG = "NotaActivity";
 
 
     @Override
@@ -73,6 +79,7 @@ public class NotaActivity extends AppCompatActivity {
         return true;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if(item.getItemId() == R.id.save){
@@ -97,9 +104,12 @@ public class NotaActivity extends AppCompatActivity {
         super.onBackPressed();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void onSavePressed(){
         note.setTitle(title.getText().toString());
         note.setBody(text.getText().toString());
+        note.setDate(LocalDateTime.now());
+        Log.d(TAG, "Local time " + LocalDateTime.now().toString());
         if(note.getId() == null){
             viewModel.addNote(note);
         }else{
