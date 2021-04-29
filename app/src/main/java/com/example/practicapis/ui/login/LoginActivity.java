@@ -261,4 +261,13 @@ public class LoginActivity extends AppCompatActivity {
         Intent intentRegister = new Intent(this, RegisterActivity.class);
         startActivity(intentRegister);
     }
+
+    @Override
+    public void onBackPressed() {
+        try {
+            super.finalize();
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+    }
 }

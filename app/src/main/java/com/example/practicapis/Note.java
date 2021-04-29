@@ -5,8 +5,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-
+    
 import java.time.*;
 
 
@@ -15,6 +16,7 @@ public class Note implements Parcelable, Comparable<Note> {
     private String body;
     private String id;
     private LocalDateTime date;
+    private boolean favorite;
 
     public Note(String title, String body) {
         this.title = title;
@@ -40,6 +42,14 @@ public class Note implements Parcelable, Comparable<Note> {
         title = in.readString();
         body = in.readString();
         id = in.readString();
+    }
+
+    public boolean isFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        this.favorite = favorite;
     }
 
     public static final Creator<Note> CREATOR = new Creator<Note>() {
@@ -92,5 +102,11 @@ public class Note implements Parcelable, Comparable<Note> {
     @Override
     public int compareTo(Note note) {
         return this.getDate().compareTo(note.getDate());
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        Note note = (Note) obj;
+        return this.body.equals(note.body) && this.title.equals(note.title);
     }
 }

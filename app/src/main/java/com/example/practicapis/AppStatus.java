@@ -5,9 +5,12 @@ import java.util.ArrayList;
 public class AppStatus {
     private Boolean start;
     private static AppStatus instance;
+
+    private ArrayList<Note> archiveNotes = new ArrayList<>();
     private ArrayList<Note> notesList = new ArrayList<>();
 
     private int id = 0;
+
 
     public AppStatus(){
         start = true;
@@ -25,7 +28,6 @@ public class AppStatus {
     }
 
     public boolean checkStarted(){ return start; }
-
 
     public void editNote(Note note, int position){
         notesList.remove(position);
@@ -47,7 +49,28 @@ public class AppStatus {
     public void setAllNotes(ArrayList<Note> notesList){ this.notesList = notesList; }
 
     public Note getNoteByPosition(int position){
-        return notesList.get(position);
+      return notesList.get(position);
     }
 
+    public Note getNoteArchivedByPosition(int position){
+        return archiveNotes.get(position);
+    }
+
+    //TODO create metodes to archive and unarchive notes
+    public ArrayList<Note> getArchiveNotes(){return archiveNotes;}
+
+    public void archiveNote(Note note) {
+        this.notesList.remove(note);
+        this.archiveNotes.add(0, note);
+    }
+    public void unarchiveNote(int position) {
+        this.archiveNotes.remove(position);
+    }
+    public boolean isNoteArchived(Note note) {
+        for (int i = 0; i < archiveNotes.size(); i++) {
+            if (archiveNotes.get(i).equals(note))
+                return true;
+        }
+        return false;
+    }
 }

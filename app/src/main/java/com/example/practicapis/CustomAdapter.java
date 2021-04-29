@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -23,6 +24,7 @@ public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.
 
     private ArrayList<Note> localDataSet;
     private final Context parentContext;
+    private boolean archive;
     private AppStatus appStatus = AppStatus.getInstance();
 
     /**
@@ -32,11 +34,12 @@ public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView title, body;
         private final LinearLayout noteLayout;
+        private ImageView favorite;
 
         public ViewHolder(View view) {
             super(view);
             // Define click listener for the ViewHolder's View
-
+            favorite = view.findViewById(R.id.imageView);
             title = view.findViewById(R.id.NotaNoteTitle);
             noteLayout = view.findViewById(R.id.noteLayout);
             body = view.findViewById(R.id.NotaBodyText);
@@ -52,6 +55,7 @@ public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.
         }
 
         public TextView getBodyNote() {return body;}
+        public ImageView getFavorite() {return favorite;}
     }
 
     /**
@@ -60,11 +64,16 @@ public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.
      * @param dataSet String[] containing the data to populate views to be used
      * by RecyclerView.
      */
-    public CustomAdapter(Context current, ArrayList<Note> dataSet) {
+     CustomAdapter(Context current, ArrayList<Note> dataSet) {
         parentContext = current;
         localDataSet = dataSet;
         Collections.sort(localDataSet, Collections.reverseOrder());
+     }
+    public void setArchive(boolean archive) {
+         this.archive = archive;
+        System.out.println("archive " + archive);
     }
+
     public void setLocalDataSet(ArrayList<Note> dataSet){
         localDataSet = dataSet;
         Collections.sort(localDataSet, Collections.reverseOrder());
@@ -86,13 +95,15 @@ public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.
 
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
-        System.out.println("onBind");
         int color = ContextCompat.getColor(parentContext, R.color.note);
         viewHolder.getLayout().setBackgroundColor(color);
 
         viewHolder.getTitleNote().setText(localDataSet.get(position).getTitle());
         viewHolder.getBodyNote().setText(localDataSet.get(position).getBody());
-
+        if (localDataSet.get(position).isFavorite())
+            viewHolder.getFavorite().setVisibility(View.VISIBLE);
+        else
+            viewHolder.getFavorite().setVisibility(View.INVISIBLE);
 
 
         // TODO Ir al notaActivity en concreto
@@ -105,6 +116,7 @@ public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.
                 intent.putExtra("note", note);
                 v.getContext().startActivity(intent);
             }
+
         });
     }
 

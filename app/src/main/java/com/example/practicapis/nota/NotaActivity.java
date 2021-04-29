@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -26,6 +25,8 @@ import com.example.practicapis.Note;
 import com.example.practicapis.NoteActivityViewModel;
 import com.example.practicapis.R;
 
+import java.util.Objects;
+
 import java.time.LocalDateTime;
 
 public class NotaActivity extends AppCompatActivity {
@@ -35,16 +36,18 @@ public class NotaActivity extends AppCompatActivity {
     private Note note;
     private NoteActivityViewModel viewModel;
     public static final String TAG = "NotaActivity";
-
+    private boolean isFavorite, toArchive, prevArchive;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nota);
         toolbar = findViewById(R.id.toolbarNote);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("New Note");
 
+        isFavorite = false;
+        toArchive = false;
         title = findViewById(R.id.noteTitle);
         text = findViewById(R.id.noteBody);
         viewModel = new ViewModelProvider(this).get(NoteActivityViewModel.class);
@@ -60,7 +63,7 @@ public class NotaActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if(s.length() != 0){
-                    getSupportActionBar().setTitle(s);
+                    Objects.requireNonNull(getSupportActionBar()).setTitle(s);
                 }
             }
 
@@ -75,27 +78,45 @@ public class NotaActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.save_menu, menu);
+        inflater.inflate(R.menu.menu_note, menu);
         return true;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if(item.getItemId() == R.id.save){
-            if(title.getText().length() != 0){
-                onSavePressed();
-            } else{
-                title.setError("Title can't be blank");
-            }
-
-        } else if(item.getItemId() == R.id.delete) {
+        if (item.getItemId() == R.id.action_share) {
+            onSharePressed();
+        } else if(item.getItemId() == R.id.action_favorite){
+            onFavoritePressed();
+        } else if(item.getItemId() == R.id.action_delete) {
             onDeletePressed();
+        } else if (item.getItemId() == R.id.action_archive){
+            onArchivePressed();
         } else {
-            onBackPressed();
+            onSavePressed();
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void onArchivePressed() {
+        toArchive = !toArchive;
+        System.out.println("archive: "+toArchive);
+    }
+
+    private void onSharePressed() {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        String toShare = title.getText().toString()+"\n"+text.getText().toString();
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, toShare);
+        //TODO put maps and files of the note
+        startActivity(Intent.createChooser(shareIntent, "Share using..."));
+    }
+
+    private void onFavoritePressed() {
+        isFavorite = !isFavorite;
+        System.out.println("favorite: "+isFavorite);
     }
 
 
@@ -106,6 +127,7 @@ public class NotaActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void onSavePressed(){
+        // TODO: Guardar preferits i archivats.
         note.setTitle(title.getText().toString());
         note.setBody(text.getText().toString());
         note.setDate(LocalDateTime.now());

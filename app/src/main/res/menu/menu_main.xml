@@ -1,24 +1,17 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.example.practicapis.MainActivity">
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
     <item
-        android:id="@+id/action_share"
-        android:icon="@android:drawable/ic_menu_share"
-        android:title="@string/action_share"/>
-    <item
-        android:id="@+id/action_favorite"
-        android:icon="@android:drawable/btn_star"
-        android:title="@string/action_favorite" />
+        android:id="@+id/app_bar_switch"
+        android:title="@string/archive_notes"
+        app:actionLayout="@layout/switch_item"
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_archive"
-        android:title="@string/action_archive" />
+        android:title="@string/action_archive"
+        app:showAsAction="ifRoom"/>
     <item
-        android:id="@+id/action_delete"
-        android:icon="@android:drawable/ic_delete"
-        android:title="@string/action_delete" />
-    <item
-        android:id="@+id/action_reminder"
-        android:icon="@android:drawable/ic_popup_reminder"
-        android:title="@string/action_reminder" />
+        android:id="@+id/singOut"
+        android:title="@string/sing_out" />
 </menu>
