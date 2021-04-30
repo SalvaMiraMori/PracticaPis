@@ -71,7 +71,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         appStatus.setAllNotes(viewModel.getNotes().getValue());
+        appStatus.setArchivedNotes(viewModel.getArchivedNotes().getValue());
         notesList = appStatus.getAllNotes();
+        archivedNotesList = appStatus.getArchivedNotes();
     }
 
     public void setLiveDataObservers() {
