@@ -52,4 +52,8 @@ public class AppStatus {
         notesView = true;
         archivedView = false;
     }
+
+    public boolean isStart(){ return start; }
+
+    public void startApp(){ start = false; }
 }
