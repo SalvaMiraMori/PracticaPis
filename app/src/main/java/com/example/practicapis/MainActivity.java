@@ -29,8 +29,8 @@ public class MainActivity extends AppCompatActivity {
     private MenuItem switchArchive;
     private ArrayList<Note> notesList;
     private ArrayList<Note> archivedNotesList;
-    private RecyclerView mRecyclerView;
-    private CustomAdapter adapter;
+    private RecyclerView mRecyclerViewNotes;
+    private NotesAdapter notesAdapter;
     private AppStatus appStatus;
     private TextView username;
     private FloatingActionButton addNotebtn;
@@ -45,26 +45,24 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         //recyclerList = new ArrayList<>();
-        mRecyclerView = findViewById(R.id.recyclerView);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        mRecyclerViewNotes = findViewById(R.id.recyclerView);
+        mRecyclerViewNotes.setLayoutManager(new GridLayoutManager(this, 2));
         username = findViewById(R.id.userName);
         appStatus = AppStatus.getInstance();
-        adapter = new CustomAdapter(this, appStatus.getAllNotes());
-        mRecyclerView.setAdapter(adapter);
+        notesAdapter = new NotesAdapter(this, appStatus.getAllNotes());
+        mRecyclerViewNotes.setAdapter(notesAdapter);
         addNotebtn = findViewById(R.id.addNoteBtn);
         parentContext = this.getBaseContext();
 
         setLiveDataObservers();
 
-
         addNotebtn.setOnClickListener(v -> addNote());
-
-        appStatus = AppStatus.getInstance();
 
         notesList = appStatus.getAllNotes();
         archivedNotesList = appStatus.getArchivedNotes();
-        adapter.setLocalDataSet(notesList);
-        mRecyclerView.setAdapter(adapter);
+        notesAdapter.setLocalDataSet(notesList);
+        mRecyclerViewNotes.setAdapter(notesAdapter);
+
     }
 
     @Override
@@ -74,6 +72,12 @@ public class MainActivity extends AppCompatActivity {
         appStatus.setArchivedNotes(viewModel.getArchivedNotes().getValue());
         notesList = appStatus.getAllNotes();
         archivedNotesList = appStatus.getArchivedNotes();
+        if(appStatus.isArchivedView()){
+            notesAdapter.setLocalDataSet(appStatus.getArchivedNotes());
+        }else{
+            notesAdapter.setLocalDataSet(appStatus.getAllNotes());
+        }
+        mRecyclerViewNotes.setAdapter(notesAdapter);
     }
 
     public void setLiveDataObservers() {
@@ -83,8 +87,8 @@ public class MainActivity extends AppCompatActivity {
         final Observer<ArrayList<Note>> observer = new Observer<ArrayList<Note>>() {
             @Override
             public void onChanged(ArrayList<Note> arrayList) {
-                CustomAdapter newAdapter = new CustomAdapter(parentContext, arrayList);
-                mRecyclerView.swapAdapter(newAdapter, false);
+                NotesAdapter newAdapter = new NotesAdapter(parentContext, arrayList);
+                mRecyclerViewNotes.swapAdapter(newAdapter, false);
                 appStatus.setAllNotes(viewModel.getNotes().getValue());
                 appStatus.setArchivedNotes(viewModel.getArchivedNotes().getValue());
                 notesList = appStatus.getAllNotes();
@@ -122,13 +126,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    adapter.setLocalDataSet(appStatus.getArchivedNotes());
-                    //adapter.setArchive(true);
+                    notesAdapter.setLocalDataSet(appStatus.getArchivedNotes());
+                    appStatus.setArchivedView();
                 } else {
-                    adapter.setLocalDataSet(appStatus.getAllNotes());
-                    //adapter.setArchive(false);
+                    notesAdapter.setLocalDataSet(appStatus.getAllNotes());
+                    appStatus.setNotesView();
                 }
-                mRecyclerView.setAdapter(adapter);
+                mRecyclerViewNotes.setAdapter(notesAdapter);
             }
         });
         return true;
@@ -151,50 +155,6 @@ public class MainActivity extends AppCompatActivity {
     public void goToNotaActivity(){
         Intent intent = new Intent(this, NotaActivity.class);
         startActivity(intent);
-    }
-
-    public void getFromNotaActivity(){
-        System.out.println("Bundle de Notas");
-        Bundle bundle = getIntent().getExtras();
-        Note note = bundle.getParcelable("note");
-        int pos = (int)bundle.get("position");
-
-        if((boolean)bundle.get("delete")){                      //Si está marcat per eliminar
-            if((int)bundle.get("position") != -1){              //I és una nota editada
-                System.out.println("delete");                   //S'ha d'eliminar
-                if ((boolean)bundle.get("prevArchive"))
-                    appStatus.unarchiveNote(pos);               //Del arxiu
-                else
-                    appStatus.deleteNote(pos);                  //O de les notes
-            }
-        }else if(pos == -1){                                    //Si és una nota nova
-            System.out.println("add");
-            appStatus.addNote(note);                            //S'afegeix a les notes
-        }else{
-            System.out.println("edit");                         //Si no és nova
-            if ((boolean)bundle.get("prevArchive"))             //S'edita
-                appStatus.editArchiveNote(note, pos);           //De l'arxiu
-            else
-                appStatus.editNote(note, pos);                  //O de les notes
-        }
-
-        if ((boolean)bundle.get("archive")) {                   //Si està marcada l'opció d'arvivar
-            System.out.println("to archive");
-            appStatus.archiveNote(note);                        //Es guarda a l'arxiu
-        } else {
-            System.out.println("no to archive");                //Sinó
-            if ((boolean)bundle.get("prevArchive")) {           //I a més estava a l'arxiu
-                System.out.println("unarchive");
-                appStatus.unarchiveNote(pos);                   //S'elimina de l'arxiu
-                appStatus.addNote(note);                        //I es guarda a notes
-            }
-        }
-
-        note.setFavorite((boolean)bundle.get("favorite"));      //Es marca com a favorit si és necesari
-
-        adapter.setLocalDataSet(appStatus.getAllNotes());
-        adapter.setArchive(false);
-        mRecyclerView.setAdapter(adapter);
     }
 
     void signOut(){
