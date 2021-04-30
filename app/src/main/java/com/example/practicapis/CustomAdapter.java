@@ -76,7 +76,9 @@ public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.
 
     public void setLocalDataSet(ArrayList<Note> dataSet){
         localDataSet = dataSet;
-        Collections.sort(localDataSet, Collections.reverseOrder());
+        if(localDataSet != null){
+            Collections.sort(localDataSet, Collections.reverseOrder());
+        }
     }
 
     // Create new views (invoked by the layout manager)

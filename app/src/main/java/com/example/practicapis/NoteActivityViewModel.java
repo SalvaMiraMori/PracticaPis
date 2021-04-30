@@ -25,6 +25,10 @@ public class NoteActivityViewModel extends ViewModel {
         adapter.saveNote(note);
     }
 
+    public void archiveNote(Note note){
+        adapter.archiveNote(note);
+    }
+
     public void deleteNote(Note note){
         adapter.deleteNote(note);
     }

@@ -3,10 +3,8 @@ package com.example.practicapis;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -14,7 +12,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -24,14 +21,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.practicapis.nota.NotaActivity;
 import com.example.practicapis.ui.login.LoginActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
     private MenuItem switchArchive;
-    private ArrayList<Note> recyclerList;
+    private ArrayList<Note> notesList;
+    private ArrayList<Note> archivedNotesList;
     private RecyclerView mRecyclerView;
     private CustomAdapter adapter;
     private AppStatus appStatus;
@@ -64,8 +61,9 @@ public class MainActivity extends AppCompatActivity {
 
         appStatus = AppStatus.getInstance();
 
-        recyclerList = appStatus.getAllNotes();
-        adapter.setLocalDataSet(recyclerList);
+        notesList = appStatus.getAllNotes();
+        archivedNotesList = appStatus.getArchivedNotes();
+        adapter.setLocalDataSet(notesList);
         mRecyclerView.setAdapter(adapter);
     }
 
@@ -73,7 +71,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         appStatus.setAllNotes(viewModel.getNotes().getValue());
-        recyclerList = appStatus.getAllNotes();
+        appStatus.setArchivedNotes(viewModel.getArchivedNotes().getValue());
+        notesList = appStatus.getAllNotes();
+        archivedNotesList = appStatus.getArchivedNotes();
     }
 
     public void setLiveDataObservers() {
@@ -86,7 +86,9 @@ public class MainActivity extends AppCompatActivity {
                 CustomAdapter newAdapter = new CustomAdapter(parentContext, arrayList);
                 mRecyclerView.swapAdapter(newAdapter, false);
                 appStatus.setAllNotes(viewModel.getNotes().getValue());
-                recyclerList = appStatus.getAllNotes();
+                appStatus.setArchivedNotes(viewModel.getArchivedNotes().getValue());
+                notesList = appStatus.getAllNotes();
+                archivedNotesList = appStatus.getArchivedNotes();
                 newAdapter.notifyDataSetChanged();
             }
         };
@@ -120,11 +122,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    adapter.setLocalDataSet(appStatus.getArchiveNotes());
-                    adapter.setArchive(true);
+                    adapter.setLocalDataSet(appStatus.getArchivedNotes());
+                    //adapter.setArchive(true);
                 } else {
                     adapter.setLocalDataSet(appStatus.getAllNotes());
-                    adapter.setArchive(false);
+                    //adapter.setArchive(false);
                 }
                 mRecyclerView.setAdapter(adapter);
             }
@@ -197,5 +199,8 @@ public class MainActivity extends AppCompatActivity {
 
     void signOut(){
         // TODO: Sign out.
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+        this.finish();
     }
 }
