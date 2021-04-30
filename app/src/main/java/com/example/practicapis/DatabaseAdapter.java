@@ -18,20 +18,12 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.android.gms.tasks.Continuation;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Executor;
 
 public class DatabaseAdapter {
 
@@ -66,7 +58,8 @@ public class DatabaseAdapter {
     }
 
     public interface vmInterface{
-        void setCollection(ArrayList<Note> ac);
+        void setNotes(ArrayList<Note> notes);
+        void setArchivedNotes(ArrayList<Note> archivedNotes);
         void setToast(String s);
     }
 
@@ -145,7 +138,7 @@ public class DatabaseAdapter {
         return isInDb[0];
     }
 
-    public void getCollection(){
+    public void getNotes(){
 
         //try{
         Log.d(TAG,"updatenotes with user");
@@ -163,7 +156,7 @@ public class DatabaseAdapter {
                         retrieved_notes.add(new Note(title, body, id, datetime));
                         Log.d(TAG, "Getting documents: " + title + body + datetime.toString());
                     }
-                    listener.setCollection(retrieved_notes);
+                    listener.setNotes(retrieved_notes);
                 } else{
                     Log.d(TAG, "Error getting documents: ", task.getException());
                 }
@@ -195,6 +188,30 @@ public class DatabaseAdapter {
         });
     }
 
+    public void archiveNote(Note note){
+        Map<String, Object> noteDbMap = new HashMap<>();
+        noteDbMap.put("title", note.getTitle());
+        noteDbMap.put("body", note.getBody());
+        noteDbMap.put("datetime", note.getDate().toString());
+
+        Log.d(TAG, "saveDocument");
+
+        db.collection("users")
+                .document(user.getUid())
+                .collection("archivedNotes")
+                .add(noteDbMap).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+            @Override
+            public void onSuccess(DocumentReference documentReference) {
+                Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.w(TAG, "Error adding document", e);
+            }
+        });
+    }
+
     public void deleteNote(Note note){
         db.collection("users").document(user.getUid()).collection("notes").document(note.getId()).delete();
     }
@@ -209,7 +226,11 @@ public class DatabaseAdapter {
 
     public void listenChanges(){
         db.collection("users").document(user.getUid()).collection("notes").addSnapshotListener((snapshots, e) -> {
-            DatabaseAdapter.this.getCollection();
+            DatabaseAdapter.this.getNotes();
         });
+    }
+
+    public void signOut(){
+
     }
 }

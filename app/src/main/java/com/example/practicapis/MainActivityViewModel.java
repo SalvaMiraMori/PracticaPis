@@ -2,13 +2,13 @@ package com.example.practicapis;
 
 import java.util.ArrayList;
 
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 public class MainActivityViewModel extends ViewModel implements DatabaseAdapter.vmInterface{
 
     private final MutableLiveData<ArrayList<Note>> mNotes;
+    private final MutableLiveData<ArrayList<Note>> mArchivedNotes;
     private final MutableLiveData<String> mToast;
 
     public static final String TAG = "ViewModel";
@@ -16,15 +16,18 @@ public class MainActivityViewModel extends ViewModel implements DatabaseAdapter.
     public MainActivityViewModel(){
         mNotes = new MutableLiveData<>();
         mToast = new MutableLiveData<>();
+        mArchivedNotes = new MutableLiveData<>();
         DatabaseAdapter da = new DatabaseAdapter(this);
-        da.setListener(this);
-        da.getCollection();
+        da.getNotes();
     }
 
     @Override
-    public void setCollection(ArrayList<Note> ac) {
-        mNotes.setValue(ac);
+    public void setNotes(ArrayList<Note> notes) {
+        mNotes.setValue(notes);
     }
+
+    @Override
+    public void setArchivedNotes(ArrayList<Note> archivedNotes) { mArchivedNotes.setValue(archivedNotes); }
 
     @Override
     public void setToast(String s) {
@@ -34,13 +37,8 @@ public class MainActivityViewModel extends ViewModel implements DatabaseAdapter.
     public MutableLiveData<ArrayList<Note>> getNotes(){
         return mNotes;
     }
+    public MutableLiveData<ArrayList<Note>> getArchivedNotes(){ return mArchivedNotes; }
     public Note getNote(int idx){
         return mNotes.getValue().get(idx);
-    }
-
-    public void addNote(Note note){
-        mNotes.getValue().add(note);
-        mNotes.setValue(mNotes.getValue());
-        //note.saveNoteToDb();
     }
 }
