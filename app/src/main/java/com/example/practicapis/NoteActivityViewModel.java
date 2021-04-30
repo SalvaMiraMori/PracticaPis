@@ -40,4 +40,8 @@ public class NoteActivityViewModel extends ViewModel {
     public LiveData<ArrayList<Note>> getNotes(){
         return mNotes;
     }
+
+    public void deleteArchivedNote(Note note) {
+        adapter.deleteArchivedNote(note);
+    }
 }
