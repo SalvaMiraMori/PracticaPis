@@ -57,6 +57,8 @@ public class DatabaseAdapter {
         this.listener = listener;
     }
 
+
+
     public interface vmInterface{
         void setNotes(ArrayList<Note> notes);
         void setArchivedNotes(ArrayList<Note> archivedNotes);
@@ -244,6 +246,10 @@ public class DatabaseAdapter {
 
     public void deleteNote(Note note){
         db.collection("users").document(user.getUid()).collection("notes").document(note.getId()).delete();
+    }
+
+    public void deleteArchivedNote(Note note) {
+        db.collection("users").document(user.getUid()).collection("archivedNotes").document(note.getId()).delete();
     }
 
     public void editNote(Note note){

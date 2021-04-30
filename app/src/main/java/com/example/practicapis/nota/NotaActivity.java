@@ -19,6 +19,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.practicapis.AppStatus;
 import com.example.practicapis.MainActivity;
 import com.example.practicapis.MainActivityViewModel;
 import com.example.practicapis.Note;
@@ -37,6 +38,7 @@ public class NotaActivity extends AppCompatActivity {
     private NoteActivityViewModel viewModel;
     public static final String TAG = "NotaActivity";
     private boolean isFavorite, toArchive, prevArchive;
+    private AppStatus appStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +53,11 @@ public class NotaActivity extends AppCompatActivity {
         title = findViewById(R.id.noteTitle);
         text = findViewById(R.id.noteBody);
         viewModel = new ViewModelProvider(this).get(NoteActivityViewModel.class);
+        appStatus = AppStatus.getInstance();
+        if(appStatus.isArchivedView()){
+            title.setEnabled(false);
+            text.setEnabled(false);
+        }
 
         getNoteDataBundle();
 
@@ -134,6 +141,9 @@ public class NotaActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void onSavePressed(){
         // TODO: Guardar preferits i archivats.
+        if(appStatus.isArchivedView()){
+            onBackPressed();
+        }
         note.setTitle(title.getText().toString());
         note.setBody(text.getText().toString());
         note.setDate(LocalDateTime.now());
@@ -150,7 +160,13 @@ public class NotaActivity extends AppCompatActivity {
     }
 
     public void onDeletePressed(){
-        try{ viewModel.deleteNote(note); }catch(Exception e){ }
+        try{
+            if(appStatus.isArchivedView()){
+                viewModel.deleteArchivedNote(note);
+            }else{
+                viewModel.deleteNote(note);
+            }
+        }catch(Exception e){ }
         this.finish();
     }
 

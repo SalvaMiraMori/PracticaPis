@@ -9,9 +9,8 @@ public class AppStatus {
 
     private ArrayList<Note> archivedNotes = new ArrayList<>();
     private ArrayList<Note> notesList = new ArrayList<>();
-
-    private int id = 0;
-
+    private boolean archivedView;
+    private boolean notesView;
 
     public AppStatus(){
         start = true;
@@ -22,30 +21,6 @@ public class AppStatus {
             instance = new AppStatus();
         }
         return instance;
-    }
-
-    public void appStarted(){
-        start = false;
-    }
-
-    public boolean checkStarted(){ return start; }
-
-    public void editNote(Note note, int position){
-        notesList.remove(position);
-        notesList.add(0, note);
-    }
-
-    public void editArchiveNote(Note note, int position){
-        archivedNotes.remove(position);
-        archivedNotes.add(0, note);
-    }
-
-    public void deleteNote(int position){
-        notesList.remove(position);
-    }
-
-    public void addNote(Note note){
-        notesList.add(0, note);
     }
 
     public ArrayList<Note> getAllNotes(){
@@ -62,23 +37,23 @@ public class AppStatus {
         return archivedNotes.get(position);
     }
 
-    //TODO create metodes to archive and unarchive notes
     public void setArchivedNotes(ArrayList<Note> archivedNotes){ this.archivedNotes = archivedNotes; }
 
     public ArrayList<Note> getArchivedNotes(){return archivedNotes;}
 
-    public void archiveNote(Note note) {
-        this.notesList.remove(note);
-        this.archivedNotes.add(0, note);
+    public void setArchivedView(){
+        archivedView = true;
+        notesView = false;
     }
-    public void unarchiveNote(int position) {
-        this.archivedNotes.remove(position);
+
+    public boolean isArchivedView(){ return archivedView; }
+
+    public void setNotesView(){
+        notesView = true;
+        archivedView = false;
     }
-    public boolean isNoteArchived(Note note) {
-        for (int i = 0; i < archivedNotes.size(); i++) {
-            if (archivedNotes.get(i).equals(note))
-                return true;
-        }
-        return false;
-    }
+
+    public boolean isStart(){ return start; }
+
+    public void startApp(){ start = false; }
 }

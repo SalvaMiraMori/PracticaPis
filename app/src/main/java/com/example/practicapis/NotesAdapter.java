@@ -11,8 +11,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.practicapis.nota.NotaActivity;
@@ -20,7 +18,7 @@ import com.example.practicapis.nota.NotaActivity;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.CustomAdapter.ViewHolder> {
+public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> {
 
     private ArrayList<Note> localDataSet;
     private final Context parentContext;
@@ -64,7 +62,7 @@ public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.
      * @param dataSet String[] containing the data to populate views to be used
      * by RecyclerView.
      */
-     CustomAdapter(Context current, ArrayList<Note> dataSet) {
+     NotesAdapter(Context current, ArrayList<Note> dataSet) {
         parentContext = current;
         localDataSet = dataSet;
         Collections.sort(localDataSet, Collections.reverseOrder());
@@ -87,7 +85,6 @@ public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         // Create a new view, which defines the UI of the list item
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.note_item, null, false);
-
         return new ViewHolder(view);
     }
 
@@ -114,7 +111,12 @@ public class CustomAdapter extends RecyclerView.Adapter<com.example.practicapis.
         layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Note note = appStatus.getNoteByPosition(position);
+                Note note = null;
+                if(appStatus.isArchivedView()){
+                    note = appStatus.getNoteArchivedByPosition(position);
+                }else{
+                    note = appStatus.getNoteByPosition(position);
+                }
                 Intent intent = new Intent(v.getContext(), NotaActivity.class);
                 intent.putExtra("note", note);
                 v.getContext().startActivity(intent);
