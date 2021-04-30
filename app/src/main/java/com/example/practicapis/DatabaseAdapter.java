@@ -158,9 +158,12 @@ public class DatabaseAdapter {
                     for(QueryDocumentSnapshot document : task.getResult()){
                         String title = document.getString("title");
                         String body = document.getString("body");
+                        Boolean favorite = document.getBoolean("favorite");
                         String id = document.getId();
                         LocalDateTime datetime = LocalDateTime.parse(document.getString("datetime"));
-                        retrieved_notes.add(new Note(title, body, id, datetime));
+                        Note note = new Note(title, body, id, datetime);
+                        note.setFavorite(favorite);
+                        retrieved_notes.add(note);
                         Log.d(TAG, "Getting documents: " + title + body + datetime.toString());
                     }
                     listener.setCollection(retrieved_notes);
@@ -176,6 +179,7 @@ public class DatabaseAdapter {
         noteDbMap.put("title", note.getTitle());
         noteDbMap.put("body", note.getBody());
         noteDbMap.put("datetime", note.getDate().toString());
+        noteDbMap.put("favorite", note.isFavorite());
 
         Log.d(TAG, "saveDocument");
 
@@ -204,6 +208,7 @@ public class DatabaseAdapter {
         noteDbMap.put("title", note.getTitle());
         noteDbMap.put("body", note.getBody());
         noteDbMap.put("datetime", note.getDate().toString());
+        noteDbMap.put("favorite", note.isFavorite());
         db.collection("users").document(user.getUid()).collection("notes").document(note.getId()).update(noteDbMap);
     }
 
