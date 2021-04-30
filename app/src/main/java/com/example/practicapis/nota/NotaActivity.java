@@ -11,11 +11,15 @@ import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.practicapis.MainActivity;
+import com.example.practicapis.MapsActivity;
 import com.example.practicapis.Note;
 import com.example.practicapis.R;
 
@@ -25,6 +29,7 @@ public class NotaActivity extends AppCompatActivity {
     EditText title, text;
     Note note;
     int position;
+    ImageButton location;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +41,18 @@ public class NotaActivity extends AppCompatActivity {
 
         title = findViewById(R.id.noteTitle);
         text = findViewById(R.id.noteBody);
+
+        location=findViewById(R.id.mapa_btn);
+
+        location.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goToMapa();
+            }
+        });
         getNoteDataBundle();
+
+
 
         title.addTextChangedListener(new TextWatcher() {
             @Override
@@ -111,5 +127,10 @@ public class NotaActivity extends AppCompatActivity {
         title.setText(bundle.getString("title"));
         text.setText(bundle.getString("body"));
         position = bundle.getInt("position");
+    }
+
+    public void goToMapa(){
+        Intent intent = new Intent(this, MapsActivity.class);
+        startActivity(intent);
     }
 }
