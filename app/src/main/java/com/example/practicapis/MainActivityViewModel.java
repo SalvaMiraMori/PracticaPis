@@ -19,6 +19,7 @@ public class MainActivityViewModel extends ViewModel implements DatabaseAdapter.
         mArchivedNotes = new MutableLiveData<>();
         DatabaseAdapter da = new DatabaseAdapter(this);
         da.getNotes();
+        da.getArchivedNotes();
     }
 
     @Override

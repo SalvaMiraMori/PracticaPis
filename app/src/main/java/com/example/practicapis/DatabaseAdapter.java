@@ -164,6 +164,30 @@ public class DatabaseAdapter {
         });
     }
 
+    public void getArchivedNotes(){
+        Log.d(TAG,"updatearchivednotes with user");
+        db.collection("users").document(user.getUid()).collection("archivedNotes").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+                    ArrayList<Note> retrieved_notes = new ArrayList<>();
+                    for(QueryDocumentSnapshot document : task.getResult()){
+                        String title = document.getString("title");
+                        String body = document.getString("body");
+                        String id = document.getId();
+                        LocalDateTime datetime = LocalDateTime.parse(document.getString("datetime"));
+                        retrieved_notes.add(new Note(title, body, id, datetime));
+                        Log.d(TAG, "Getting documents: " + title + body + datetime.toString());
+                    }
+                    listener.setArchivedNotes(retrieved_notes);
+                } else{
+                    Log.d(TAG, "Error getting documents: ", task.getException());
+                }
+            }
+        });
+    }
+
     public void saveNote(Note note){
         Map<String, Object> noteDbMap = new HashMap<>();
         noteDbMap.put("title", note.getTitle());
@@ -210,6 +234,8 @@ public class DatabaseAdapter {
                 Log.w(TAG, "Error adding document", e);
             }
         });
+
+        deleteNote(note);
     }
 
     public void deleteNote(Note note){
@@ -227,6 +253,9 @@ public class DatabaseAdapter {
     public void listenChanges(){
         db.collection("users").document(user.getUid()).collection("notes").addSnapshotListener((snapshots, e) -> {
             DatabaseAdapter.this.getNotes();
+        });
+        db.collection("users").document(user.getUid()).collection("archivedNotes").addSnapshotListener((snapshots, e) -> {
+            DatabaseAdapter.this.getArchivedNotes();
         });
     }
 

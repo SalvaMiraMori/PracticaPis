@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
         appStatus = AppStatus.getInstance();
 
         notesList = appStatus.getAllNotes();
+        archivedNotesList = appStatus.getArchivedNotes();
         adapter.setLocalDataSet(notesList);
         mRecyclerView.setAdapter(adapter);
     }

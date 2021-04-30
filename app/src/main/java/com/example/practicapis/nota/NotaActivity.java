@@ -100,9 +100,15 @@ public class NotaActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private void onArchivePressed() {
-        toArchive = !toArchive;
-        System.out.println("archive: "+toArchive);
+        note.setTitle(title.getText().toString());
+        note.setBody(text.getText().toString());
+        if(note.getDate() == null){
+            note.setDate(LocalDateTime.now());
+        }
+        viewModel.archiveNote(note);
+        onBackPressed();
     }
 
     private void onSharePressed() {
