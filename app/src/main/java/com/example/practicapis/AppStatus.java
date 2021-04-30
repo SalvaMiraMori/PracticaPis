@@ -1,12 +1,13 @@
 package com.example.practicapis;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class AppStatus {
     private Boolean start;
     private static AppStatus instance;
 
-    private ArrayList<Note> archiveNotes = new ArrayList<>();
+    private ArrayList<Note> archivedNotes = new ArrayList<>();
     private ArrayList<Note> notesList = new ArrayList<>();
 
     private int id = 0;
@@ -35,8 +36,8 @@ public class AppStatus {
     }
 
     public void editArchiveNote(Note note, int position){
-        archiveNotes.remove(position);
-        archiveNotes.add(0, note);
+        archivedNotes.remove(position);
+        archivedNotes.add(0, note);
     }
 
     public void deleteNote(int position){
@@ -58,22 +59,24 @@ public class AppStatus {
     }
 
     public Note getNoteArchivedByPosition(int position){
-        return archiveNotes.get(position);
+        return archivedNotes.get(position);
     }
 
     //TODO create metodes to archive and unarchive notes
-    public ArrayList<Note> getArchiveNotes(){return archiveNotes;}
+    public void setArchivedNotes(ArrayList<Note> archivedNotes){ this.archivedNotes = archivedNotes; }
+
+    public ArrayList<Note> getArchivedNotes(){return archivedNotes;}
 
     public void archiveNote(Note note) {
         this.notesList.remove(note);
-        this.archiveNotes.add(0, note);
+        this.archivedNotes.add(0, note);
     }
     public void unarchiveNote(int position) {
-        this.archiveNotes.remove(position);
+        this.archivedNotes.remove(position);
     }
     public boolean isNoteArchived(Note note) {
-        for (int i = 0; i < archiveNotes.size(); i++) {
-            if (archiveNotes.get(i).equals(note))
+        for (int i = 0; i < archivedNotes.size(); i++) {
+            if (archivedNotes.get(i).equals(note))
                 return true;
         }
         return false;
