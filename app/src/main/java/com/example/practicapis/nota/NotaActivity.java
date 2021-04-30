@@ -147,12 +147,15 @@ public class NotaActivity extends AppCompatActivity {
         note.setTitle(title.getText().toString());
         note.setBody(text.getText().toString());
         note.setDate(LocalDateTime.now());
+        note.setFavorite(isFavorite);
         Log.d(TAG, "Local time " + LocalDateTime.now().toString());
         if(note.getId() == null){
             viewModel.addNote(note);
         }else{
             viewModel.editNote(note);
         }
+        if (note.getTitle().isEmpty() && note.getBody().isEmpty())
+            viewModel.deleteNote(note);
         onBackPressed();
     }
 
