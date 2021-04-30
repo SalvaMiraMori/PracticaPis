@@ -25,6 +25,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.practicapis.AppStatus;
 import com.example.practicapis.LoginActivityViewModel;
 import com.example.practicapis.MainActivity;
 import com.example.practicapis.MainActivityViewModel;
@@ -56,6 +57,7 @@ public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
     private GoogleSignInClient mGoogleSignInClient;
     private LoginActivityViewModel viewModel;
+    private AppStatus appStatus;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -65,6 +67,8 @@ public class LoginActivity extends AppCompatActivity {
                 .get(LoginViewModel.class);
 
         viewModel = new ViewModelProvider(this).get(LoginActivityViewModel.class);
+
+        appStatus = AppStatus.getInstance();
 
         final EditText usernameEditText = findViewById(R.id.username);
         final EditText passwordEditText = findViewById(R.id.password);
@@ -181,11 +185,12 @@ public class LoginActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-        if(account != null){
+        if(!appStatus.isStart()){
             signOut();
             //signInButtonGoogle.setEnabled(false);
             Log.d("E-mail: ", account.getEmail());
         }
+        appStatus.startApp();
     }
 
     @Override
