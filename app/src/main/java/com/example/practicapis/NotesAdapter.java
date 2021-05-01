@@ -99,6 +99,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
 
         viewHolder.getTitleNote().setText(localDataSet.get(position).getTitle());
         viewHolder.getBodyNote().setText(localDataSet.get(position).getBody());
+        System.out.println("Note " + localDataSet.get(position).getTitle() + " OnCustomAdapter: isFavorite " + localDataSet.get(position).isFavorite());
         if (localDataSet.get(position).isFavorite())
             viewHolder.getFavorite().setVisibility(View.VISIBLE);
         else

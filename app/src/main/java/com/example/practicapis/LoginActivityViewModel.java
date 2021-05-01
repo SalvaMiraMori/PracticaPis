@@ -14,4 +14,8 @@ public class LoginActivityViewModel extends ViewModel {
     public void setUser(FirebaseUser user){
         adapter.setUser(user);
     }
+
+    public void loginUser(String email, String password){
+        adapter.loginUser(email, password);
+    }
 }

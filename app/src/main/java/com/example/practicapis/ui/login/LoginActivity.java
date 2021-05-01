@@ -26,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.practicapis.AppStatus;
+import com.example.practicapis.DatabaseAdapter;
 import com.example.practicapis.LoginActivityViewModel;
 import com.example.practicapis.MainActivity;
 import com.example.practicapis.MainActivityViewModel;
@@ -165,11 +166,9 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadingProgressBar.setVisibility(View.VISIBLE);
-                loginViewModel.login(usernameEditText.getText().toString(),
-                        passwordEditText.getText().toString());
-                //goToMainActivity();
-                finish();
+                //loadingProgressBar.setVisibility(View.VISIBLE);
+                //loginViewModel.login(usernameEditText.getText().toString(),passwordEditText.getText().toString());
+                loginUser(usernameEditText.getText().toString(), passwordEditText.getText().toString());
             }
         });
 
@@ -185,7 +184,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-        if(!appStatus.isStart()){
+        if(!appStatus.isStart() && account != null){
             signOut();
             //signInButtonGoogle.setEnabled(false);
             Log.d("E-mail: ", account.getEmail());
@@ -200,6 +199,27 @@ public class LoginActivity extends AppCompatActivity {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             handleSignInResult(task);
         }
+    }
+
+    public void loginUser(String email, String password){
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithEmail:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            viewModel.setUser(user);
+                            goToMainActivity();
+                            finish();
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithEmail:failure", task.getException());
+                            Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 
     private void signOut(){
@@ -248,11 +268,11 @@ public class LoginActivity extends AppCompatActivity {
     private void updateUiWithUser(LoggedInUserView model) {
         String welcome = getString(R.string.welcome) + model.getDisplayName();
         // TODO : initiate successful logged in experience
-        Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
+        Toast.makeText(LoginActivity.this, welcome, Toast.LENGTH_LONG).show();
     }
 
     private void showLoginFailed(@StringRes Integer errorString) {
-        Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
+        Toast.makeText(LoginActivity.this, errorString, Toast.LENGTH_SHORT).show();
     }
 
     private void goToMainActivity(){

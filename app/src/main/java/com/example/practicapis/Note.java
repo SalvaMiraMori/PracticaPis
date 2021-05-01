@@ -23,12 +23,8 @@ public class Note implements Parcelable, Comparable<Note> {
         this.body = body;
     }
 
-    public Note(){}
-
-    public Note(String title, String body, String id) {
-        this.title = title;
-        this.body = body;
-        this.id = id;
+    public Note(){
+        favorite = false;
     }
 
     public Note(String title, String body, String id, LocalDateTime date) {
@@ -36,12 +32,15 @@ public class Note implements Parcelable, Comparable<Note> {
         this.body = body;
         this.id = id;
         this.date = date;
+        favorite = false;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     protected Note(Parcel in) {
         title = in.readString();
         body = in.readString();
         id = in.readString();
+        favorite = in.readBoolean();
     }
 
     public boolean isFavorite() {
@@ -53,6 +52,7 @@ public class Note implements Parcelable, Comparable<Note> {
     }
 
     public static final Creator<Note> CREATOR = new Creator<Note>() {
+        @RequiresApi(api = Build.VERSION_CODES.Q)
         @Override
         public Note createFromParcel(Parcel in) {
             return new Note(in);
@@ -91,11 +91,13 @@ public class Note implements Parcelable, Comparable<Note> {
         return 0;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(title);
         dest.writeString(body);
         dest.writeString(id);
+        dest.writeBoolean(favorite);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
