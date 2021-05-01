@@ -1,17 +1,19 @@
 package com.example.practicapis;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,13 +25,17 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    ArrayList<Note> recyclerList;
-    RecyclerView mRecyclerView;
-    CustomAdapter adapter;
-    AppStatus appStatus;
-    TextView username;
-    FloatingActionButton addNotebtn;
-    boolean start = true;
+
+    private MenuItem switchArchive;
+    private ArrayList<Note> notesList;
+    private ArrayList<Note> archivedNotesList;
+    private RecyclerView mRecyclerViewNotes;
+    private NotesAdapter notesAdapter;
+    private AppStatus appStatus;
+    private TextView username;
+    private FloatingActionButton addNotebtn;
+    private MainActivityViewModel viewModel;
+    private Context parentContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,41 +44,68 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        recyclerList = new ArrayList<>();
-        mRecyclerView = findViewById(R.id.recyclerView);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-        adapter = new CustomAdapter(this, recyclerList);
+        //recyclerList = new ArrayList<>();
+        mRecyclerViewNotes = findViewById(R.id.recyclerView);
+        mRecyclerViewNotes.setLayoutManager(new GridLayoutManager(this, 2));
         username = findViewById(R.id.userName);
         appStatus = AppStatus.getInstance();
+        notesAdapter = new NotesAdapter(this, appStatus.getAllNotes());
+        mRecyclerViewNotes.setAdapter(notesAdapter);
         addNotebtn = findViewById(R.id.addNoteBtn);
+        parentContext = this.getBaseContext();
 
-        addNotebtn.setOnClickListener(new View.OnClickListener() {
+        setLiveDataObservers();
+
+        addNotebtn.setOnClickListener(v -> addNote());
+
+        notesList = appStatus.getAllNotes();
+        archivedNotesList = appStatus.getArchivedNotes();
+        notesAdapter.setLocalDataSet(notesList);
+        mRecyclerViewNotes.setAdapter(notesAdapter);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        appStatus.setAllNotes(viewModel.getNotes().getValue());
+        appStatus.setArchivedNotes(viewModel.getArchivedNotes().getValue());
+        notesList = appStatus.getAllNotes();
+        archivedNotesList = appStatus.getArchivedNotes();
+        if(appStatus.isArchivedView()){
+            notesAdapter.setLocalDataSet(appStatus.getArchivedNotes());
+        }else{
+            notesAdapter.setLocalDataSet(appStatus.getAllNotes());
+        }
+        mRecyclerViewNotes.setAdapter(notesAdapter);
+    }
+
+    public void setLiveDataObservers() {
+        // Subscribe the activity to the observable
+        viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
+
+        final Observer<ArrayList<Note>> observer = new Observer<ArrayList<Note>>() {
             @Override
-            public void onClick(View v) {
-                addNote();
+            public void onChanged(ArrayList<Note> arrayList) {
+                NotesAdapter newAdapter = new NotesAdapter(parentContext, arrayList);
+                mRecyclerViewNotes.swapAdapter(newAdapter, false);
+                appStatus.setAllNotes(viewModel.getNotes().getValue());
+                appStatus.setArchivedNotes(viewModel.getArchivedNotes().getValue());
+                notesList = appStatus.getAllNotes();
+                archivedNotesList = appStatus.getArchivedNotes();
+                newAdapter.notifyDataSetChanged();
             }
-        });
+        };
 
-        if(appStatus.checkStarted()){
-            goToLoginActivity();
-            appStatus.appStarted();
-        }
+        final Observer<String> observerToast = new Observer<String>() {
+            @Override
+            public void onChanged(String t) {
+                Toast.makeText(parentContext, t, Toast.LENGTH_SHORT).show();
+            }
+        };
 
-        try{
-            getFromLoginActivity();
-        }catch(Exception e){
 
-        }
-
-        try{
-            getFromNotaActivity();
-            recyclerList = appStatus.getAllNotes();
-            System.out.println("RecycleList: "+recyclerList.size());
-            adapter.setLocalDataSet(recyclerList);
-            mRecyclerView.setAdapter(adapter);
-        }catch(Exception e){
-
-        }
+        viewModel.getNotes().observe(this, observer);
+        //viewModel.getToast().observe(this, observerToast);
     }
 
     public void addNote() {
@@ -84,6 +117,23 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        switchArchive = menu.findItem(R.id.app_bar_switch);
+        switchArchive.setActionView(R.layout.switch_item);
+        final Switch swch = (Switch) menu.findItem(R.id.app_bar_switch).getActionView().findViewById(R.id.action_switch);
+
+        swch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    notesAdapter.setLocalDataSet(appStatus.getArchivedNotes());
+                    appStatus.setArchivedView();
+                } else {
+                    notesAdapter.setLocalDataSet(appStatus.getAllNotes());
+                    appStatus.setNotesView();
+                }
+                mRecyclerViewNotes.setAdapter(notesAdapter);
+            }
+        });
         return true;
     }
 
@@ -95,46 +145,21 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_share) {
-            return true;
+        if (id == R.id.singOut) {
+            signOut();
         }
         return super.onOptionsItemSelected(item);
     }
 
-    public void goToLoginActivity(){
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
-    }
-
-    public void getFromLoginActivity(){
-        Bundle bundle = getIntent().getExtras();
-        System.out.println("Bundle de Login: "+bundle.toString());
-        if(bundle != null){
-            username.setText(bundle.getString("username"));
-            Log.d("Name", username.getText().toString());
-        }
-
-    }
-
     public void goToNotaActivity(){
         Intent intent = new Intent(this, NotaActivity.class);
-        intent.putExtra("position", -1);
         startActivity(intent);
     }
 
-    public void getFromNotaActivity(){
-        Bundle bundle = getIntent().getExtras();
-
-        Note note = bundle.getParcelable("note");
-
-        if((boolean)bundle.get("delete")){
-            if((int)bundle.get("position") != -1){
-                appStatus.deleteNote((int)bundle.get("position"));
-            }
-        }else if((int)bundle.get("position") == -1){
-            appStatus.addNote(note);
-        }else{
-            appStatus.editNote(note, bundle.getInt("position"));
-        }
+    void signOut(){
+        // TODO: Sign out.
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+        this.finish();
     }
 }
