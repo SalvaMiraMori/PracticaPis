@@ -128,8 +128,8 @@ public class NotaActivity extends AppCompatActivity {
     }
 
     private void onFavoritePressed() {
-        isFavorite = !isFavorite;
-        System.out.println("favorite: "+isFavorite);
+        note.setFavorite(!note.isFavorite());
+        isFavorite = note.isFavorite();
     }
 
 
@@ -180,5 +180,6 @@ public class NotaActivity extends AppCompatActivity {
 
         if(note.getTitle() != null){ title.setText(note.getTitle()); }
         if(note.getBody() != null){ text.setText(note.getBody()); }
+        isFavorite = note.isFavorite();
     }
 }
