@@ -116,7 +116,7 @@ public class DatabaseAdapter extends AppCompatActivity {
                 });
     }
 
-    public boolean existsEmail(String email){
+    public boolean existsEmail(String email) throws InterruptedException {
         final boolean[] isInDb = new boolean[1];
         mAuth.fetchSignInMethodsForEmail(email).addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>() {
             @Override

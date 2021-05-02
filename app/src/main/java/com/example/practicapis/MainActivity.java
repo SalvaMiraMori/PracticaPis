@@ -130,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
                     addNotebtn.setEnabled(false);
                 } else {
                     notesAdapter.setLocalDataSet(appStatus.getAllNotes());
+                    appStatus.setAllNotes(notesAdapter.getLocalDataSet());
                     appStatus.setNotesView();
                     addNotebtn.setEnabled(true);
                 }

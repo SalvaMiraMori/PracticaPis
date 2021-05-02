@@ -2,6 +2,7 @@ package com.example.practicapis;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class AppStatus {
     private Boolean start;
@@ -27,7 +28,11 @@ public class AppStatus {
         return notesList;
     }
 
-    public void setAllNotes(ArrayList<Note> notesList){ this.notesList = notesList; }
+    public void setAllNotes(ArrayList<Note> notesList){
+        if(notesList != null){
+            this.notesList = sortByFavourite(notesList);
+        }
+    }
 
     public Note getNoteByPosition(int position){
       return notesList.get(position);
@@ -56,4 +61,20 @@ public class AppStatus {
     public boolean isStart(){ return start; }
 
     public void startApp(){ start = false; }
+
+    private ArrayList<Note> sortByFavourite(ArrayList<Note> notes){
+        ArrayList<Note> favourites = new ArrayList<>();
+        ArrayList<Note> notFavourites = new ArrayList<>();
+        for(Note note : notes){
+            if(note.isFavorite()){
+                favourites.add(note);
+            }else{
+                notFavourites.add(note);
+            }
+        }
+        Collections.sort(favourites, Collections.reverseOrder());
+        Collections.sort(notFavourites, Collections.reverseOrder());
+        favourites.addAll(notFavourites);
+        return favourites;
+    }
 }

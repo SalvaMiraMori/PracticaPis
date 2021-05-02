@@ -43,7 +43,7 @@ public class Note implements Parcelable, Comparable<Note> {
         title = in.readString();
         body = in.readString();
         id = in.readString();
-        favorite = in.readBoolean();
+        favorite = Boolean.valueOf(in.readString());
         String locationFromParcel = in.readString();
         if(locationFromParcel != null){
             location = convertStringToLatLng(locationFromParcel);
@@ -109,7 +109,8 @@ public class Note implements Parcelable, Comparable<Note> {
         dest.writeString(title);
         dest.writeString(body);
         dest.writeString(id);
-        dest.writeBoolean(favorite);
+        //dest.writeBoolean(favorite);
+        dest.writeString(String.valueOf(favorite));
         if(location != null){
             dest.writeString(location.toString());
         }

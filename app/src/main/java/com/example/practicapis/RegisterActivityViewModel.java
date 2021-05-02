@@ -11,7 +11,7 @@ public class RegisterActivityViewModel {
         db.signUpUser(mail, password);
     }
 
-    public boolean existsEmail(String email){
+    public boolean existsEmail(String email) throws InterruptedException {
         return db.existsEmail(email);
     }
 }

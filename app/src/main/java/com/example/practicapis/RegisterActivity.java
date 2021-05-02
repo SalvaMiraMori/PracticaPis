@@ -36,7 +36,11 @@ public class RegisterActivity extends AppCompatActivity {
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                goToLoginActivity();
+                try {
+                    goToLoginActivity();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -66,14 +70,14 @@ public class RegisterActivity extends AppCompatActivity {
         repeatPasswordTxt.addTextChangedListener(textWatcher);
     }
 
-    private void goToLoginActivity(){
+    private void goToLoginActivity() throws InterruptedException {
         if(!emailTxt.getText().toString().contains("@")){
             Toast.makeText(RegisterActivity.this, "Wrong email format.", Toast.LENGTH_SHORT).show();
         }else if(!isPasswordSecure(passwordTxt.getText().toString())){
             Toast.makeText(RegisterActivity.this, "Password not secure enough.", Toast.LENGTH_SHORT).show();
         }else if(!passwordTxt.getText().toString().equals(repeatPasswordTxt.getText().toString())){
             Toast.makeText(RegisterActivity.this, "Repeated password wrong.", Toast.LENGTH_SHORT).show();
-        }else if(!viewModel.existsEmail(emailTxt.getText().toString())){
+        }else if(viewModel.existsEmail(emailTxt.getText().toString())){
             Toast.makeText(RegisterActivity.this, "E-mail already in use.", Toast.LENGTH_SHORT).show();
         }else{
             viewModel.signUpUser(emailTxt.getText().toString(), passwordTxt.getText().toString());

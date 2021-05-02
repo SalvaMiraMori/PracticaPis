@@ -149,4 +149,6 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
          favourites.addAll(notFavourites);
          return favourites;
     }
+
+    public ArrayList<Note> getLocalDataSet(){ return localDataSet; }
 }

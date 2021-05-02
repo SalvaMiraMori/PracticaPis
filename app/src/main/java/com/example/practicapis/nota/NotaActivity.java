@@ -206,7 +206,10 @@ public class NotaActivity extends AppCompatActivity {
             note = new Note();
         }
 
-        if(note.getTitle() != null){ title.setText(note.getTitle()); }
+        if(note.getTitle() != null){
+            title.setText(note.getTitle());
+            Objects.requireNonNull(getSupportActionBar()).setTitle((CharSequence) title.getText().toString());
+        }
         if(note.getBody() != null){ text.setText(note.getBody()); }
         isFavorite = note.isFavorite();
     }
