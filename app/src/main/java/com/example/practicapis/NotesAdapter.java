@@ -119,6 +119,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
                 }
                 Intent intent = new Intent(v.getContext(), NotaActivity.class);
                 intent.putExtra("note", note);
+                intent.putExtra("position", position);
                 v.getContext().startActivity(intent);
             }
 

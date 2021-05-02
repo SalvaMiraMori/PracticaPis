@@ -1,6 +1,7 @@
 package com.example.practicapis;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -13,7 +14,9 @@ import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -31,6 +34,7 @@ import com.google.android.gms.maps.GoogleMap.OnMyLocationClickListener;
 import java.io.IOException;
 import java.security.Permissions;
 import java.util.List;
+import java.util.Locale;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
@@ -42,7 +46,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private int LOCATION_PERMISSION_REQUEST = 1;
     private boolean enabled = false;
-    SearchView searchView;
+    private SearchView searchView;
+    private int position;
+    private MapsStatus mapsStatus;
 
     private void enableMyLocation(){
         if(ContextCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
@@ -75,6 +81,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
+        getBundlesData();
+
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         int status= GooglePlayServicesUtil.isGooglePlayServicesAvailable(getApplicationContext());
@@ -82,8 +90,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if(status == ConnectionResult.SUCCESS){
             SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.map);
+            setAllPreviousLocations();
             searchView = findViewById(R.id.search_btn);
             searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @RequiresApi(api = Build.VERSION_CODES.N)
                 @Override
                 public boolean onQueryTextSubmit(String query) {
                     String location = searchView.getQuery().toString();
@@ -96,10 +106,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         } catch (IOException e){
                             e.printStackTrace();
                         }
-                        Address address = addressList.get(0);
-                        LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
-                        mMap.addMarker(new MarkerOptions().position(latLng).title(location));
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10));
+                        //Mirem si hi existeix l'adreca
+                        if(position != -1 && addressList != null) {
+                            Address address = addressList.get(0);
+                            LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
+                            mMap.addMarker(new MarkerOptions().position(latLng).title(location));
+                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10));
+                            mapsStatus.addLocationOfNote(position, latLng);
+                        }
                     }
                     return false;
                 }
@@ -114,10 +128,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Dialog dialog = GooglePlayServicesUtil.getErrorDialog(status, (Activity)getApplicationContext(), 10);
             dialog.show();
         }
-
-
-
-
     }
 
     /**
@@ -152,5 +162,50 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMyLocationClick(@NonNull Location location) {
         Toast.makeText(this, "Current location:\n" + location, Toast.LENGTH_LONG).show();
+    }
+
+    public void setAllPreviousLocations(){
+        String address;
+        for(LatLng latLng : mapsStatus.getAllPreviouslyVisitedLocations(position)){
+            address = getAddress(latLng.latitude, latLng.longitude);
+            mMap.addMarker(new MarkerOptions().position(latLng).title(address));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10));
+        }
+    }
+
+    public void getBundlesData(){
+        Bundle bundle = getIntent().getExtras();
+        if(bundle != null){
+            position = bundle.getInt("position");
+        }else{
+            position = -1;
+        }
+    }
+
+    public String getAddress(double lat, double lng) {
+        Geocoder geocoder = new Geocoder(MapsActivity.this, Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocation(lat, lng, 1);
+            Address obj = addresses.get(0);
+            String add = obj.getAddressLine(0);
+            add = add + "\n" + obj.getCountryName();
+            add = add + "\n" + obj.getCountryCode();
+            add = add + "\n" + obj.getAdminArea();
+            add = add + "\n" + obj.getPostalCode();
+            add = add + "\n" + obj.getSubAdminArea();
+            add = add + "\n" + obj.getLocality();
+            add = add + "\n" + obj.getSubThoroughfare();
+
+            return add;
+            // Toast.makeText(this, "Address=>" + add,
+            // Toast.LENGTH_SHORT).show();
+
+            // TennisAppActivity.showDialog(add);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+        return null;
     }
 }

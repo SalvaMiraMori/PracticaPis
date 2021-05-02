@@ -44,6 +44,7 @@ public class NotaActivity extends AppCompatActivity {
     public static final String TAG = "NotaActivity";
     private boolean isFavorite, toArchive, prevArchive;
     private AppStatus appStatus;
+    private int position;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -188,6 +189,7 @@ public class NotaActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         if(bundle != null){
             note = (Note) bundle.get("note");
+            position = bundle.getInt("position");
         }else{
             note = new Note();
         }
@@ -199,6 +201,7 @@ public class NotaActivity extends AppCompatActivity {
 
     public void goToMapa(){
         Intent intent = new Intent(this, MapsActivity.class);
+        intent.putExtra("position", position);
         startActivity(intent);
     }
 }
