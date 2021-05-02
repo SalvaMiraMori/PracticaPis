@@ -104,7 +104,7 @@ public class DatabaseAdapter extends AppCompatActivity {
                     if(task.isSuccessful()){
                         Log.d(TAG, "User added with ID: " + user.getUid());
                     }else{
-
+                        Log.d(TAG, "User not added.");
                     }
                 }
             });
