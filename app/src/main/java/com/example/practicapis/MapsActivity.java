@@ -121,13 +121,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             e.printStackTrace();
                         }
                         //Mirem si hi existeix l'adreca
-                        if(addressList != null) {
+                        if(addressList != null && addressList.size() != 0) {
                             Address address = addressList.get(0);
                             LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
                             mMap.addMarker(new MarkerOptions().position(latLng).title(location));
                             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10));
                             saveLocationBtn.setEnabled(true);
                             lastLocation = latLng;
+                        }else{
+                            Toast.makeText(getApplicationContext(), "Address doesn't exist.", Toast.LENGTH_SHORT).show();
                         }
                     }
                     return false;

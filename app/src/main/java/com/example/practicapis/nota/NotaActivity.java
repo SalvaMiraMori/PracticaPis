@@ -15,7 +15,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -25,9 +24,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.practicapis.AppStatus;
-import com.example.practicapis.MainActivity;
 import com.example.practicapis.MapsActivity;
-import com.example.practicapis.MainActivityViewModel;
 import com.example.practicapis.Note;
 import com.example.practicapis.NoteActivityViewModel;
 import com.example.practicapis.R;
@@ -69,7 +66,7 @@ public class NotaActivity extends AppCompatActivity {
             text.setEnabled(false);
         }
 
-        location=findViewById(R.id.mapa_btn);
+        location=findViewById(R.id.addLocationBtn);
 
         location.setOnClickListener(new View.OnClickListener() {
             @Override

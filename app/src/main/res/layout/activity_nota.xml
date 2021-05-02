@@ -17,35 +17,35 @@
         app:layout_constraintTop_toBottomOf="@+id/toolbarNote">
 
         <ImageButton
-            android:id="@+id/editText_btn"
+            android:id="@+id/editTextBtn"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
             app:srcCompat="@android:drawable/ic_menu_sort_alphabetically" />
 
         <ImageButton
-            android:id="@+id/draw_btn"
+            android:id="@+id/drawBtn"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
             app:srcCompat="@android:drawable/ic_menu_edit" />
 
         <ImageButton
-            android:id="@+id/uploadNote_btn"
+            android:id="@+id/addTagBtn"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            app:srcCompat="@android:drawable/stat_sys_upload" />
+            app:srcCompat="@android:drawable/stat_notify_more" />
 
         <ImageButton
-            android:id="@+id/downloadNote_btn"
+            android:id="@+id/addFileBtn"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            app:srcCompat="@android:drawable/stat_sys_download" />
+            app:srcCompat="@drawable/ic_baseline_attach_file_24" />
 
         <ImageButton
-            android:id="@+id/mapa_btn"
+            android:id="@+id/addLocationBtn"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
