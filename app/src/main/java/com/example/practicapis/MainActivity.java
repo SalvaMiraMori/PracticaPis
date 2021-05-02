@@ -83,7 +83,18 @@ public class MainActivity extends AppCompatActivity {
         // Subscribe the activity to the observable
         viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
 
-        final Observer<ArrayList<Note>> observer = new Observer<ArrayList<Note>>() {
+        /*final Observer<ArrayList<Note>> observerArchivedNotes = new Observer<ArrayList<Note>>() {
+            @Override
+            public void onChanged(ArrayList<Note> arrayList) {
+                NotesAdapter newAdapter = new NotesAdapter(parentContext, arrayList);
+                mRecyclerViewNotes.swapAdapter(newAdapter, false);
+                appStatus.setArchivedNotes(viewModel.getArchivedNotes().getValue());
+                archivedNotesList = appStatus.getArchivedNotes();
+                newAdapter.notifyDataSetChanged();
+            }
+        };*/
+
+        final Observer<ArrayList<Note>> observerNotes = new Observer<ArrayList<Note>>() {
             @Override
             public void onChanged(ArrayList<Note> arrayList) {
                 NotesAdapter newAdapter = new NotesAdapter(parentContext, arrayList);
@@ -96,6 +107,8 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
+
+
         final Observer<String> observerToast = new Observer<String>() {
             @Override
             public void onChanged(String t) {
@@ -103,8 +116,9 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
+        viewModel.getArchivedNotes().observe(this, observerNotes);
+        viewModel.getNotes().observe(this, observerNotes);
 
-        viewModel.getNotes().observe(this, observer);
         //viewModel.getToast().observe(this, observerToast);
     }
 
@@ -125,13 +139,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    notesAdapter.setLocalDataSet(appStatus.getArchivedNotes());
                     appStatus.setArchivedView();
+                    notesAdapter.setLocalDataSet(appStatus.getArchivedNotes());
                     addNotebtn.setEnabled(false);
                 } else {
+                    appStatus.setNotesView();
                     notesAdapter.setLocalDataSet(appStatus.getAllNotes());
                     appStatus.setAllNotes(notesAdapter.getLocalDataSet());
-                    appStatus.setNotesView();
                     addNotebtn.setEnabled(true);
                 }
                 mRecyclerViewNotes.setAdapter(notesAdapter);
