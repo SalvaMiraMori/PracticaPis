@@ -306,7 +306,9 @@ public class DatabaseAdapter extends AppCompatActivity {
             }
         });
 
-        deleteNote(note);
+        if(note.getId() != null){
+            deleteNote(note);
+        }
     }
 
     public void deleteNote(Note note){

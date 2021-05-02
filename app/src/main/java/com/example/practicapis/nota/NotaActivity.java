@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 
@@ -147,6 +148,12 @@ public class NotaActivity extends AppCompatActivity {
     private void onFavoritePressed() {
         note.setFavorite(!note.isFavorite());
         isFavorite = note.isFavorite();
+        if(isFavorite){
+            Toast.makeText(this, title.getText().toString() + " is now a favorite.", Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(this, title.getText().toString() + " is no longer a favorite.", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
 
@@ -166,13 +173,13 @@ public class NotaActivity extends AppCompatActivity {
         note.setDate(LocalDateTime.now());
         note.setFavorite(isFavorite);
         Log.d(TAG, "Local time " + LocalDateTime.now().toString());
-        if(note.getId() == null){
-            viewModel.addNote(note);
-        }else{
-            viewModel.editNote(note);
+        if (!note.getTitle().isEmpty()) {
+            if (note.getId() == null) {
+                viewModel.addNote(note);
+            } else {
+                viewModel.editNote(note);
+            }
         }
-        if (note.getTitle().isEmpty() && note.getBody().isEmpty())
-            viewModel.deleteNote(note);
         onBackPressed();
     }
 
@@ -192,7 +199,9 @@ public class NotaActivity extends AppCompatActivity {
             if(appStatus.isArchivedView()){
                 viewModel.deleteArchivedNote(note);
             }else{
-                viewModel.deleteNote(note);
+                if(note.getId() != null){
+                    viewModel.deleteNote(note);
+                }
             }
         }catch(Exception e){ }
         this.finish();

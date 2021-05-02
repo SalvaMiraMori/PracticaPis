@@ -73,7 +73,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
 
     public void setLocalDataSet(ArrayList<Note> dataSet){
         localDataSet = dataSet;
-        if(localDataSet != null || !appStatus.isArchivedView()){
+        if(localDataSet != null && !appStatus.isArchivedView()){
             localDataSet = sortByFavourite(localDataSet);
         }
     }

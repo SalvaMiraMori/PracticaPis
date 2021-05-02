@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton addNotebtn;
     private MainActivityViewModel viewModel;
     private Context parentContext;
+    private Switch archivedNotesSwitch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,31 +84,18 @@ public class MainActivity extends AppCompatActivity {
         // Subscribe the activity to the observable
         viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
 
-        /*final Observer<ArrayList<Note>> observerArchivedNotes = new Observer<ArrayList<Note>>() {
-            @Override
-            public void onChanged(ArrayList<Note> arrayList) {
-                NotesAdapter newAdapter = new NotesAdapter(parentContext, arrayList);
-                mRecyclerViewNotes.swapAdapter(newAdapter, false);
-                appStatus.setArchivedNotes(viewModel.getArchivedNotes().getValue());
-                archivedNotesList = appStatus.getArchivedNotes();
-                newAdapter.notifyDataSetChanged();
-            }
-        };*/
-
         final Observer<ArrayList<Note>> observerNotes = new Observer<ArrayList<Note>>() {
             @Override
             public void onChanged(ArrayList<Note> arrayList) {
                 NotesAdapter newAdapter = new NotesAdapter(parentContext, arrayList);
                 mRecyclerViewNotes.swapAdapter(newAdapter, false);
-                appStatus.setAllNotes(viewModel.getNotes().getValue());
                 appStatus.setArchivedNotes(viewModel.getArchivedNotes().getValue());
-                notesList = appStatus.getAllNotes();
                 archivedNotesList = appStatus.getArchivedNotes();
+                appStatus.setAllNotes(viewModel.getNotes().getValue());
+                notesList = appStatus.getAllNotes();
                 newAdapter.notifyDataSetChanged();
             }
         };
-
-
 
         final Observer<String> observerToast = new Observer<String>() {
             @Override
@@ -116,9 +104,8 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        viewModel.getArchivedNotes().observe(this, observerNotes);
+        //viewModel.getArchivedNotes().observe(this, observerNotes);
         viewModel.getNotes().observe(this, observerNotes);
-
         //viewModel.getToast().observe(this, observerToast);
     }
 
@@ -133,9 +120,9 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         switchArchive = menu.findItem(R.id.app_bar_switch);
         switchArchive.setActionView(R.layout.switch_item);
-        final Switch swch = (Switch) menu.findItem(R.id.app_bar_switch).getActionView().findViewById(R.id.action_switch);
+        archivedNotesSwitch = (Switch) menu.findItem(R.id.app_bar_switch).getActionView().findViewById(R.id.action_switch);
 
-        swch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        archivedNotesSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
@@ -151,6 +138,8 @@ public class MainActivity extends AppCompatActivity {
                 mRecyclerViewNotes.setAdapter(notesAdapter);
             }
         });
+        //archivedNotesSwitch.setChecked(true);
+        //archivedNotesSwitch.setChecked(false);
         return true;
     }
 
