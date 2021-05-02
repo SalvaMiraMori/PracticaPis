@@ -1,6 +1,7 @@
 package com.example.practicapis.nota;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -13,7 +14,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 import androidx.appcompat.widget.Toolbar;
 
@@ -21,10 +25,12 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.practicapis.AppStatus;
 import com.example.practicapis.MainActivity;
+import com.example.practicapis.MapsActivity;
 import com.example.practicapis.MainActivityViewModel;
 import com.example.practicapis.Note;
 import com.example.practicapis.NoteActivityViewModel;
 import com.example.practicapis.R;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Objects;
 
@@ -32,6 +38,7 @@ import java.time.LocalDateTime;
 
 public class NotaActivity extends AppCompatActivity {
 
+    private ImageButton location;
     private Toolbar toolbar;
     private EditText title, text;
     private Note note;
@@ -39,6 +46,7 @@ public class NotaActivity extends AppCompatActivity {
     public static final String TAG = "NotaActivity";
     private boolean isFavorite, toArchive, prevArchive;
     private AppStatus appStatus;
+    private int position;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +60,7 @@ public class NotaActivity extends AppCompatActivity {
         toArchive = false;
         title = findViewById(R.id.noteTitle);
         text = findViewById(R.id.noteBody);
+
         viewModel = new ViewModelProvider(this).get(NoteActivityViewModel.class);
         appStatus = AppStatus.getInstance();
         if(appStatus.isArchivedView()){
@@ -59,6 +68,14 @@ public class NotaActivity extends AppCompatActivity {
             text.setEnabled(false);
         }
 
+        location=findViewById(R.id.mapa_btn);
+
+        location.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goToMapa();
+            }
+        });
         getNoteDataBundle();
 
         title.addTextChangedListener(new TextWatcher() {
@@ -159,6 +176,17 @@ public class NotaActivity extends AppCompatActivity {
         onBackPressed();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1) {
+            if(resultCode == RESULT_OK) {
+                note.setLocation(convertStringToLatLng(data.getStringExtra("location")));
+                Log.d(TAG, "Location received " + note.getLocation().toString());
+            }
+        }
+    }
+
     public void onDeletePressed(){
         try{
             if(appStatus.isArchivedView()){
@@ -181,5 +209,23 @@ public class NotaActivity extends AppCompatActivity {
         if(note.getTitle() != null){ title.setText(note.getTitle()); }
         if(note.getBody() != null){ text.setText(note.getBody()); }
         isFavorite = note.isFavorite();
+    }
+
+    public void goToMapa(){
+        Intent intent = new Intent(this, MapsActivity.class);
+        if(note.getLocation() != null){
+            intent.putExtra("location", note.getLocation());
+        }
+        startActivityForResult(intent, 1);
+    }
+
+    private LatLng convertStringToLatLng(String location){
+        String[] latlong =  location.split(",");
+        String[] lat = latlong[0].split("\\(");
+        String[] lng = latlong[1].split("\\)");
+
+        double latitude = Double.parseDouble(lat[1]);
+        double longitude = Double.parseDouble(lng[0]);
+        return new LatLng(latitude, longitude);
     }
 }

@@ -6,18 +6,63 @@
     android:layout_height="match_parent"
     tools:context=".nota.NotaActivity">
 
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="413dp"
+        android:layout_height="51dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/noteTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbarNote">
+
+        <ImageButton
+            android:id="@+id/editText_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:srcCompat="@android:drawable/ic_menu_sort_alphabetically" />
+
+        <ImageButton
+            android:id="@+id/draw_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:srcCompat="@android:drawable/ic_menu_edit" />
+
+        <ImageButton
+            android:id="@+id/uploadNote_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:srcCompat="@android:drawable/stat_sys_upload" />
+
+        <ImageButton
+            android:id="@+id/downloadNote_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:srcCompat="@android:drawable/stat_sys_download" />
+
+        <ImageButton
+            android:id="@+id/mapa_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:srcCompat="@android:drawable/ic_dialog_map" />
+
+    </LinearLayout>
+
     <EditText
         android:id="@+id/noteTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="textPersonName"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.081" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
 
     <EditText
         android:id="@+id/noteBody"
@@ -45,7 +90,6 @@
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
-        app:layout_constraintBottom_toTopOf="@+id/noteTitle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

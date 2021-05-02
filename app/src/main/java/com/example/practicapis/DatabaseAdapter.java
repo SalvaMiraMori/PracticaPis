@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -205,9 +206,13 @@ public class DatabaseAdapter extends AppCompatActivity {
                         String body = document.getString("body");
                         Boolean favorite = document.getBoolean("favorite");
                         String id = document.getId();
+                        String location = document.getString("location");
                         LocalDateTime datetime = LocalDateTime.parse(document.getString("datetime"));
                         Note note = new Note(title, body, id, datetime);
                         note.setFavorite(favorite);
+                        if(location != null){
+                            note.setLocation(convertStringToLatLng(location));
+                        }
                         retrieved_notes.add(note);
                         Log.d(TAG, "Getting documents: " + title + body + datetime.toString());
                     }
@@ -231,8 +236,13 @@ public class DatabaseAdapter extends AppCompatActivity {
                         String title = document.getString("title");
                         String body = document.getString("body");
                         String id = document.getId();
+                        String location = document.getString("location");
                         LocalDateTime datetime = LocalDateTime.parse(document.getString("datetime"));
-                        retrieved_notes.add(new Note(title, body, id, datetime));
+                        Note note = new Note(title, body, id, datetime);
+                        if(location != null){
+                            note.setLocation(convertStringToLatLng(location));
+                        }
+                        retrieved_notes.add(note);
                         Log.d(TAG, "Getting documents: " + title + body + datetime.toString());
                     }
                     listener.setArchivedNotes(retrieved_notes);
@@ -249,7 +259,9 @@ public class DatabaseAdapter extends AppCompatActivity {
         noteDbMap.put("body", note.getBody());
         noteDbMap.put("datetime", note.getDate().toString());
         noteDbMap.put("favorite", note.isFavorite());
-
+        if(note.getLocation() != null){
+            noteDbMap.put("location", note.getLocation().toString());
+        }
         Log.d(TAG, "saveDocument");
 
         db.collection("users")
@@ -273,6 +285,9 @@ public class DatabaseAdapter extends AppCompatActivity {
         noteDbMap.put("title", note.getTitle());
         noteDbMap.put("body", note.getBody());
         noteDbMap.put("datetime", note.getDate().toString());
+        if(note.getLocation() != null){
+            noteDbMap.put("location", note.getLocation().toString());
+        }
 
         Log.d(TAG, "saveDocument");
 
@@ -308,6 +323,10 @@ public class DatabaseAdapter extends AppCompatActivity {
         noteDbMap.put("body", note.getBody());
         noteDbMap.put("datetime", note.getDate().toString());
         noteDbMap.put("favorite", note.isFavorite());
+        if(note.getLocation() != null){
+            noteDbMap.put("location" ,note.getLocation().toString());
+        }
+
         db.collection("users").document(user.getUid()).collection("notes").document(note.getId()).update(noteDbMap);
     }
 
@@ -320,7 +339,13 @@ public class DatabaseAdapter extends AppCompatActivity {
         });
     }
 
-    public void signOut(){
+    private LatLng convertStringToLatLng(String location){
+        String[] latlong =  location.split(",");
+        String[] lat = latlong[0].split("\\(");
+        String[] lng = latlong[1].split("\\)");
 
+        double latitude = Double.parseDouble(lat[1]);
+        double longitude = Double.parseDouble(lng[0]);
+        return new LatLng(latitude, longitude);
     }
 }
