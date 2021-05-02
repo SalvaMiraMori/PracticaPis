@@ -13,8 +13,7 @@
         android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/noteTitle"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbarNote">
+        app:layout_constraintStart_toStartOf="parent">
 
         <ImageButton
             android:id="@+id/editTextBtn"
@@ -82,16 +81,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/noteTitle" />
-
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbarNote"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
