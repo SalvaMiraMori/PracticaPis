@@ -1,6 +1,7 @@
 package com.example.practicapis.nota;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -29,6 +30,7 @@ import com.example.practicapis.MainActivityViewModel;
 import com.example.practicapis.Note;
 import com.example.practicapis.NoteActivityViewModel;
 import com.example.practicapis.R;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Objects;
 
@@ -174,6 +176,17 @@ public class NotaActivity extends AppCompatActivity {
         onBackPressed();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1) {
+            if(resultCode == RESULT_OK) {
+                note.setLocation(convertStringToLatLng(data.getStringExtra("location")));
+                Log.d(TAG, "Location received " + note.getLocation().toString());
+            }
+        }
+    }
+
     public void onDeletePressed(){
         try{
             if(appStatus.isArchivedView()){
@@ -189,7 +202,6 @@ public class NotaActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         if(bundle != null){
             note = (Note) bundle.get("note");
-            position = bundle.getInt("position");
         }else{
             note = new Note();
         }
@@ -201,7 +213,19 @@ public class NotaActivity extends AppCompatActivity {
 
     public void goToMapa(){
         Intent intent = new Intent(this, MapsActivity.class);
-        intent.putExtra("position", position);
-        startActivity(intent);
+        if(note.getLocation() != null){
+            intent.putExtra("location", note.getLocation());
+        }
+        startActivityForResult(intent, 1);
+    }
+
+    private LatLng convertStringToLatLng(String location){
+        String[] latlong =  location.split(",");
+        String[] lat = latlong[0].split("\\(");
+        String[] lng = latlong[1].split("\\)");
+
+        double latitude = Double.parseDouble(lat[1]);
+        double longitude = Double.parseDouble(lng[0]);
+        return new LatLng(latitude, longitude);
     }
 }

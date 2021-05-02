@@ -7,7 +7,9 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-    
+
+import com.google.android.gms.maps.model.LatLng;
+
 import java.time.*;
 
 
@@ -17,6 +19,7 @@ public class Note implements Parcelable, Comparable<Note> {
     private String id;
     private LocalDateTime date;
     private boolean favorite;
+    private LatLng location;
 
     public Note(String title, String body) {
         this.title = title;
@@ -41,6 +44,11 @@ public class Note implements Parcelable, Comparable<Note> {
         body = in.readString();
         id = in.readString();
         favorite = in.readBoolean();
+        String locationFromParcel = in.readString();
+        if(locationFromParcel != null){
+            location = convertStringToLatLng(locationFromParcel);
+        }
+
     }
 
     public boolean isFavorite() {
@@ -74,6 +82,8 @@ public class Note implements Parcelable, Comparable<Note> {
 
     public String getId(){ return id; }
 
+    public LatLng getLocation(){ return location; }
+
     public LocalDateTime getDate(){ return date; }
 
     public void setTitle(String title) {
@@ -85,6 +95,8 @@ public class Note implements Parcelable, Comparable<Note> {
     }
 
     public void setDate(LocalDateTime date){ this.date = date; }
+
+    public void setLocation(LatLng location){ this.location = location; }
 
     @Override
     public int describeContents() {
@@ -98,6 +110,9 @@ public class Note implements Parcelable, Comparable<Note> {
         dest.writeString(body);
         dest.writeString(id);
         dest.writeBoolean(favorite);
+        if(location != null){
+            dest.writeString(location.toString());
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -110,5 +125,15 @@ public class Note implements Parcelable, Comparable<Note> {
     public boolean equals(@Nullable Object obj) {
         Note note = (Note) obj;
         return this.body.equals(note.body) && this.title.equals(note.title);
+    }
+
+    private LatLng convertStringToLatLng(String location){
+        String[] latlong =  location.split(",");
+        String[] lat = latlong[0].split("\\(");
+        String[] lng = latlong[1].split("\\)");
+
+        double latitude = Double.parseDouble(lat[1]);
+        double longitude = Double.parseDouble(lng[0]);
+        return new LatLng(latitude, longitude);
     }
 }

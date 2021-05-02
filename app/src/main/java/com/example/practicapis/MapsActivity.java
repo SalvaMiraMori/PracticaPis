@@ -10,6 +10,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -17,6 +18,7 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -30,6 +32,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMyLocationClickListener;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.IOException;
 import java.security.Permissions;
@@ -49,6 +52,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private SearchView searchView;
     private int position;
     private MapsStatus mapsStatus;
+    private FloatingActionButton saveLocationBtn;
+    private LatLng lastLocation;
 
     private void enableMyLocation(){
         if(ContextCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
@@ -80,8 +85,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        saveLocationBtn = findViewById(R.id.saveLocationBtn);
+        saveLocationBtn.setEnabled(false);
 
-        getBundlesData();
+        saveLocationBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveLocation();
+            }
+        });
+
+
 
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -90,7 +104,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if(status == ConnectionResult.SUCCESS){
             SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.map);
-            setAllPreviousLocations();
+            //setAllPreviousLocations();
             searchView = findViewById(R.id.search_btn);
             searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @RequiresApi(api = Build.VERSION_CODES.N)
@@ -107,12 +121,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             e.printStackTrace();
                         }
                         //Mirem si hi existeix l'adreca
-                        if(position != -1 && addressList != null) {
+                        if(addressList != null) {
                             Address address = addressList.get(0);
                             LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
                             mMap.addMarker(new MarkerOptions().position(latLng).title(location));
                             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10));
-                            mapsStatus.addLocationOfNote(position, latLng);
+                            saveLocationBtn.setEnabled(true);
+                            lastLocation = latLng;
                         }
                     }
                     return false;
@@ -128,6 +143,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Dialog dialog = GooglePlayServicesUtil.getErrorDialog(status, (Activity)getApplicationContext(), 10);
             dialog.show();
         }
+        //getBundlesData();
     }
 
     /**
@@ -145,6 +161,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setOnMyLocationButtonClickListener(this);
         mMap.setOnMyLocationClickListener(this);
         enableMyLocation();
+        getBundlesData();
         // Add a marker in Sydney and move the camera
         /*LatLng sydney = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
@@ -155,13 +172,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public boolean onMyLocationButtonClick() {
-        Toast.makeText(this, "MyLocation button clicked", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "MyLocation button clicked", Toast.LENGTH_SHORT).show();
         return false;
     }
 
     @Override
     public void onMyLocationClick(@NonNull Location location) {
-        Toast.makeText(this, "Current location:\n" + location, Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "Current location:\n" + location, Toast.LENGTH_SHORT).show();
+        lastLocation = new LatLng(location.getLatitude(), location.getLongitude());
+        String address = getAddress(lastLocation.latitude, lastLocation.longitude);
+        mMap.addMarker(new MarkerOptions().position(lastLocation).title(address));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(lastLocation, 10));
+        saveLocationBtn.setEnabled(true);
     }
 
     public void setAllPreviousLocations(){
@@ -176,9 +198,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void getBundlesData(){
         Bundle bundle = getIntent().getExtras();
         if(bundle != null){
-            position = bundle.getInt("position");
-        }else{
-            position = -1;
+            lastLocation = (LatLng) bundle.get("location");
+            String address = getAddress(lastLocation.latitude, lastLocation.longitude);
+            mMap.addMarker(new MarkerOptions().position(lastLocation).title(address));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(lastLocation, 10));
         }
     }
 
@@ -207,5 +230,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
         return null;
+    }
+
+    private void saveLocation(){
+        //TODO: save location
+        Intent intent = new Intent();
+        intent.putExtra("location", lastLocation.toString());
+        setResult(RESULT_OK, intent);
+        finish();
+    }
+
+    private LatLng convertStringToLatLng(String location){
+        String[] latlong =  location.split(",");
+        String[] lat = latlong[0].split("\\(");
+        String[] lng = latlong[1].split("\\)");
+
+        double latitude = Double.parseDouble(lat[1]);
+        double longitude = Double.parseDouble(lng[0]);
+        return new LatLng(latitude, longitude);
     }
 }
