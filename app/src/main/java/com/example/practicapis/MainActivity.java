@@ -127,9 +127,11 @@ public class MainActivity extends AppCompatActivity {
                 if (isChecked) {
                     notesAdapter.setLocalDataSet(appStatus.getArchivedNotes());
                     appStatus.setArchivedView();
+                    addNotebtn.setEnabled(false);
                 } else {
                     notesAdapter.setLocalDataSet(appStatus.getAllNotes());
                     appStatus.setNotesView();
+                    addNotebtn.setEnabled(true);
                 }
                 mRecyclerViewNotes.setAdapter(notesAdapter);
             }

@@ -64,8 +64,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
      */
      NotesAdapter(Context current, ArrayList<Note> dataSet) {
         parentContext = current;
-        localDataSet = dataSet;
-        Collections.sort(localDataSet, Collections.reverseOrder());
+        localDataSet = sortByFavourite(dataSet);
      }
     public void setArchive(boolean archive) {
          this.archive = archive;
@@ -75,7 +74,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
     public void setLocalDataSet(ArrayList<Note> dataSet){
         localDataSet = dataSet;
         if(localDataSet != null){
-            Collections.sort(localDataSet, Collections.reverseOrder());
+            localDataSet = sortByFavourite(localDataSet);
         }
     }
 
@@ -133,5 +132,21 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
             return localDataSet.size();
         }
         return 0;
+    }
+
+    private ArrayList<Note> sortByFavourite(ArrayList<Note> notes){
+         ArrayList<Note> favourites = new ArrayList<>();
+         ArrayList<Note> notFavourites = new ArrayList<>();
+         for(Note note : notes){
+             if(note.isFavorite()){
+                 favourites.add(note);
+             }else{
+                 notFavourites.add(note);
+             }
+         }
+        Collections.sort(favourites, Collections.reverseOrder());
+        Collections.sort(notFavourites, Collections.reverseOrder());
+         favourites.addAll(notFavourites);
+         return favourites;
     }
 }
