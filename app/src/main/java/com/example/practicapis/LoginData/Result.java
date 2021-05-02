@@ -1,4 +1,4 @@
-package com.example.practicapis.data;
+package com.example.practicapis.LoginData;
 
 /**
  * A generic class that holds a result success w/ data or an error exception.

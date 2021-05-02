@@ -1,47 +1,42 @@
-package com.example.practicapis;
+package com.example.practicapis.viewModel;
 
 import android.util.Log;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import java.util.ArrayList;
+import com.example.practicapis.database.DatabaseAdapter;
+import com.example.practicapis.localLogic.Note;
 
 public class NoteActivityViewModel extends ViewModel {
-    private final MutableLiveData<ArrayList<Note>> mNotes;
-    private final MutableLiveData<String> mToast;
     private final DatabaseAdapter adapter = DatabaseAdapter.databaseAdapter;
 
-    public static final String TAG = "ViewModel";
+    public static final String TAG = "NoteActivityViewModel";
 
     public NoteActivityViewModel(){
-        mNotes = new MutableLiveData<>();
-        mToast = new MutableLiveData<>();
     }
 
     public void addNote(Note note){
-        Log.d("saveCard", "saveCard-> saveDocument");
+        Log.d(TAG, "Adding note.");
         adapter.saveNote(note);
     }
 
     public void archiveNote(Note note){
+        Log.d(TAG, "Archiving note.");
         adapter.archiveNote(note);
     }
 
     public void deleteNote(Note note){
+        Log.d(TAG, "Deleting note.");
         adapter.deleteNote(note);
     }
 
     public void editNote(Note note){
+        Log.d(TAG, "Editing note.");
         adapter.editNote(note);
     }
 
-    public LiveData<ArrayList<Note>> getNotes(){
-        return mNotes;
-    }
-
     public void deleteArchivedNote(Note note) {
+        Log.d(TAG, "Deleting archived note.");
         adapter.deleteArchivedNote(note);
     }
 }

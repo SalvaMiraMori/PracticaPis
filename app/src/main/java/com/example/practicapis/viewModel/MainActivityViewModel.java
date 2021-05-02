@@ -1,11 +1,14 @@
-package com.example.practicapis;
+package com.example.practicapis.viewModel;
 
 import java.util.ArrayList;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class MainActivityViewModel extends ViewModel implements DatabaseAdapter.vmInterface{
+import com.example.practicapis.database.DatabaseAdapter;
+import com.example.practicapis.localLogic.Note;
+
+public class MainActivityViewModel extends ViewModel implements DatabaseAdapter.vmInterface {
 
     private final MutableLiveData<ArrayList<Note>> mNotes;
     private final MutableLiveData<ArrayList<Note>> mArchivedNotes;
@@ -39,7 +42,4 @@ public class MainActivityViewModel extends ViewModel implements DatabaseAdapter.
         return mNotes;
     }
     public MutableLiveData<ArrayList<Note>> getArchivedNotes(){ return mArchivedNotes; }
-    public Note getNote(int idx){
-        return mNotes.getValue().get(idx);
-    }
 }

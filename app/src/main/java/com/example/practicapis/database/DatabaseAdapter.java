@@ -1,13 +1,13 @@
-package com.example.practicapis;
+package com.example.practicapis.database;
 
 import android.os.Build;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.practicapis.localLogic.Note;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -22,20 +22,17 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.storage.FirebaseStorage;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Executor;
 
 public class DatabaseAdapter extends AppCompatActivity {
 
     public static final String TAG = "DatabaseAdapter";
 
     public static FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private final FirebaseStorage storage = FirebaseStorage.getInstance();
     private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private FirebaseUser user;
 
@@ -54,48 +51,12 @@ public class DatabaseAdapter extends AppCompatActivity {
     public DatabaseAdapter(){
         databaseAdapter = this;
         FirebaseFirestore.setLoggingEnabled(true);
-        //initFirebase();
-        //listenChanges();
     }
-
-    public void setListener(vmInterface listener){
-        this.listener = listener;
-    }
-
-
 
     public interface vmInterface{
         void setNotes(ArrayList<Note> notes);
         void setArchivedNotes(ArrayList<Note> archivedNotes);
         void setToast(String s);
-    }
-
-    public void initFirebase(){
-
-        user = mAuth.getCurrentUser();
-
-        if (user == null) {
-            mAuth.signInAnonymously().addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (task.isSuccessful()) {
-                        // Sign in success, update UI with the signed-in user's information
-                        Log.d(TAG, "signInAnonymously:success");
-                        listener.setToast("Authentication successful.");
-                        user = mAuth.getCurrentUser();
-                    } else {
-                        // If sign in fails, display a message to the user.
-                        Log.w(TAG, "signInAnonymously:failure", task.getException());
-                        listener.setToast("Authentication failed.");
-
-                    }
-                }
-            });
-        }
-        else{
-            listener.setToast("Authentication with current user.");
-
-        }
     }
 
     public void signUpUser(String email, String password){
@@ -126,25 +87,6 @@ public class DatabaseAdapter extends AppCompatActivity {
             }
         });
         return isInDb[0];
-    }
-
-    public void loginUser(String email, String password){
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            setUser(user);
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "signInWithEmail:failure", task.getException());
-                            Toast.makeText(DatabaseAdapter.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
     }
 
     public void setUser(FirebaseUser user){

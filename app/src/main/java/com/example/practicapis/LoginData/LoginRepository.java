@@ -1,6 +1,6 @@
-package com.example.practicapis.data;
+package com.example.practicapis.LoginData;
 
-import com.example.practicapis.data.model.LoggedInUser;
+import com.example.practicapis.LoginData.model.LoggedInUser;
 
 /**
  * Class that requests authentication and user information from the remote data source and

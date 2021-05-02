@@ -1,18 +1,18 @@
-package com.example.practicapis;
+package com.example.practicapis.view;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.practicapis.ui.login.LoginActivity;
+import com.example.practicapis.R;
+import com.example.practicapis.viewModel.RegisterActivityViewModel;
 
 public class RegisterActivity extends AppCompatActivity {
     private RegisterActivityViewModel viewModel;
@@ -71,7 +71,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void goToLoginActivity() throws InterruptedException {
-        if(!emailTxt.getText().toString().contains("@")){
+        if(!emailTxt.getText().toString().contains("@") || !Patterns.EMAIL_ADDRESS.matcher(emailTxt.getText().toString()).matches()){
             Toast.makeText(RegisterActivity.this, "Wrong email format.", Toast.LENGTH_SHORT).show();
         }else if(!isPasswordSecure(passwordTxt.getText().toString())){
             Toast.makeText(RegisterActivity.this, "Password not secure enough.", Toast.LENGTH_SHORT).show();

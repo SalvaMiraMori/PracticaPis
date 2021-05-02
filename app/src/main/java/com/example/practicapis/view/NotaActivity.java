@@ -1,4 +1,4 @@
-package com.example.practicapis.nota;
+package com.example.practicapis.view;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,10 +23,9 @@ import androidx.appcompat.widget.Toolbar;
 
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.practicapis.AppStatus;
-import com.example.practicapis.MapsActivity;
-import com.example.practicapis.Note;
-import com.example.practicapis.NoteActivityViewModel;
+import com.example.practicapis.localLogic.AppStatus;
+import com.example.practicapis.localLogic.Note;
+import com.example.practicapis.viewModel.NoteActivityViewModel;
 import com.example.practicapis.R;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -42,7 +41,7 @@ public class NotaActivity extends AppCompatActivity {
     private Note note;
     private NoteActivityViewModel viewModel;
     public static final String TAG = "NotaActivity";
-    private boolean isFavorite, toArchive, prevArchive;
+    private boolean isFavorite;
     private AppStatus appStatus;
     private int position;
 
@@ -55,7 +54,6 @@ public class NotaActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("New Note");
 
         isFavorite = false;
-        toArchive = false;
         title = findViewById(R.id.noteTitle);
         text = findViewById(R.id.noteBody);
 
@@ -84,9 +82,7 @@ public class NotaActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.length() != 0){
-                    Objects.requireNonNull(getSupportActionBar()).setTitle(s);
-                }
+                Objects.requireNonNull(getSupportActionBar()).setTitle(s);
             }
 
             @Override
@@ -176,6 +172,9 @@ public class NotaActivity extends AppCompatActivity {
             } else {
                 viewModel.editNote(note);
             }
+        }else if(note.getId() != null){
+            Toast.makeText(this, "At least put a title to the note please.", Toast.LENGTH_SHORT).show();
+            return;
         }
         onBackPressed();
     }

@@ -1,6 +1,6 @@
-package com.example.practicapis.data;
+package com.example.practicapis.LoginData;
 
-import com.example.practicapis.data.model.LoggedInUser;
+import com.example.practicapis.LoginData.model.LoggedInUser;
 
 import java.io.IOException;
 

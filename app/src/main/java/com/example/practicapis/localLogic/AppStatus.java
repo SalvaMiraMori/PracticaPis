@@ -1,6 +1,5 @@
-package com.example.practicapis;
+package com.example.practicapis.localLogic;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 

@@ -1,7 +1,8 @@
-package com.example.practicapis;
+package com.example.practicapis.viewModel;
 
 import androidx.lifecycle.ViewModel;
 
+import com.example.practicapis.database.DatabaseAdapter;
 import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivityViewModel extends ViewModel {
@@ -13,9 +14,5 @@ public class LoginActivityViewModel extends ViewModel {
 
     public void setUser(FirebaseUser user){
         adapter.setUser(user);
-    }
-
-    public void loginUser(String email, String password){
-        adapter.loginUser(email, password);
     }
 }

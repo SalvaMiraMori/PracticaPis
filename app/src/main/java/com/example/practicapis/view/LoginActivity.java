@@ -1,4 +1,4 @@
-package com.example.practicapis.ui.login;
+package com.example.practicapis.view;
 
 import android.app.Activity;
 
@@ -25,15 +25,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.practicapis.AppStatus;
-import com.example.practicapis.DatabaseAdapter;
-import com.example.practicapis.LoginActivityViewModel;
-import com.example.practicapis.MainActivity;
-import com.example.practicapis.MainActivityViewModel;
-import com.example.practicapis.R;
-import com.example.practicapis.RegisterActivity;
+import com.example.practicapis.localLogic.AppStatus;
+import com.example.practicapis.ui.login.LoggedInUserView;
+import com.example.practicapis.ui.login.LoginFormState;
+import com.example.practicapis.ui.login.LoginResult;
 import com.example.practicapis.ui.login.LoginViewModel;
 import com.example.practicapis.ui.login.LoginViewModelFactory;
+import com.example.practicapis.viewModel.LoginActivityViewModel;
+import com.example.practicapis.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -41,13 +40,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GoogleAuthCredential;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 public class LoginActivity extends AppCompatActivity {
@@ -254,7 +251,6 @@ public class LoginActivity extends AppCompatActivity {
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "signInWithCredential:failure", task.getException());
-                        //updateUI(null);
                     }
                 }
             });
@@ -263,7 +259,6 @@ public class LoginActivity extends AppCompatActivity {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
             Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
-           // updateUI(null);
         }
     }
 

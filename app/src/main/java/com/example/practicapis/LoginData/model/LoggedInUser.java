@@ -1,4 +1,4 @@
-package com.example.practicapis.data.model;
+package com.example.practicapis.LoginData.model;
 
 /**
  * Data class that captures user information for logged in users retrieved from LoginRepository

@@ -6,9 +6,9 @@ import androidx.lifecycle.ViewModel;
 
 import android.util.Patterns;
 
-import com.example.practicapis.data.LoginRepository;
-import com.example.practicapis.data.Result;
-import com.example.practicapis.data.model.LoggedInUser;
+import com.example.practicapis.LoginData.LoginRepository;
+import com.example.practicapis.LoginData.Result;
+import com.example.practicapis.LoginData.model.LoggedInUser;
 import com.example.practicapis.R;
 
 public class LoginViewModel extends ViewModel {
@@ -21,11 +21,11 @@ public class LoginViewModel extends ViewModel {
         this.loginRepository = loginRepository;
     }
 
-    LiveData<LoginFormState> getLoginFormState() {
+    public LiveData<LoginFormState> getLoginFormState() {
         return loginFormState;
     }
 
-    LiveData<LoginResult> getLoginResult() {
+    public LiveData<LoginResult> getLoginResult() {
         return loginResult;
     }
 

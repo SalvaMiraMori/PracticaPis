@@ -1,4 +1,4 @@
-package com.example.practicapis;
+package com.example.practicapis.view;
 
 import android.content.Context;
 import android.content.Intent;
@@ -7,7 +7,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.CompoundButton;
 import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,8 +17,11 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 //import com.example.practicapis.nota.DataBase;
-import com.example.practicapis.nota.NotaActivity;
-import com.example.practicapis.ui.login.LoginActivity;
+import com.example.practicapis.localLogic.AppStatus;
+import com.example.practicapis.viewModel.MainActivityViewModel;
+import com.example.practicapis.localLogic.Note;
+import com.example.practicapis.localLogic.NotesAdapter;
+import com.example.practicapis.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -27,12 +29,9 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     private MenuItem switchArchive;
-    private ArrayList<Note> notesList;
-    private ArrayList<Note> archivedNotesList;
     private RecyclerView mRecyclerViewNotes;
     private NotesAdapter notesAdapter;
     private AppStatus appStatus;
-    private TextView username;
     private FloatingActionButton addNotebtn;
     private MainActivityViewModel viewModel;
     private Context parentContext;
@@ -45,10 +44,11 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //recyclerList = new ArrayList<>();
+        // Configure recycler view
         mRecyclerViewNotes = findViewById(R.id.recyclerView);
         mRecyclerViewNotes.setLayoutManager(new GridLayoutManager(this, 2));
-        username = findViewById(R.id.userName);
+
+        // Configure activity elements
         appStatus = AppStatus.getInstance();
         notesAdapter = new NotesAdapter(this, appStatus.getAllNotes());
         mRecyclerViewNotes.setAdapter(notesAdapter);
@@ -58,10 +58,7 @@ public class MainActivity extends AppCompatActivity {
         setLiveDataObservers();
 
         addNotebtn.setOnClickListener(v -> addNote());
-
-        notesList = appStatus.getAllNotes();
-        archivedNotesList = appStatus.getArchivedNotes();
-        notesAdapter.setLocalDataSet(notesList);
+        notesAdapter.setLocalNoteSet(appStatus.getAllNotes());
         mRecyclerViewNotes.setAdapter(notesAdapter);
     }
 
@@ -70,12 +67,10 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         appStatus.setAllNotes(viewModel.getNotes().getValue());
         appStatus.setArchivedNotes(viewModel.getArchivedNotes().getValue());
-        notesList = appStatus.getAllNotes();
-        archivedNotesList = appStatus.getArchivedNotes();
         if(appStatus.isArchivedView()){
-            notesAdapter.setLocalDataSet(appStatus.getArchivedNotes());
+            notesAdapter.setLocalNoteSet(appStatus.getArchivedNotes());
         }else{
-            notesAdapter.setLocalDataSet(appStatus.getAllNotes());
+            notesAdapter.setLocalNoteSet(appStatus.getAllNotes());
         }
         mRecyclerViewNotes.setAdapter(notesAdapter);
     }
@@ -90,9 +85,7 @@ public class MainActivity extends AppCompatActivity {
                 NotesAdapter newAdapter = new NotesAdapter(parentContext, arrayList);
                 mRecyclerViewNotes.swapAdapter(newAdapter, false);
                 appStatus.setArchivedNotes(viewModel.getArchivedNotes().getValue());
-                archivedNotesList = appStatus.getArchivedNotes();
                 appStatus.setAllNotes(viewModel.getNotes().getValue());
-                notesList = appStatus.getAllNotes();
                 newAdapter.notifyDataSetChanged();
             }
         };
@@ -104,9 +97,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        //viewModel.getArchivedNotes().observe(this, observerNotes);
         viewModel.getNotes().observe(this, observerNotes);
-        //viewModel.getToast().observe(this, observerToast);
     }
 
     public void addNote() {
@@ -127,19 +118,17 @@ public class MainActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     appStatus.setArchivedView();
-                    notesAdapter.setLocalDataSet(appStatus.getArchivedNotes());
+                    notesAdapter.setLocalNoteSet(appStatus.getArchivedNotes());
                     addNotebtn.setEnabled(false);
                 } else {
                     appStatus.setNotesView();
-                    notesAdapter.setLocalDataSet(appStatus.getAllNotes());
-                    appStatus.setAllNotes(notesAdapter.getLocalDataSet());
+                    notesAdapter.setLocalNoteSet(appStatus.getAllNotes());
+                    appStatus.setAllNotes(notesAdapter.getLocalNoteSet());
                     addNotebtn.setEnabled(true);
                 }
                 mRecyclerViewNotes.setAdapter(notesAdapter);
             }
         });
-        //archivedNotesSwitch.setChecked(true);
-        //archivedNotesSwitch.setChecked(false);
         return true;
     }
 
@@ -163,7 +152,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void signOut(){
-        // TODO: Sign out.
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
         this.finish();

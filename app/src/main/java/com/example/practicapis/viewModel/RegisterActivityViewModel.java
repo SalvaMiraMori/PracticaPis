@@ -1,4 +1,6 @@
-package com.example.practicapis;
+package com.example.practicapis.viewModel;
+
+import com.example.practicapis.database.DatabaseAdapter;
 
 public class RegisterActivityViewModel {
     private DatabaseAdapter db;

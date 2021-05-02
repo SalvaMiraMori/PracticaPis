@@ -1,4 +1,4 @@
-package com.example.practicapis;
+package com.example.practicapis.localLogic;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,16 +13,16 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.practicapis.nota.NotaActivity;
+import com.example.practicapis.R;
+import com.example.practicapis.view.NotaActivity;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
 public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> {
 
-    private ArrayList<Note> localDataSet;
+    private ArrayList<Note> localNoteSet;
     private final Context parentContext;
-    private boolean archive;
     private AppStatus appStatus = AppStatus.getInstance();
 
     /**
@@ -47,11 +47,9 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
         public TextView getTitleNote() {
             return title;
         }
-
         public LinearLayout getLayout() {
             return noteLayout;
         }
-
         public TextView getBodyNote() {return body;}
         public ImageView getFavorite() {return favorite;}
     }
@@ -62,19 +60,15 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
      * @param dataSet String[] containing the data to populate views to be used
      * by RecyclerView.
      */
-     NotesAdapter(Context current, ArrayList<Note> dataSet) {
+     public NotesAdapter(Context current, ArrayList<Note> dataSet) {
         parentContext = current;
-        localDataSet = sortByFavourite(dataSet);
+        localNoteSet = sortByFavourite(dataSet);
      }
-    public void setArchive(boolean archive) {
-         this.archive = archive;
-        System.out.println("archive " + archive);
-    }
 
-    public void setLocalDataSet(ArrayList<Note> dataSet){
-        localDataSet = dataSet;
-        if(localDataSet != null && !appStatus.isArchivedView()){
-            localDataSet = sortByFavourite(localDataSet);
+    public void setLocalNoteSet(ArrayList<Note> dataSet){
+        localNoteSet = dataSet;
+        if(localNoteSet != null && !appStatus.isArchivedView()){
+            localNoteSet = sortByFavourite(localNoteSet);
         }
     }
 
@@ -96,10 +90,10 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
         int color = ContextCompat.getColor(parentContext, R.color.note);
         viewHolder.getLayout().setBackgroundColor(color);
 
-        viewHolder.getTitleNote().setText(localDataSet.get(position).getTitle());
-        viewHolder.getBodyNote().setText(localDataSet.get(position).getBody());
-        System.out.println("Note " + localDataSet.get(position).getTitle() + " OnCustomAdapter: isFavorite " + localDataSet.get(position).isFavorite());
-        if (localDataSet.get(position).isFavorite())
+        viewHolder.getTitleNote().setText(localNoteSet.get(position).getTitle());
+        viewHolder.getBodyNote().setText(localNoteSet.get(position).getBody());
+        System.out.println("Note " + localNoteSet.get(position).getTitle() + " OnCustomAdapter: isFavorite " + localNoteSet.get(position).isFavorite());
+        if (localNoteSet.get(position).isFavorite())
             viewHolder.getFavorite().setVisibility(View.VISIBLE);
         else
             viewHolder.getFavorite().setVisibility(View.INVISIBLE);
@@ -118,7 +112,6 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
                 }
                 Intent intent = new Intent(v.getContext(), NotaActivity.class);
                 intent.putExtra("note", note);
-                //intent.putExtra("position", position);
                 v.getContext().startActivity(intent);
             }
 
@@ -128,8 +121,8 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        if (localDataSet != null) {
-            return localDataSet.size();
+        if (localNoteSet != null) {
+            return localNoteSet.size();
         }
         return 0;
     }
@@ -144,11 +137,11 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
                  notFavourites.add(note);
              }
          }
-        Collections.sort(favourites, Collections.reverseOrder());
-        Collections.sort(notFavourites, Collections.reverseOrder());
+         Collections.sort(favourites, Collections.reverseOrder());
+         Collections.sort(notFavourites, Collections.reverseOrder());
          favourites.addAll(notFavourites);
          return favourites;
     }
 
-    public ArrayList<Note> getLocalDataSet(){ return localDataSet; }
+    public ArrayList<Note> getLocalNoteSet(){ return localNoteSet; }
 }

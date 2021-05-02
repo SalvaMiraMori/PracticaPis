@@ -1,9 +1,8 @@
-package com.example.practicapis;
+package com.example.practicapis.localLogic;
 
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -109,7 +108,6 @@ public class Note implements Parcelable, Comparable<Note> {
         dest.writeString(title);
         dest.writeString(body);
         dest.writeString(id);
-        //dest.writeBoolean(favorite);
         dest.writeString(String.valueOf(favorite));
         if(location != null){
             dest.writeString(location.toString());

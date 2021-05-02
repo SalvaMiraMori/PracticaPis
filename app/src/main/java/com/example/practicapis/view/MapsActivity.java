@@ -1,4 +1,4 @@
-package com.example.practicapis;
+package com.example.practicapis.view;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -6,10 +6,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -17,11 +15,11 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import com.example.practicapis.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -35,7 +33,6 @@ import com.google.android.gms.maps.GoogleMap.OnMyLocationClickListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.IOException;
-import java.security.Permissions;
 import java.util.List;
 import java.util.Locale;
 
@@ -50,8 +47,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private int LOCATION_PERMISSION_REQUEST = 1;
     private boolean enabled = false;
     private SearchView searchView;
-    private int position;
-    private MapsStatus mapsStatus;
     private FloatingActionButton saveLocationBtn;
     private LatLng lastLocation;
 
@@ -104,7 +99,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if(status == ConnectionResult.SUCCESS){
             SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.map);
-            //setAllPreviousLocations();
             searchView = findViewById(R.id.search_btn);
             searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @RequiresApi(api = Build.VERSION_CODES.N)
@@ -145,7 +139,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Dialog dialog = GooglePlayServicesUtil.getErrorDialog(status, (Activity)getApplicationContext(), 10);
             dialog.show();
         }
-        //getBundlesData();
     }
 
     /**
@@ -164,37 +157,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setOnMyLocationClickListener(this);
         enableMyLocation();
         getBundlesData();
-        // Add a marker in Sydney and move the camera
-        /*LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));*/
-
-
     }
 
     @Override
-    public boolean onMyLocationButtonClick() {
-        //Toast.makeText(this, "MyLocation button clicked", Toast.LENGTH_SHORT).show();
-        return false;
-    }
+    public boolean onMyLocationButtonClick() { return false; }
 
     @Override
     public void onMyLocationClick(@NonNull Location location) {
-        //Toast.makeText(this, "Current location:\n" + location, Toast.LENGTH_SHORT).show();
         lastLocation = new LatLng(location.getLatitude(), location.getLongitude());
         String address = getAddress(lastLocation.latitude, lastLocation.longitude);
         mMap.addMarker(new MarkerOptions().position(lastLocation).title(address));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(lastLocation, 10));
         saveLocationBtn.setEnabled(true);
-    }
-
-    public void setAllPreviousLocations(){
-        String address;
-        for(LatLng latLng : mapsStatus.getAllPreviouslyVisitedLocations(position)){
-            address = getAddress(latLng.latitude, latLng.longitude);
-            mMap.addMarker(new MarkerOptions().position(latLng).title(address));
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10));
-        }
     }
 
     public void getBundlesData(){
@@ -222,33 +196,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             add = add + "\n" + obj.getSubThoroughfare();
 
             return add;
-            // Toast.makeText(this, "Address=>" + add,
-            // Toast.LENGTH_SHORT).show();
-
-            // TennisAppActivity.showDialog(add);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Error getting the address.", Toast.LENGTH_SHORT).show();
         }
         return null;
     }
 
     private void saveLocation(){
-        //TODO: save location
         Intent intent = new Intent();
         intent.putExtra("location", lastLocation.toString());
         setResult(RESULT_OK, intent);
         finish();
-    }
-
-    private LatLng convertStringToLatLng(String location){
-        String[] latlong =  location.split(",");
-        String[] lat = latlong[0].split("\\(");
-        String[] lng = latlong[1].split("\\)");
-
-        double latitude = Double.parseDouble(lat[1]);
-        double longitude = Double.parseDouble(lng[0]);
-        return new LatLng(latitude, longitude);
     }
 }
