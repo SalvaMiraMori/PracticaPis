@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -35,7 +36,11 @@ import java.time.LocalDateTime;
 
 public class NotaActivity extends AppCompatActivity {
 
-    private ImageButton location;
+    private ImageButton locationBtn;
+    private ImageButton reminderBtn;
+    private ImageButton fileBtn;
+    private ImageButton drawableBtn;
+    private ImageButton tagBtn;
     private Toolbar toolbar;
     private EditText title, text;
     private Note note;
@@ -43,7 +48,6 @@ public class NotaActivity extends AppCompatActivity {
     public static final String TAG = "NotaActivity";
     private boolean isFavorite;
     private AppStatus appStatus;
-    private int position;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,14 +67,8 @@ public class NotaActivity extends AppCompatActivity {
             text.setEnabled(false);
         }
 
-        location=findViewById(R.id.addLocationBtn);
+        initializeButtons();
 
-        location.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                goToMapa();
-            }
-        });
         getNoteDataBundle();
 
         title.addTextChangedListener(new TextWatcher() {
@@ -91,6 +89,59 @@ public class NotaActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void initializeButtons(){
+        locationBtn =findViewById(R.id.addLocationBtn);
+        locationBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goToMapa();
+            }
+        });
+        locationBtn.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                showBtnInfo(locationBtn.getId(), locationBtn);
+                return true;
+            }
+        });
+
+        reminderBtn = findViewById(R.id.addReminderBtn);
+        reminderBtn.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                showBtnInfo(reminderBtn.getId(), reminderBtn);
+                return true;
+            }
+        });
+
+        drawableBtn = findViewById(R.id.drawBtn);
+        drawableBtn.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                showBtnInfo(drawableBtn.getId(), drawableBtn);
+                return true;
+            }
+        });
+
+        fileBtn = findViewById(R.id.addFileBtn);
+        fileBtn.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                showBtnInfo(fileBtn.getId(), fileBtn);
+                return true;
+            }
+        });
+
+        tagBtn = findViewById(R.id.addTagBtn);
+        tagBtn.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                showBtnInfo(tagBtn.getId(), tagBtn);
+                return true;
+            }
+        });
     }
 
     @Override
@@ -242,5 +293,32 @@ public class NotaActivity extends AppCompatActivity {
         double latitude = Double.parseDouble(lat[1]);
         double longitude = Double.parseDouble(lng[0]);
         return new LatLng(latitude, longitude);
+    }
+
+    private void showBtnInfo(int btnId, ImageButton btn){
+        Toast toast = null;
+        switch(btnId){
+            case R.id.addLocationBtn:
+                toast = Toast.makeText(this, "Add location", Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.TOP,0,0);
+                break;
+            case R.id.addFileBtn:
+                toast = Toast.makeText(this, "Add file", Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.TOP,0,0);
+                break;
+            case R.id.addReminderBtn:
+                toast = Toast.makeText(this, "Add reminder", Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.TOP,0,0);
+                break;
+            case R.id.addTagBtn:
+                toast = Toast.makeText(this, "Add tag", Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.TOP,0,0);
+                break;
+            case R.id.drawBtn:
+                toast = Toast.makeText(this, "Add drawable", Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.TOP,0,0);
+                break;
+        }
+        toast.show();
     }
 }

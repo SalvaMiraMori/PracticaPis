@@ -87,9 +87,6 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
 
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
-        int color = ContextCompat.getColor(parentContext, R.color.note);
-        viewHolder.getLayout().setBackgroundColor(color);
-
         viewHolder.getTitleNote().setText(localNoteSet.get(position).getTitle());
         viewHolder.getBodyNote().setText(localNoteSet.get(position).getBody());
         System.out.println("Note " + localNoteSet.get(position).getTitle() + " OnCustomAdapter: isFavorite " + localNoteSet.get(position).isFavorite());

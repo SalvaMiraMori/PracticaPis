@@ -23,14 +23,29 @@
 
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addNoteBtnTest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        android:contentDescription="@string/buttonAdd"
+        app:backgroundTint="#F4B400"
+        app:rippleColor="@android:color/transparent"
+        app:tint="@android:color/black"
+        app:fabSize="normal"
+        android:scaleType="fitCenter"
+        app:maxImageSize="35dp"
+        app:srcCompat="@drawable/ic_add" />
+<!--
+    <ImageButton
         android:id="@+id/addNoteBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@android:drawable/ic_input_add"
-        android:contentDescription="@string/buttonAdd" />
-
+        android:background="@android:color/transparent"
+        app:srcCompat="@drawable/ic_add" />
+-->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"

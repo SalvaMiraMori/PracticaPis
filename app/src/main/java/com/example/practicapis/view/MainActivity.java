@@ -6,11 +6,13 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.CompoundButton;
+import android.widget.ImageButton;
 import android.widget.Switch;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -33,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private NotesAdapter notesAdapter;
     private AppStatus appStatus;
     private FloatingActionButton addNotebtn;
+    private ImageButton addNoteBtn;
     private MainActivityViewModel viewModel;
     private Context parentContext;
     private Switch archivedNotesSwitch;
@@ -52,12 +55,15 @@ public class MainActivity extends AppCompatActivity {
         appStatus = AppStatus.getInstance();
         notesAdapter = new NotesAdapter(this, appStatus.getAllNotes());
         mRecyclerViewNotes.setAdapter(notesAdapter);
-        addNotebtn = findViewById(R.id.addNoteBtn);
+        addNotebtn = findViewById(R.id.addNoteBtnTest);
+        //addNotebtn.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_add));
+        //addNoteBtn = findViewById(R.id.addNoteBtn);
         parentContext = this.getBaseContext();
 
         setLiveDataObservers();
 
         addNotebtn.setOnClickListener(v -> addNote());
+        //addNoteBtn.setOnClickListener(v -> addNote());
         notesAdapter.setLocalNoteSet(appStatus.getAllNotes());
         mRecyclerViewNotes.setAdapter(notesAdapter);
     }
@@ -120,11 +126,13 @@ public class MainActivity extends AppCompatActivity {
                     appStatus.setArchivedView();
                     notesAdapter.setLocalNoteSet(appStatus.getArchivedNotes());
                     addNotebtn.setEnabled(false);
+                    //addNoteBtn.setEnabled(false);
                 } else {
                     appStatus.setNotesView();
                     notesAdapter.setLocalNoteSet(appStatus.getAllNotes());
                     appStatus.setAllNotes(notesAdapter.getLocalNoteSet());
                     addNotebtn.setEnabled(true);
+                    //addNoteBtn.setEnabled(true);
                 }
                 mRecyclerViewNotes.setAdapter(notesAdapter);
             }
