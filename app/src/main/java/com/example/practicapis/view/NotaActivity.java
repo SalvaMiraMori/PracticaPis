@@ -300,25 +300,21 @@ public class NotaActivity extends AppCompatActivity {
         switch(btnId){
             case R.id.addLocationBtn:
                 toast = Toast.makeText(this, "Add location", Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.TOP,0,0);
                 break;
             case R.id.addFileBtn:
                 toast = Toast.makeText(this, "Add file", Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.TOP,0,0);
                 break;
             case R.id.addReminderBtn:
                 toast = Toast.makeText(this, "Add reminder", Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.TOP,0,0);
                 break;
             case R.id.addTagBtn:
                 toast = Toast.makeText(this, "Add tag", Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.TOP,0,0);
                 break;
             case R.id.drawBtn:
                 toast = Toast.makeText(this, "Add drawable", Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.TOP,0,0);
                 break;
         }
+        toast.setGravity(Gravity.TOP,0,btn.getHeight() + 200);
         toast.show();
     }
 }
