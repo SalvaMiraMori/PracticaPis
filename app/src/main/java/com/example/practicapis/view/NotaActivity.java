@@ -82,6 +82,7 @@ public class NotaActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 Objects.requireNonNull(getSupportActionBar()).setTitle(s);
+                //Objects.requireNonNull(getSupportActionBar()).
             }
 
             @Override
@@ -102,16 +103,23 @@ public class NotaActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.action_share) {
-            onSharePressed();
-        } else if(item.getItemId() == R.id.action_favorite){
-            onFavoritePressed();
-        } else if(item.getItemId() == R.id.action_delete) {
-            onDeletePressed();
-        } else if (item.getItemId() == R.id.action_archive){
-            onArchivePressed();
-        } else {
-            onSavePressed();
+
+        switch(item.getItemId()){
+            case R.id.action_share:
+                onSharePressed();
+                break;
+            case R.id.action_favorite:
+                onFavoritePressed();
+                break;
+            case R.id.action_delete:
+                onDeletePressed();
+                break;
+            case R.id.action_archive:
+                onArchivePressed();
+                break;
+            case android.R.id.home:
+                onSavePressed();
+                break;
         }
 
         return super.onOptionsItemSelected(item);

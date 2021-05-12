@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel;
 import com.example.practicapis.database.DatabaseAdapter;
 import com.example.practicapis.localLogic.Note;
 
-public class MainActivityViewModel extends ViewModel implements DatabaseAdapter.vmInterface {
+public class MainActivityViewModel extends ViewModel implements DatabaseAdapter.MainInterface {
 
     private final MutableLiveData<ArrayList<Note>> mNotes;
     private final MutableLiveData<ArrayList<Note>> mArchivedNotes;

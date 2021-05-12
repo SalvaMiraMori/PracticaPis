@@ -8,7 +8,7 @@
 
     <LinearLayout
         android:id="@+id/linearLayout2"
-        android:layout_width="413dp"
+        android:layout_width="409dp"
         android:layout_height="51dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/noteTitle"
@@ -16,39 +16,39 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <ImageButton
-            android:id="@+id/editTextBtn"
-            android:layout_width="wrap_content"
+            android:id="@+id/addReminderBtn"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            app:srcCompat="@android:drawable/ic_menu_sort_alphabetically" />
+            app:srcCompat="@drawable/ic_alarm_bell" />
 
         <ImageButton
             android:id="@+id/drawBtn"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            app:srcCompat="@android:drawable/ic_menu_edit" />
+            app:srcCompat="@drawable/ic_pencil" />
 
         <ImageButton
             android:id="@+id/addTagBtn"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            app:srcCompat="@android:drawable/stat_notify_more" />
+            app:srcCompat="@drawable/ic_tag" />
 
         <ImageButton
             android:id="@+id/addFileBtn"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            app:srcCompat="@drawable/ic_baseline_attach_file_24" />
+            app:srcCompat="@drawable/ic_add_file" />
 
         <ImageButton
             android:id="@+id/addLocationBtn"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            app:srcCompat="@android:drawable/ic_dialog_map" />
+            app:srcCompat="@drawable/ic_add_location" />
 
     </LinearLayout>
 

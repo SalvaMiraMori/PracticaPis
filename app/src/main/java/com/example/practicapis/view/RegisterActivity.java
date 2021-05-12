@@ -1,6 +1,7 @@
 package com.example.practicapis.view;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 
 import android.os.Bundle;
 import android.text.Editable;
@@ -37,7 +38,7 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 try {
-                    goToLoginActivity();
+                    viewModel.askExistsEmail(emailTxt.getText().toString());
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -68,6 +69,23 @@ public class RegisterActivity extends AppCompatActivity {
         passwordTxt.addTextChangedListener(textWatcher);
         emailTxt.addTextChangedListener(textWatcher);
         repeatPasswordTxt.addTextChangedListener(textWatcher);
+
+        setLiveDataObservers();
+    }
+
+    public void setLiveDataObservers(){
+        final Observer<Boolean> observerExistEmail = new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                try {
+                    goToLoginActivity();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        viewModel.existsEmail().observe(this, observerExistEmail);
     }
 
     private void goToLoginActivity() throws InterruptedException {
@@ -77,7 +95,7 @@ public class RegisterActivity extends AppCompatActivity {
             Toast.makeText(RegisterActivity.this, "Password not secure enough.", Toast.LENGTH_SHORT).show();
         }else if(!passwordTxt.getText().toString().equals(repeatPasswordTxt.getText().toString())){
             Toast.makeText(RegisterActivity.this, "Repeated password wrong.", Toast.LENGTH_SHORT).show();
-        }else if(viewModel.existsEmail(emailTxt.getText().toString())){
+        }else if(viewModel.existsEmail().getValue()){
             Toast.makeText(RegisterActivity.this, "E-mail already in use.", Toast.LENGTH_SHORT).show();
         }else{
             viewModel.signUpUser(emailTxt.getText().toString(), passwordTxt.getText().toString());

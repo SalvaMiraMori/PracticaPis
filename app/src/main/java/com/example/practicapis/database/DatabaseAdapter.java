@@ -36,14 +36,15 @@ public class DatabaseAdapter extends AppCompatActivity {
     private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private FirebaseUser user;
 
-    public static vmInterface listener;
+    public static MainInterface mainActivityListener;
+    public static RegisterInterface registerActivityListener;
     public static DatabaseAdapter databaseAdapter;
 
-    public DatabaseAdapter(vmInterface listener){
+    public DatabaseAdapter(MainInterface mainActivityListener){
 
         databaseAdapter = this;
         FirebaseFirestore.setLoggingEnabled(true);
-        this.listener = listener;
+        this.mainActivityListener = mainActivityListener;
         user = mAuth.getCurrentUser();
         listenChanges();
     }
@@ -53,10 +54,18 @@ public class DatabaseAdapter extends AppCompatActivity {
         FirebaseFirestore.setLoggingEnabled(true);
     }
 
-    public interface vmInterface{
+    public interface MainInterface {
         void setNotes(ArrayList<Note> notes);
         void setArchivedNotes(ArrayList<Note> archivedNotes);
         void setToast(String s);
+    }
+
+    public interface RegisterInterface {
+        void onExistsEmailSucceed(boolean exists);
+    }
+
+    public void setRegisterActivityListener(RegisterInterface registerInterface){
+        this.registerActivityListener = registerInterface;
     }
 
     public void signUpUser(String email, String password){
@@ -77,16 +86,14 @@ public class DatabaseAdapter extends AppCompatActivity {
                 });
     }
 
-    public boolean existsEmail(String email) throws InterruptedException {
-        final boolean[] isInDb = new boolean[1];
+    public void existsEmail(String email) throws InterruptedException {
         mAuth.fetchSignInMethodsForEmail(email).addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>() {
             @Override
             public void onComplete(@NonNull Task<SignInMethodQueryResult> task) {
                 boolean isNewUser = task.getResult().getSignInMethods().isEmpty();
-                isInDb[0] = !isNewUser;
+                registerActivityListener.onExistsEmailSucceed(!isNewUser);
             }
         });
-        return isInDb[0];
     }
 
     public void setUser(FirebaseUser user){
@@ -129,7 +136,6 @@ public class DatabaseAdapter extends AppCompatActivity {
                 }
             }
         });
-
         return isInDb[0];
     }
 
@@ -158,7 +164,7 @@ public class DatabaseAdapter extends AppCompatActivity {
                         retrieved_notes.add(note);
                         Log.d(TAG, "Getting documents: " + title + body + datetime.toString());
                     }
-                    listener.setNotes(retrieved_notes);
+                    mainActivityListener.setNotes(retrieved_notes);
                 } else{
                     Log.d(TAG, "Error getting documents: ", task.getException());
                 }
@@ -187,7 +193,7 @@ public class DatabaseAdapter extends AppCompatActivity {
                         retrieved_notes.add(note);
                         Log.d(TAG, "Getting documents: " + title + body + datetime.toString());
                     }
-                    listener.setArchivedNotes(retrieved_notes);
+                    mainActivityListener.setArchivedNotes(retrieved_notes);
                 } else{
                     Log.d(TAG, "Error getting documents: ", task.getException());
                 }
