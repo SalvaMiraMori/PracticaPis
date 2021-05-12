@@ -28,66 +28,79 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <TextView
-        android:id="@+id/passwordTxtView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Password"
-        app:layout_constraintBottom_toTopOf="@+id/passwordInput"
-        app:layout_constraintStart_toStartOf="@+id/emailInput"
-        app:layout_constraintTop_toBottomOf="@+id/emailInput" />
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/repeatPasswordInputLayout"
+        android:layout_width="250dp"
+        android:layout_height="51dp"
+        app:boxStrokeColor="@color/teal_200"
+        app:hintTextColor="@color/teal_200"
+        app:layout_constraintBottom_toTopOf="@+id/passwordInputLayout"
+        app:layout_constraintEnd_toEndOf="@+id/emailInputLayout"
+        app:layout_constraintStart_toStartOf="@+id/emailInputLayout"
+        app:layout_constraintTop_toBottomOf="@+id/emailInputLayout">
 
-    <EditText
-        android:id="@+id/passwordInput"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPassword"
-        app:layout_constraintBottom_toTopOf="@+id/repeatPasswordTxtView"
-        app:layout_constraintStart_toStartOf="@+id/passwordTxtView"
-        app:layout_constraintTop_toBottomOf="@+id/passwordTxtView" />
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/passwordInput"
+            android:layout_width="match_parent"
+            android:layout_height="51dp"
+            android:layout_marginBottom="264dp"
+            android:ems="10"
+            android:hint="Password"
+            android:inputType="textPassword"
+            app:layout_constraintBottom_toTopOf="@+id/registrationBtn"
+            app:layout_constraintStart_toStartOf="@+id/repeatPasswordTxtView"
+            app:layout_constraintTop_toBottomOf="@+id/repeatPasswordTxtView"></com.google.android.material.textfield.TextInputEditText>
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <EditText
-        android:id="@+id/repeatPasswordInput"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="264dp"
-        android:ems="10"
-        android:inputType="textPassword"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/passwordInputLayout"
+        android:layout_width="250dp"
+        android:layout_height="51dp"
+        android:layout_marginBottom="262dp"
+        app:boxStrokeColor="@color/teal_200"
+        app:hintTextColor="@color/teal_200"
         app:layout_constraintBottom_toTopOf="@+id/registrationBtn"
-        app:layout_constraintStart_toStartOf="@+id/repeatPasswordTxtView"
-        app:layout_constraintTop_toBottomOf="@+id/repeatPasswordTxtView" />
+        app:layout_constraintEnd_toEndOf="@+id/repeatPasswordInputLayout"
+        app:layout_constraintStart_toStartOf="@+id/repeatPasswordInputLayout"
+        app:layout_constraintTop_toBottomOf="@+id/repeatPasswordInputLayout">
 
-    <EditText
-        android:id="@+id/emailInput"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName"
-        app:layout_constraintBottom_toTopOf="@+id/passwordTxtView"
-        app:layout_constraintStart_toStartOf="@+id/emailTxtView"
-        app:layout_constraintTop_toBottomOf="@+id/emailTxtView" />
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/repeatPasswordInput"
+            android:layout_width="match_parent"
+            android:layout_height="51dp"
+            android:layout_marginBottom="232dp"
+            android:ems="10"
+            android:hint="Repeat password"
+            android:inputType="textPassword" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <TextView
-        android:id="@+id/repeatPasswordTxtView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Repeat password"
-        app:layout_constraintBottom_toTopOf="@+id/repeatPasswordInput"
-        app:layout_constraintStart_toStartOf="@+id/passwordInput"
-        app:layout_constraintTop_toBottomOf="@+id/passwordInput" />
-
-    <TextView
-        android:id="@+id/emailTxtView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="146dp"
-        android:layout_marginEnd="358dp"
-        android:text="E-mail"
-        app:layout_constraintBottom_toTopOf="@+id/emailInput"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/emailInputLayout"
+        android:layout_width="250dp"
+        android:layout_height="51dp"
+        android:layout_marginStart="81dp"
+        android:layout_marginTop="141dp"
+        android:layout_marginEnd="80dp"
+        app:boxStrokeColor="@color/teal_200"
+        app:hintTextColor="@color/teal_200"
+        app:layout_constraintBottom_toTopOf="@+id/repeatPasswordInputLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/activityNameTxtView">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/emailInput"
+            android:layout_width="match_parent"
+            android:layout_height="51dp"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="264dp"
+            android:ems="10"
+            android:hint="E-mail"
+            android:inputType="textPersonName"
+            app:layout_constraintBottom_toTopOf="@+id/passwordInput"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/activityNameTxtView"></com.google.android.material.textfield.TextInputEditText>
+    </com.google.android.material.textfield.TextInputLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
