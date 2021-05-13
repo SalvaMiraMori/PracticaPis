@@ -117,6 +117,7 @@ public class Note implements Parcelable, Comparable<Note> {
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public int compareTo(Note note) {
+
         return this.getDate().compareTo(note.getDate());
     }
 

@@ -29,7 +29,7 @@ public class AppStatus {
 
     public void setAllNotes(ArrayList<Note> notesList){
         if(notesList != null){
-            this.notesList = sortByFavourite(notesList);
+            this.notesList = notesList;
         }
     }
 
@@ -60,20 +60,4 @@ public class AppStatus {
     public boolean isStart(){ return start; }
 
     public void startApp(){ start = false; }
-
-    private ArrayList<Note> sortByFavourite(ArrayList<Note> notes){
-        ArrayList<Note> favourites = new ArrayList<>();
-        ArrayList<Note> notFavourites = new ArrayList<>();
-        for(Note note : notes){
-            if(note.isFavorite()){
-                favourites.add(note);
-            }else{
-                notFavourites.add(note);
-            }
-        }
-        Collections.sort(favourites, Collections.reverseOrder());
-        Collections.sort(notFavourites, Collections.reverseOrder());
-        favourites.addAll(notFavourites);
-        return favourites;
-    }
 }

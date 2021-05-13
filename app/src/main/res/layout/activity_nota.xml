@@ -55,6 +55,16 @@
             android:background="@drawable/selector_border"
             app:srcCompat="@drawable/ic_add_location" />
 
+        <com.like.LikeButton
+            android:id="@+id/star_button"
+            android:layout_width="70dp"
+            android:layout_height="match_parent"
+            app:icon_size="10dp"
+            app:icon_type="heart"
+            app:anim_scale_factor="2.5"
+            app:dots_primary_color="@color/teal_200"
+            app:dots_secondary_color="@color/teal_700"/>
+
     </LinearLayout>
 
     <EditText
