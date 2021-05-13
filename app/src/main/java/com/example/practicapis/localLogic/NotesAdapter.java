@@ -62,14 +62,11 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
      */
      public NotesAdapter(Context current, ArrayList<Note> dataSet) {
         parentContext = current;
-        localNoteSet = sortByFavourite(dataSet);
+        localNoteSet = dataSet;
      }
 
     public void setLocalNoteSet(ArrayList<Note> dataSet){
         localNoteSet = dataSet;
-        if(localNoteSet != null && !appStatus.isArchivedView()){
-            localNoteSet = sortByFavourite(localNoteSet);
-        }
     }
 
     // Create new views (invoked by the layout manager)
@@ -122,22 +119,6 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
             return localNoteSet.size();
         }
         return 0;
-    }
-
-    private ArrayList<Note> sortByFavourite(ArrayList<Note> notes){
-         ArrayList<Note> favourites = new ArrayList<>();
-         ArrayList<Note> notFavourites = new ArrayList<>();
-         for(Note note : notes){
-             if(note.isFavorite()){
-                 favourites.add(note);
-             }else{
-                 notFavourites.add(note);
-             }
-         }
-         Collections.sort(favourites, Collections.reverseOrder());
-         Collections.sort(notFavourites, Collections.reverseOrder());
-         favourites.addAll(notFavourites);
-         return favourites;
     }
 
     public ArrayList<Note> getLocalNoteSet(){ return localNoteSet; }

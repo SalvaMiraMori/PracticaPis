@@ -19,12 +19,16 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.SignInMethodQueryResult;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.core.OrderBy;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -143,7 +147,7 @@ public class DatabaseAdapter extends AppCompatActivity {
 
         //try{
         Log.d(TAG,"updatenotes with user");
-        db.collection("users").document(user.getUid()).collection("notes").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        db.collection("users").document(user.getUid()).collection("notes").orderBy("favorite", Query.Direction.DESCENDING).orderBy("serverTime", Query.Direction.DESCENDING).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -164,6 +168,7 @@ public class DatabaseAdapter extends AppCompatActivity {
                         retrieved_notes.add(note);
                         Log.d(TAG, "Getting documents: " + title + body + datetime.toString());
                     }
+                    //Collections.reverse(retrieved_notes);
                     mainActivityListener.setNotes(retrieved_notes);
                 } else{
                     Log.d(TAG, "Error getting documents: ", task.getException());
@@ -174,7 +179,7 @@ public class DatabaseAdapter extends AppCompatActivity {
 
     public void getArchivedNotes(){
         Log.d(TAG,"updatearchivednotes with user");
-        db.collection("users").document(user.getUid()).collection("archivedNotes").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        db.collection("users").document(user.getUid()).collection("archivedNotes").orderBy("serverTime").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -206,6 +211,7 @@ public class DatabaseAdapter extends AppCompatActivity {
         noteDbMap.put("title", note.getTitle());
         noteDbMap.put("body", note.getBody());
         noteDbMap.put("datetime", note.getDate().toString());
+        noteDbMap.put("serverTime", FieldValue.serverTimestamp());
         noteDbMap.put("favorite", note.isFavorite());
         if(note.getLocation() != null){
             noteDbMap.put("location", note.getLocation().toString());
@@ -233,6 +239,7 @@ public class DatabaseAdapter extends AppCompatActivity {
         noteDbMap.put("title", note.getTitle());
         noteDbMap.put("body", note.getBody());
         noteDbMap.put("datetime", note.getDate().toString());
+        noteDbMap.put("serverTime", FieldValue.serverTimestamp());
         if(note.getLocation() != null){
             noteDbMap.put("location", note.getLocation().toString());
         }
@@ -272,6 +279,7 @@ public class DatabaseAdapter extends AppCompatActivity {
         noteDbMap.put("title", note.getTitle());
         noteDbMap.put("body", note.getBody());
         noteDbMap.put("datetime", note.getDate().toString());
+        noteDbMap.put("serverTime", FieldValue.serverTimestamp());
         noteDbMap.put("favorite", note.isFavorite());
         if(note.getLocation() != null){
             noteDbMap.put("location" ,note.getLocation().toString());

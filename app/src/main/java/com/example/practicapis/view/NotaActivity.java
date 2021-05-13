@@ -29,6 +29,8 @@ import com.example.practicapis.localLogic.Note;
 import com.example.practicapis.viewModel.NoteActivityViewModel;
 import com.example.practicapis.R;
 import com.google.android.gms.maps.model.LatLng;
+import com.like.LikeButton;
+import com.like.OnLikeListener;
 
 import java.util.Objects;
 
@@ -41,12 +43,12 @@ public class NotaActivity extends AppCompatActivity {
     private ImageButton fileBtn;
     private ImageButton drawableBtn;
     private ImageButton tagBtn;
+    private LikeButton favBtn;
     private Toolbar toolbar;
     private EditText title, text;
     private Note note;
     private NoteActivityViewModel viewModel;
     public static final String TAG = "NotaActivity";
-    private boolean isFavorite;
     private AppStatus appStatus;
 
     @Override
@@ -56,7 +58,6 @@ public class NotaActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("New Note");
 
-        isFavorite = false;
         title = findViewById(R.id.noteTitle);
         text = findViewById(R.id.noteBody);
 
@@ -80,7 +81,6 @@ public class NotaActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 Objects.requireNonNull(getSupportActionBar()).setTitle(s);
-                //Objects.requireNonNull(getSupportActionBar()).
             }
 
             @Override
@@ -142,6 +142,26 @@ public class NotaActivity extends AppCompatActivity {
                 return true;
             }
         });
+
+        favBtn = findViewById(R.id.star_button);
+        favBtn.setOnLikeListener(new OnLikeListener() {
+            @Override
+            public void liked(LikeButton likeButton) {
+                onFavoritePressed(true);
+            }
+
+            @Override
+            public void unLiked(LikeButton likeButton) {
+                onFavoritePressed(false);
+            }
+        });
+        favBtn.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                showBtnInfo(favBtn.getId(), locationBtn);
+                return true;
+            }
+        });
     }
 
     @Override
@@ -158,9 +178,6 @@ public class NotaActivity extends AppCompatActivity {
         switch(item.getItemId()){
             case R.id.action_share:
                 onSharePressed();
-                break;
-            case R.id.action_favorite:
-                onFavoritePressed();
                 break;
             case R.id.action_delete:
                 onDeletePressed();
@@ -196,10 +213,9 @@ public class NotaActivity extends AppCompatActivity {
         startActivity(Intent.createChooser(shareIntent, "Share using..."));
     }
 
-    private void onFavoritePressed() {
-        note.setFavorite(!note.isFavorite());
-        isFavorite = note.isFavorite();
-        if(isFavorite){
+    private void onFavoritePressed(Boolean fav) {
+        note.setFavorite(fav);
+        if(note.isFavorite()){
             Toast.makeText(this, title.getText().toString() + " is now a favorite.", Toast.LENGTH_SHORT).show();
         }else{
             Toast.makeText(this, title.getText().toString() + " is no longer a favorite.", Toast.LENGTH_SHORT).show();
@@ -222,7 +238,6 @@ public class NotaActivity extends AppCompatActivity {
         note.setTitle(title.getText().toString());
         note.setBody(text.getText().toString());
         note.setDate(LocalDateTime.now());
-        note.setFavorite(isFavorite);
         Log.d(TAG, "Local time " + LocalDateTime.now().toString());
         if (!note.getTitle().isEmpty()) {
             if (note.getId() == null) {
@@ -274,7 +289,8 @@ public class NotaActivity extends AppCompatActivity {
             Objects.requireNonNull(getSupportActionBar()).setTitle((CharSequence) title.getText().toString());
         }
         if(note.getBody() != null){ text.setText(note.getBody()); }
-        isFavorite = note.isFavorite();
+        if(note.isFavorite()){ favBtn.setLiked(true); }
+        if(appStatus.isArchivedView()){ disableButtons(); }
     }
 
     public void goToMapa(){
@@ -313,8 +329,15 @@ public class NotaActivity extends AppCompatActivity {
             case R.id.drawBtn:
                 toast = Toast.makeText(this, "Add drawable", Toast.LENGTH_SHORT);
                 break;
+            case R.id.star_button:
+                toast = Toast.makeText(this, "Set favorite", Toast.LENGTH_SHORT);
+                break;
         }
         toast.setGravity(Gravity.TOP,0,btn.getHeight() + 200);
         toast.show();
+    }
+
+    private void disableButtons(){
+        favBtn.setEnabled(false);
     }
 }
