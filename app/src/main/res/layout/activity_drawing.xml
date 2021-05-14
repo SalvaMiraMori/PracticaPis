@@ -3,42 +3,51 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFCCCCCC"
+    android:background="#FFFFFFFF"
     android:orientation="vertical"
     android:visibility="visible"
     tools:context=".view.DrawingActivity"
     tools:visibility="visible">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="300dp"
         android:layout_height="50dp"
         android:layout_gravity="center"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
+
         <ImageButton
             android:id="@+id/new_btn"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="@drawable/selector_border"
             android:contentDescription="@string/start_new"
             android:src="@drawable/ic_painting" />
 
         <ImageButton
             android:id="@+id/draw_btn"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="@drawable/selector_border"
             android:contentDescription="@string/brush"
-            android:src="@drawable/ic_paint_brush" />
+            android:src="@drawable/ic_width" />
 
         <ImageButton
             android:id="@+id/erase_btn"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="@drawable/selector_border"
             android:contentDescription="@string/erase"
             android:src="@drawable/ic_eraser" />
 
         <ImageButton
             android:id="@+id/save_btn"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="@drawable/selector_border"
             android:contentDescription="@string/save"
             android:src="@drawable/ic_save" />
     </LinearLayout>

@@ -5,12 +5,18 @@ import androidx.annotation.Nullable;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.view.MotionEvent;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.util.TypedValue;
+
+import com.example.practicapis.R;
 
 public class DrawView extends View {
 
@@ -24,14 +30,21 @@ public class DrawView extends View {
     private Canvas drawCanvas;
     //canvas bitmap
     private Bitmap canvasBitmap;
+    //brush sizes
+    private float brushSize, lastBrushSize;
+
+    private boolean erase=false;
 
     public DrawView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         setupDrawing();
+        this.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
     }
 
     private void setupDrawing(){
     //get drawing area setup for interaction
+        brushSize = getResources().getInteger(R.integer.medium_size);
+        lastBrushSize = brushSize;
         // Instantiating Path and Paint objects
         drawPath = new Path();
         drawPaint = new Paint();
@@ -41,7 +54,7 @@ public class DrawView extends View {
 
         // Setting initial properties
         drawPaint.setAntiAlias(true);
-        drawPaint.setStrokeWidth(20);
+        drawPaint.setStrokeWidth(brushSize);
         drawPaint.setStyle(Paint.Style.STROKE);
         drawPaint.setStrokeJoin(Paint.Join.ROUND);
         drawPaint.setStrokeCap(Paint.Cap.ROUND);
@@ -96,5 +109,34 @@ public class DrawView extends View {
         invalidate();
         paintColor = Color.parseColor(newColor);
         drawPaint.setColor(paintColor);
+    }
+
+    public void setBrushSize(float newSize){
+        //update brush size
+        float pixelAmount = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, newSize, getResources().getDisplayMetrics());
+        brushSize=pixelAmount;
+        drawPaint.setStrokeWidth(brushSize);
+    }
+
+    public void setLastBrushSize(float lastSize){
+        lastBrushSize=lastSize;
+    }
+
+    public float getLastBrushSize(){
+        return lastBrushSize;
+    }
+
+    public void setErase(boolean isErase){
+        //set erase true or false
+        erase=isErase;
+        if(erase){
+            drawPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+        }
+        else drawPaint.setXfermode(null);
+    }
+
+    public void startNew(){
+        drawCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
+        invalidate();
     }
 }
