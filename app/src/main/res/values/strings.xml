@@ -28,9 +28,20 @@
     <string name="notes">Notes</string>
     <string name="sing_out">Sing Out</string>
 
-
+    <!-- Login Google -->
     <string name="sign_in_google">Have a Google account?</string>
     <string name="server_client_id">277878564756-v0m4rganho3q8b6mv1qp8cs8lik48ub2.apps.googleusercontent.com</string>
     <string name="client_secret">uYQNNmsv1NxbnMXmh_ch0Rfb</string>
 
+    <!-- DrawActivity -->
+    <string name="start_new">New</string>
+    <string name="brush">Brush</string>
+    <string name="erase">Erase</string>
+    <string name="save">Save</string>
+    <string name="paint">Paint</string>
+
+    <!-- Brush sizes -->
+    <string name="sml">Small</string>
+    <string name="med">Medium</string>
+    <string name="lrg">Large</string>
 </resources>
