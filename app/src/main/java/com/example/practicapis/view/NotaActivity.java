@@ -124,6 +124,12 @@ public class NotaActivity extends AppCompatActivity {
                 return true;
             }
         });
+        drawableBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onDrawPressed();
+            }
+        });
 
         fileBtn = findViewById(R.id.addFileBtn);
         fileBtn.setOnLongClickListener(new View.OnLongClickListener() {
@@ -339,5 +345,10 @@ public class NotaActivity extends AppCompatActivity {
 
     private void disableButtons(){
         favBtn.setEnabled(false);
+    }
+
+    public void onDrawPressed(){
+        Intent intentDraw = new Intent(this, DrawingActivity.class);
+        startActivity(intentDraw);
     }
 }

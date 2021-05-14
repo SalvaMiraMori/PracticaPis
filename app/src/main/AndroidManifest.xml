@@ -38,6 +38,9 @@
             android:label="@string/title_activity_maps"></activity>
         <activity android:name=".view.NotaActivity" />
         <activity android:name=".view.RegisterActivity" />
+        <activity android:name=".view.DrawingActivity">
+
+        </activity>
         <activity
             android:name=".view.LoginActivity"
             android:label="@string/title_activity_login">
