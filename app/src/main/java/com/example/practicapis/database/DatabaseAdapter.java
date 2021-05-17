@@ -1,5 +1,8 @@
 package com.example.practicapis.database;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
 
@@ -25,12 +28,20 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.core.OrderBy;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.io.ByteArrayOutputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class DatabaseAdapter extends AppCompatActivity {
 
@@ -42,20 +53,26 @@ public class DatabaseAdapter extends AppCompatActivity {
 
     public static MainInterface mainActivityListener;
     public static RegisterInterface registerActivityListener;
+    public static DrawingInterface drawingInterfaceListener;
     public static DatabaseAdapter databaseAdapter;
+    private FirebaseStorage storage;
+    private StorageReference storageRef;
 
     public DatabaseAdapter(MainInterface mainActivityListener){
-
         databaseAdapter = this;
         FirebaseFirestore.setLoggingEnabled(true);
         this.mainActivityListener = mainActivityListener;
         user = mAuth.getCurrentUser();
+        storage = FirebaseStorage.getInstance();
+        storageRef = storage.getReferenceFromUrl("gs://practicapis.appspot.com");
         listenChanges();
     }
 
     public DatabaseAdapter(){
         databaseAdapter = this;
         FirebaseFirestore.setLoggingEnabled(true);
+        storage = FirebaseStorage.getInstance();
+        storageRef = storage.getReferenceFromUrl("gs://practicapis.appspot.com");
     }
 
     public interface MainInterface {
@@ -68,8 +85,16 @@ public class DatabaseAdapter extends AppCompatActivity {
         void onExistsEmailSucceed(boolean exists);
     }
 
+    public interface DrawingInterface {
+        void setDrawingBitmap(Bitmap bitmap);
+    }
+
     public void setRegisterActivityListener(RegisterInterface registerInterface){
         this.registerActivityListener = registerInterface;
+    }
+
+    public void setDrawingInterfaceListener(DrawingInterface drawingInterface){
+        this.drawingInterfaceListener = drawingInterface;
     }
 
     public void signUpUser(String email, String password){
@@ -165,6 +190,14 @@ public class DatabaseAdapter extends AppCompatActivity {
                         if(location != null){
                             note.setLocation(convertStringToLatLng(location));
                         }
+                        try{
+                            String drawingId = document.getString("drawingId");
+                            if(drawingId != null){
+                                note.setDrawingId(drawingId);
+                            }
+                        }catch(Exception e){
+                            e.printStackTrace();
+                        }
                         retrieved_notes.add(note);
                         Log.d(TAG, "Getting documents: " + title + body + datetime.toString());
                     }
@@ -195,6 +228,14 @@ public class DatabaseAdapter extends AppCompatActivity {
                         if(location != null){
                             note.setLocation(convertStringToLatLng(location));
                         }
+                        try{
+                            String drawingId = document.getString("drawingId");
+                            if(drawingId != null){
+                                note.setDrawingId(drawingId);
+                            }
+                        }catch(Exception e){
+                            e.printStackTrace();
+                        }
                         retrieved_notes.add(note);
                         Log.d(TAG, "Getting documents: " + title + body + datetime.toString());
                     }
@@ -215,6 +256,9 @@ public class DatabaseAdapter extends AppCompatActivity {
         noteDbMap.put("favorite", note.isFavorite());
         if(note.getLocation() != null){
             noteDbMap.put("location", note.getLocation().toString());
+        }
+        if(note.getDrawingId() != null){
+            noteDbMap.put("drawingId", note.getDrawingId());
         }
         Log.d(TAG, "saveDocument");
 
@@ -242,6 +286,9 @@ public class DatabaseAdapter extends AppCompatActivity {
         noteDbMap.put("serverTime", FieldValue.serverTimestamp());
         if(note.getLocation() != null){
             noteDbMap.put("location", note.getLocation().toString());
+        }
+        if(note.getDrawingId() != null){
+            noteDbMap.put("drawingId", note.getDrawingId());
         }
 
         Log.d(TAG, "saveDocument");
@@ -284,6 +331,9 @@ public class DatabaseAdapter extends AppCompatActivity {
         if(note.getLocation() != null){
             noteDbMap.put("location" ,note.getLocation().toString());
         }
+        if(note.getDrawingId() != null){
+            noteDbMap.put("drawingId", note.getDrawingId());
+        }
 
         db.collection("users").document(user.getUid()).collection("notes").document(note.getId()).update(noteDbMap);
     }
@@ -305,5 +355,42 @@ public class DatabaseAdapter extends AppCompatActivity {
         double latitude = Double.parseDouble(lat[1]);
         double longitude = Double.parseDouble(lng[0]);
         return new LatLng(latitude, longitude);
+    }
+
+    public void saveDrawing(ByteArrayOutputStream baos, String drawingId){
+        byte[] data = baos.toByteArray();
+
+        drawingId = drawingId + ".png";
+
+        StorageReference drawingRef = storageRef.child("drawings/" + drawingId);
+
+        UploadTask uploadTask = drawingRef.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull @NotNull Exception e) {
+
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+            }
+        });
+    }
+
+    public void recoverDrawing(String drawingId){
+        StorageReference drawingRef = storageRef.child("drawings/" + drawingId + ".png");
+        drawingRef.getBytes(2048 * 2048).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                drawingInterfaceListener.setDrawingBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
+                Log.d(TAG, "drawing recovered");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull @NotNull Exception e) {
+                Log.d(TAG, "failed drawing recovery");
+            }
+        });
     }
 }

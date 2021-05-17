@@ -2,33 +2,49 @@ package com.example.practicapis.view;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageButton;
+
+import java.io.ByteArrayOutputStream;
 import java.util.UUID;
 import android.provider.MediaStore;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.view.View.OnClickListener;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.practicapis.R;
+import com.example.practicapis.localLogic.AppStatus;
+import com.example.practicapis.viewModel.DrawingActivityViewModel;
 
 public class DrawingActivity extends AppCompatActivity implements OnClickListener{
 
     private DrawView drawView;
-    private ImageButton currPaint, drawBtn, eraseBtn, newBtn;
+    private ImageButton currPaint, drawBtn, eraseBtn, newBtn, saveBtn;
     private float smallBrush, mediumBrush, largeBrush;
+    private DrawingActivityViewModel viewModel;
+    private String drawingId;
+    private AppStatus appStatus;
+    private LinearLayout drawingLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drawing);
+        drawingLayout = findViewById(R.id.drawing_layout);
+        viewModel = new DrawingActivityViewModel();
+        appStatus = AppStatus.getInstance();
         drawView = findViewById(R.id.drawing);
         // Retrieve linear layout paint color is contained
         // Get inital color button
@@ -54,7 +70,7 @@ public class DrawingActivity extends AppCompatActivity implements OnClickListene
                 return true;
             }
         });
-        // Get new canvas button
+        // Set new canvas button
         newBtn = findViewById(R.id.new_btn);
         newBtn.setOnClickListener(this);
         newBtn.setOnLongClickListener(new View.OnLongClickListener() {
@@ -64,12 +80,41 @@ public class DrawingActivity extends AppCompatActivity implements OnClickListene
                 return true;
             }
         });
+        // Save painting button
+        saveBtn = findViewById(R.id.save_btn);
+        saveBtn.setOnClickListener(this);
+        saveBtn.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                showBtnInfo(saveBtn.getId(), saveBtn);
+                return true;
+            }
+        });
         // Instantiate brushes size
         smallBrush = getResources().getInteger(R.integer.small_size);
         mediumBrush = getResources().getInteger(R.integer.medium_size);
         largeBrush = getResources().getInteger(R.integer.large_size);
         // Initiate with medium brush
         drawView.setBrushSize(mediumBrush);
+
+        getDataFromNoteActivity();
+        if(drawingId != null){
+            viewModel.recoverDrawing(drawingId);
+        }
+        setLiveDataObservers();
+    }
+
+    private void setLiveDataObservers(){
+        final Observer<Bitmap> observerDrawingBitmap = new Observer<Bitmap>() {
+            @Override
+            public void onChanged(Bitmap bitmap) {
+                Log.d("bitmapDA", bitmap.toString());
+                drawView.setCanvasBitmap(viewModel.getBitmap().getValue(), drawingLayout);
+                paintClicked(findViewById(R.id.black_color));
+                paintClicked(findViewById(R.id.initial_color));
+            }
+        };
+        viewModel.getBitmap().observe(this, observerDrawingBitmap);
     }
 
     public void paintClicked(View view){
@@ -183,6 +228,37 @@ public class DrawingActivity extends AppCompatActivity implements OnClickListene
                 }
             });
             newDialog.show();
+        }else if(view.getId()==R.id.save_btn){
+            //save drawing
+            AlertDialog.Builder saveDialog = new AlertDialog.Builder(this);
+            saveDialog.setTitle("Save drawing");
+            saveDialog.setMessage("Save drawing to device Gallery?");
+            saveDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener(){
+                public void onClick(DialogInterface dialog, int which){
+                    //save drawing
+                    if(!appStatus.isArchivedView()){
+                        drawView.setDrawingCacheEnabled(true);
+                        drawView.buildDrawingCache();
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        Bitmap bitmap = drawView.getDrawingCache();
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                        if(drawingId == null){
+                            drawingId = UUID.randomUUID().toString();
+                        }
+                        viewModel.saveToDb(baos, drawingId);
+                        Intent intent = new Intent();
+                        intent.putExtra("drawingId", drawingId);
+                        setResult(RESULT_OK, intent);
+                    }
+                    finish();
+                }
+            });
+            saveDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
+                public void onClick(DialogInterface dialog, int which){
+                    dialog.cancel();
+                }
+            });
+            saveDialog.show();
         }
     }
 
@@ -204,5 +280,13 @@ public class DrawingActivity extends AppCompatActivity implements OnClickListene
         }
         toast.setGravity(Gravity.TOP,0,btn.getHeight() + 200);
         toast.show();
+    }
+
+    private void getDataFromNoteActivity(){
+        Bundle bundle = getIntent().getExtras();
+        String drawingIdFromNote = bundle.getString("drawingId");
+        if(drawingIdFromNote != null){
+            drawingId = drawingIdFromNote;
+        }
     }
 }

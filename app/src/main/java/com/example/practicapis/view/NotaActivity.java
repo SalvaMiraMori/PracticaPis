@@ -266,6 +266,11 @@ public class NotaActivity extends AppCompatActivity {
                 note.setLocation(convertStringToLatLng(data.getStringExtra("location")));
                 Log.d(TAG, "Location received " + note.getLocation().toString());
             }
+        }else if(requestCode == 2){
+            if(resultCode == RESULT_OK){
+                note.setDrawingId(data.getStringExtra("drawingId"));
+                Log.d(TAG, note.getDrawingId());
+            }
         }
     }
 
@@ -349,6 +354,7 @@ public class NotaActivity extends AppCompatActivity {
 
     public void onDrawPressed(){
         Intent intentDraw = new Intent(this, DrawingActivity.class);
-        startActivity(intentDraw);
+        intentDraw.putExtra("drawingId", note.getDrawingId());
+        startActivityForResult(intentDraw, 2);
     }
 }

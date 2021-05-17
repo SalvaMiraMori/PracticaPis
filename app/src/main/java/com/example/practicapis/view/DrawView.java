@@ -3,7 +3,10 @@ package com.example.practicapis.view;
 import androidx.annotation.Nullable;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -15,6 +18,7 @@ import android.view.MotionEvent;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.util.TypedValue;
+import android.widget.LinearLayout;
 
 import com.example.practicapis.R;
 
@@ -33,10 +37,13 @@ public class DrawView extends View {
     //brush sizes
     private float brushSize, lastBrushSize;
 
+
+
     private boolean erase=false;
 
     public DrawView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+
         setupDrawing();
         this.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
     }
@@ -83,7 +90,7 @@ public class DrawView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        //detect user touch
+        // detect user touch
         // Retrieving X and Y positions of the user touch
         float touchX = event.getX();
         float touchY = event.getY();
@@ -138,5 +145,13 @@ public class DrawView extends View {
     public void startNew(){
         drawCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
         invalidate();
+    }
+
+    public void setCanvasBitmap(Bitmap bitmap, LinearLayout drawingLayout){
+        Drawable d = new BitmapDrawable(Resources.getSystem(), bitmap);
+        Log.d("bitmap", bitmap.toString());
+        //d.setBounds(getLeft(), getTop(), getRight(), getBottom());
+        d.setBounds(drawingLayout.getLeft(), drawingLayout.getTop(), drawingLayout.getRight(), drawingLayout.getBottom());
+        d.draw(drawCanvas);
     }
 }
