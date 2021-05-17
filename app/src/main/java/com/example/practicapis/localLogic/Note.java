@@ -19,6 +19,7 @@ public class Note implements Parcelable, Comparable<Note> {
     private LocalDateTime date;
     private boolean favorite;
     private LatLng location;
+    private String drawingId;
 
     public Note(String title, String body) {
         this.title = title;
@@ -44,10 +45,13 @@ public class Note implements Parcelable, Comparable<Note> {
         id = in.readString();
         favorite = Boolean.valueOf(in.readString());
         String locationFromParcel = in.readString();
-        if(locationFromParcel != null){
+        if(!locationFromParcel.equals("null")){
             location = convertStringToLatLng(locationFromParcel);
         }
-
+        String drawingIdFromParcel = in.readString();
+        if(!drawingIdFromParcel.equals("null")){
+            drawingId = drawingIdFromParcel;
+        }
     }
 
     public boolean isFavorite() {
@@ -85,6 +89,10 @@ public class Note implements Parcelable, Comparable<Note> {
 
     public LocalDateTime getDate(){ return date; }
 
+    public String getDrawingId(){ return drawingId; }
+
+    public void setDrawingId(String drawingId){ this.drawingId = drawingId; }
+
     public void setTitle(String title) {
         this.title = title;
     }
@@ -109,15 +117,23 @@ public class Note implements Parcelable, Comparable<Note> {
         dest.writeString(body);
         dest.writeString(id);
         dest.writeString(String.valueOf(favorite));
+
         if(location != null){
             dest.writeString(location.toString());
+        }else{
+            dest.writeString("null");
+        }
+
+        if(drawingId != null){
+            dest.writeString(drawingId);
+        }else{
+            dest.writeString("null");
         }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public int compareTo(Note note) {
-
         return this.getDate().compareTo(note.getDate());
     }
 

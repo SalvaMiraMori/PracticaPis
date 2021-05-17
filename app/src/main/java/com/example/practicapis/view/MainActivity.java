@@ -5,14 +5,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.CompoundButton;
-import android.widget.ImageButton;
 import android.widget.Switch;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -34,8 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView mRecyclerViewNotes;
     private NotesAdapter notesAdapter;
     private AppStatus appStatus;
-    private FloatingActionButton addNotebtn;
-    private ImageButton addNoteBtn;
+    private FloatingActionButton addNoteBtn;
     private MainActivityViewModel viewModel;
     private Context parentContext;
     private Switch archivedNotesSwitch;
@@ -55,15 +53,12 @@ public class MainActivity extends AppCompatActivity {
         appStatus = AppStatus.getInstance();
         notesAdapter = new NotesAdapter(this, appStatus.getAllNotes());
         mRecyclerViewNotes.setAdapter(notesAdapter);
-        addNotebtn = findViewById(R.id.addNoteBtnTest);
-        //addNotebtn.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_add));
-        //addNoteBtn = findViewById(R.id.addNoteBtn);
+        addNoteBtn = findViewById(R.id.addNoteBtn);
         parentContext = this.getBaseContext();
 
         setLiveDataObservers();
 
-        addNotebtn.setOnClickListener(v -> addNote());
-        //addNoteBtn.setOnClickListener(v -> addNote());
+        addNoteBtn.setOnClickListener(v -> addNote());
         notesAdapter.setLocalNoteSet(appStatus.getAllNotes());
         mRecyclerViewNotes.setAdapter(notesAdapter);
     }
@@ -114,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+        // TODO: Check what happens if press go back
         getMenuInflater().inflate(R.menu.menu_main, menu);
         switchArchive = menu.findItem(R.id.app_bar_switch);
         switchArchive.setActionView(R.layout.switch_item);
@@ -125,14 +121,13 @@ public class MainActivity extends AppCompatActivity {
                 if (isChecked) {
                     appStatus.setArchivedView();
                     notesAdapter.setLocalNoteSet(appStatus.getArchivedNotes());
-                    addNotebtn.setEnabled(false);
-                    //addNoteBtn.setEnabled(false);
+                    addNoteBtn.setVisibility(View.INVISIBLE);
                 } else {
                     appStatus.setNotesView();
                     notesAdapter.setLocalNoteSet(appStatus.getAllNotes());
                     appStatus.setAllNotes(notesAdapter.getLocalNoteSet());
-                    addNotebtn.setEnabled(true);
                     //addNoteBtn.setEnabled(true);
+                    addNoteBtn.setVisibility(View.VISIBLE);
                 }
                 mRecyclerViewNotes.setAdapter(notesAdapter);
             }
