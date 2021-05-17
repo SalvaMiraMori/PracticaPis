@@ -14,6 +14,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -29,14 +33,8 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    private MenuItem switchArchive;
-    private RecyclerView mRecyclerViewNotes;
-    private NotesAdapter notesAdapter;
     private AppStatus appStatus;
-    private FloatingActionButton addNoteBtn;
-    private MainActivityViewModel viewModel;
-    private Context parentContext;
-    private Switch archivedNotesSwitch;
+    private FloatingActionButton addNotebtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,60 +43,24 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // Configure recycler view
-        mRecyclerViewNotes = findViewById(R.id.recyclerView);
-        mRecyclerViewNotes.setLayoutManager(new GridLayoutManager(this, 2));
-
         // Configure activity elements
         appStatus = AppStatus.getInstance();
-        notesAdapter = new NotesAdapter(this, appStatus.getAllNotes());
-        mRecyclerViewNotes.setAdapter(notesAdapter);
-        addNoteBtn = findViewById(R.id.addNoteBtn);
-        parentContext = this.getBaseContext();
+        addNotebtn = findViewById(R.id.addNoteBtn);
+        Context parentContext = this.getBaseContext();
 
         setLiveDataObservers();
 
-        addNoteBtn.setOnClickListener(v -> addNote());
-        notesAdapter.setLocalNoteSet(appStatus.getAllNotes());
-        mRecyclerViewNotes.setAdapter(notesAdapter);
+        addNotebtn.setOnClickListener(v -> addNote());
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        appStatus.setAllNotes(viewModel.getNotes().getValue());
-        appStatus.setArchivedNotes(viewModel.getArchivedNotes().getValue());
-        if(appStatus.isArchivedView()){
-            notesAdapter.setLocalNoteSet(appStatus.getArchivedNotes());
-        }else{
-            notesAdapter.setLocalNoteSet(appStatus.getAllNotes());
-        }
-        mRecyclerViewNotes.setAdapter(notesAdapter);
     }
 
     public void setLiveDataObservers() {
         // Subscribe the activity to the observable
-        viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
-
-        final Observer<ArrayList<Note>> observerNotes = new Observer<ArrayList<Note>>() {
-            @Override
-            public void onChanged(ArrayList<Note> arrayList) {
-                NotesAdapter newAdapter = new NotesAdapter(parentContext, arrayList);
-                mRecyclerViewNotes.swapAdapter(newAdapter, false);
-                appStatus.setArchivedNotes(viewModel.getArchivedNotes().getValue());
-                appStatus.setAllNotes(viewModel.getNotes().getValue());
-                newAdapter.notifyDataSetChanged();
-            }
-        };
-
-        final Observer<String> observerToast = new Observer<String>() {
-            @Override
-            public void onChanged(String t) {
-                Toast.makeText(parentContext, t, Toast.LENGTH_SHORT).show();
-            }
-        };
-
-        viewModel.getNotes().observe(this, observerNotes);
+        MainActivityViewModel viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
     }
 
     public void addNote() {
@@ -109,27 +71,26 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        // TODO: Check what happens if press go back
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        switchArchive = menu.findItem(R.id.app_bar_switch);
+        MenuItem switchArchive = menu.findItem(R.id.app_bar_switch);
         switchArchive.setActionView(R.layout.switch_item);
-        archivedNotesSwitch = (Switch) menu.findItem(R.id.app_bar_switch).getActionView().findViewById(R.id.action_switch);
+        Switch archivedNotesSwitch = (Switch) menu.findItem(R.id.app_bar_switch).getActionView().findViewById(R.id.action_switch);
 
         archivedNotesSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
+                    NavController navController = Navigation.findNavController(MainActivity.this, R.id.nav_host_fragment);
+                    navController.navigate(R.id.action_FirstFragment_to_SecondFragment);
                     appStatus.setArchivedView();
-                    notesAdapter.setLocalNoteSet(appStatus.getArchivedNotes());
-                    addNoteBtn.setVisibility(View.INVISIBLE);
+                    addNotebtn.setVisibility(View.INVISIBLE);
                 } else {
+                    NavController navController = Navigation.findNavController(MainActivity.this, R.id.nav_host_fragment);
+                    navController.navigate(R.id.action_SecondFragment_to_FirstFragment);
                     appStatus.setNotesView();
-                    notesAdapter.setLocalNoteSet(appStatus.getAllNotes());
-                    appStatus.setAllNotes(notesAdapter.getLocalNoteSet());
-                    //addNoteBtn.setEnabled(true);
-                    addNoteBtn.setVisibility(View.VISIBLE);
+                    addNotebtn.setVisibility(View.VISIBLE);
                 }
-                mRecyclerViewNotes.setAdapter(notesAdapter);
+
             }
         });
         return true;
