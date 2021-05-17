@@ -8,10 +8,11 @@
 
     <LinearLayout
         android:id="@+id/noteLayout"
-        android:layout_width="145dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginTop="5dp"
         android:orientation="vertical"
         android:background="@drawable/note_background"
         app:layout_constraintStart_toStartOf="parent"

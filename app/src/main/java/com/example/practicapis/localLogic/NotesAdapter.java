@@ -74,7 +74,8 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         // Create a new view, which defines the UI of the list item
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.note_item, null, false);
+        View view = LayoutInflater.from(viewGroup.getContext())
+                .inflate(R.layout.note_item, null, false);
         return new ViewHolder(view);
     }
 
@@ -86,14 +87,11 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
         // contents of the view with that element
         viewHolder.getTitleNote().setText(localNoteSet.get(position).getTitle());
         viewHolder.getBodyNote().setText(localNoteSet.get(position).getBody());
-        System.out.println("Note " + localNoteSet.get(position).getTitle() + " OnCustomAdapter: isFavorite " + localNoteSet.get(position).isFavorite());
         if (localNoteSet.get(position).isFavorite())
             viewHolder.getFavorite().setVisibility(View.VISIBLE);
         else
             viewHolder.getFavorite().setVisibility(View.INVISIBLE);
 
-
-        // TODO Ir al notaActivity en concreto
         LinearLayout layout =viewHolder.getLayout();
         layout.setOnClickListener(new View.OnClickListener() {
             @Override
