@@ -174,10 +174,14 @@ public class NotaActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        if (appStatus.isArchivedView())
-            inflater.inflate(R.menu.menu_note_archive, menu);
-        else
-            inflater.inflate(R.menu.menu_note, menu);
+        inflater.inflate(R.menu.menu_note, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem item_archivar = menu.findItem(R.id.action_archive);
+        item_archivar.setVisible(!appStatus.isArchivedView());
         return true;
     }
 
