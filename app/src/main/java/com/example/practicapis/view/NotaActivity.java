@@ -66,6 +66,7 @@ public class NotaActivity extends AppCompatActivity {
         if(appStatus.isArchivedView()){
             title.setEnabled(false);
             text.setEnabled(false);
+
         }
 
         initializeButtons();
@@ -174,6 +175,13 @@ public class NotaActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_note, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem item_archivar = menu.findItem(R.id.action_archive);
+        item_archivar.setVisible(!appStatus.isArchivedView());
         return true;
     }
 
