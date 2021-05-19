@@ -28,17 +28,20 @@
                 android:layout_width="105dp"
                 android:layout_height="wrap_content"
                 android:text="@string/title"
+                android:layout_weight="1"
                 android:layout_margin="5dp"
                 android:textSize="20sp" />
+
             <ImageView
                 android:id="@+id/imageView"
                 android:layout_width="30dp"
-                android:layout_height="32dp"
-                android:layoutDirection="inherit"
-                app:srcCompat="@drawable/ic_fav_tag"
-                android:visibility="invisible"
+                android:layout_height="36dp"
                 android:layout_marginEnd="2dp"
-                android:contentDescription="@string/favoritestar" />
+                android:layout_weight="1"
+                android:contentDescription="@string/favoritestar"
+                android:layoutDirection="inherit"
+                android:visibility="invisible"
+                app:srcCompat="@drawable/ic_fav_tag" />
 
         </LinearLayout>
 
