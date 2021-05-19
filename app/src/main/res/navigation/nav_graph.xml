@@ -12,7 +12,7 @@
         tools:layout="@layout/main_notes_fragment">
 
         <action
-            android:id="@+id/action_FirstFragment_to_SecondFragment"
+            android:id="@+id/notes_to_archive"
             app:destination="@id/Archive" />
     </fragment>
     <fragment
@@ -22,7 +22,7 @@
         tools:layout="@layout/main_archive_fragment">
 
         <action
-            android:id="@+id/action_SecondFragment_to_FirstFragment"
+            android:id="@+id/archive_to_notes"
             app:destination="@id/Notes" />
     </fragment>
 </navigation>

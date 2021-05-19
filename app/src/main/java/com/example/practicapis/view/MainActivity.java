@@ -8,28 +8,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-import androidx.navigation.fragment.NavHostFragment;
-import androidx.navigation.ui.NavigationUI;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 //import com.example.practicapis.nota.DataBase;
 import com.example.practicapis.localLogic.AppStatus;
 import com.example.practicapis.viewModel.MainActivityViewModel;
-import com.example.practicapis.localLogic.Note;
-import com.example.practicapis.localLogic.NotesAdapter;
 import com.example.practicapis.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -81,12 +71,12 @@ public class MainActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     NavController navController = Navigation.findNavController(MainActivity.this, R.id.nav_host_fragment);
-                    navController.navigate(R.id.action_FirstFragment_to_SecondFragment);
+                    navController.navigate(R.id.notes_to_archive);
                     appStatus.setArchivedView();
                     addNotebtn.setVisibility(View.INVISIBLE);
                 } else {
                     NavController navController = Navigation.findNavController(MainActivity.this, R.id.nav_host_fragment);
-                    navController.navigate(R.id.action_SecondFragment_to_FirstFragment);
+                    navController.navigate(R.id.archive_to_notes);
                     appStatus.setNotesView();
                     addNotebtn.setVisibility(View.VISIBLE);
                 }
