@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,6 +13,7 @@ import androidx.lifecycle.Observer;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 
 import java.io.ByteArrayOutputStream;
@@ -36,7 +38,7 @@ public class DrawingActivity extends AppCompatActivity implements OnClickListene
     private DrawingActivityViewModel viewModel;
     private String drawingId;
     private AppStatus appStatus;
-    private LinearLayout drawingLayout;
+    private FrameLayout drawingLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
