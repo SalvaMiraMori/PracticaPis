@@ -18,6 +18,7 @@ import android.view.MotionEvent;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.util.TypedValue;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import com.example.practicapis.R;
@@ -147,11 +148,13 @@ public class DrawView extends View {
         invalidate();
     }
 
-    public void setCanvasBitmap(Bitmap bitmap, LinearLayout drawingLayout){
+    public void setCanvasBitmap(Bitmap bitmap, FrameLayout drawingLayout){
         Drawable d = new BitmapDrawable(Resources.getSystem(), bitmap);
-        Log.d("bitmap", bitmap.toString());
+        Log.d("drawingLayout", String.valueOf(drawingLayout.getTop()) + ", " + String.valueOf(drawingLayout.getLeft()) + ", " + String.valueOf(drawingLayout.getRight()) + ", " + String.valueOf(drawingLayout.getBottom()) + "\n");
+        Log.d("drawView", String.valueOf(getTop()) + ", " + String.valueOf(getLeft()) + ", " + String.valueOf(getRight()) + ", " + String.valueOf(getBottom()) + "\n");
         //d.setBounds(getLeft(), getTop(), getRight(), getBottom());
-        d.setBounds(drawingLayout.getLeft(), drawingLayout.getTop(), drawingLayout.getRight(), drawingLayout.getBottom());
+        // TODO: poner drawing dentro de un framelayout
+        d.setBounds(drawingLayout.getLeft(), this.getTop(), drawingLayout.getRight(), this.getBottom());
         d.draw(drawCanvas);
     }
 }
