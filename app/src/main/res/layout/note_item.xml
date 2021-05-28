@@ -15,6 +15,7 @@
         android:layout_marginTop="5dp"
         android:orientation="vertical"
         android:background="@drawable/note_background"
+        android:backgroundTint="@color/teal_200"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
