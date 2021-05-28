@@ -10,6 +10,10 @@ import androidx.annotation.RequiresApi;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.time.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 
 public class Note implements Parcelable, Comparable<Note> {
@@ -20,10 +24,12 @@ public class Note implements Parcelable, Comparable<Note> {
     private boolean favorite;
     private LatLng location;
     private String drawingId;
+    private ArrayList<String> tags;
 
     public Note(String title, String body) {
         this.title = title;
         this.body = body;
+        tags = new ArrayList<>();
     }
 
     public Note(){
@@ -52,6 +58,7 @@ public class Note implements Parcelable, Comparable<Note> {
         if(!drawingIdFromParcel.equals("null")){
             drawingId = drawingIdFromParcel;
         }
+        tags = new ArrayList(Arrays.asList(in.readArray(getClass().getClassLoader())));
     }
 
     public boolean isFavorite() {
@@ -91,6 +98,10 @@ public class Note implements Parcelable, Comparable<Note> {
 
     public String getDrawingId(){ return drawingId; }
 
+    public ArrayList<String> getTags() { return tags; }
+
+    public void setTags(ArrayList<String> tags) { this.tags = tags; }
+
     public void setDrawingId(String drawingId){ this.drawingId = drawingId; }
 
     public void setTitle(String title) {
@@ -129,6 +140,8 @@ public class Note implements Parcelable, Comparable<Note> {
         }else{
             dest.writeString("null");
         }
+
+        dest.writeArray(tags.toArray());
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -152,4 +165,10 @@ public class Note implements Parcelable, Comparable<Note> {
         double longitude = Double.parseDouble(lng[0]);
         return new LatLng(latitude, longitude);
     }
+
+    public void addTag(String tag){
+        tags.add(tag);
+    }
+
+    public void deleteTag(String tag){ tags.remove(tag); }
 }
