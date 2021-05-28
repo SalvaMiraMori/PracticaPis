@@ -3,6 +3,7 @@ package com.example.practicapis.localLogic;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -24,16 +25,20 @@ public class Note implements Parcelable, Comparable<Note> {
     private boolean favorite;
     private LatLng location;
     private String drawingId;
+    private String color;
     private ArrayList<String> tags;
 
     public Note(String title, String body) {
         this.title = title;
         this.body = body;
         tags = new ArrayList<>();
+        color = "#F3C22E";
     }
 
     public Note(){
+        tags = new ArrayList<>();
         favorite = false;
+        color = "#F3C22E";
     }
 
     public Note(String title, String body, String id, LocalDateTime date) {
@@ -42,6 +47,8 @@ public class Note implements Parcelable, Comparable<Note> {
         this.id = id;
         this.date = date;
         favorite = false;
+        tags = new ArrayList<>();
+        color = "#F3C22E";
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
@@ -58,7 +65,9 @@ public class Note implements Parcelable, Comparable<Note> {
         if(!drawingIdFromParcel.equals("null")){
             drawingId = drawingIdFromParcel;
         }
+        color = in.readString();
         tags = new ArrayList(Arrays.asList(in.readArray(getClass().getClassLoader())));
+
     }
 
     public boolean isFavorite() {
@@ -100,6 +109,10 @@ public class Note implements Parcelable, Comparable<Note> {
 
     public ArrayList<String> getTags() { return tags; }
 
+    public String getColor() { return color; }
+
+    public void setColor(String color) { this.color = color; }
+
     public void setTags(ArrayList<String> tags) { this.tags = tags; }
 
     public void setDrawingId(String drawingId){ this.drawingId = drawingId; }
@@ -140,8 +153,11 @@ public class Note implements Parcelable, Comparable<Note> {
         }else{
             dest.writeString("null");
         }
+        dest.writeString(color);
+        try{
+            dest.writeArray(tags.toArray());
+        }catch(Exception e){}
 
-        dest.writeArray(tags.toArray());
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -170,5 +186,24 @@ public class Note implements Parcelable, Comparable<Note> {
         tags.add(tag);
     }
 
-    public void deleteTag(String tag){ tags.remove(tag); }
+    public boolean deleteTag(String tag){
+        if(tags.contains(tag)){
+            tags.remove(tag);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean containsTag(String tag){
+        if(tags == null){
+            Log.d("Note", "tags null");
+            return false;
+        }
+        for(String auxTag : tags){
+            if(auxTag.equals(tag)){
+                return true;
+            }
+        }
+        return false;
+    }
 }

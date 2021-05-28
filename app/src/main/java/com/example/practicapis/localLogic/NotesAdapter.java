@@ -2,6 +2,9 @@ package com.example.practicapis.localLogic;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +43,8 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
             favorite = view.findViewById(R.id.imageView);
             title = view.findViewById(R.id.NotaNoteTitle);
             noteLayout = view.findViewById(R.id.noteLayout);
+            noteLayout.getBackground().setColorFilter(Color.parseColor("#F3C22E"), PorterDuff.Mode.SRC_ATOP);
+            //noteLayout.getDrawingCacheBackgroundColor();
             body = view.findViewById(R.id.NotaBodyText);
         }
 
@@ -93,6 +98,12 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
             viewHolder.getFavorite().setVisibility(View.INVISIBLE);
 
         LinearLayout layout =viewHolder.getLayout();
+        try{
+            layout.getBackground().setColorFilter(Color.parseColor(localNoteSet.get(position).getColor()), PorterDuff.Mode.SRC_ATOP);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
         layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

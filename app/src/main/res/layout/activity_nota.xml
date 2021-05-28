@@ -55,6 +55,14 @@
             android:background="@drawable/selector_border"
             app:srcCompat="@drawable/ic_add_location" />
 
+        <ImageButton
+            android:id="@+id/changeColorBtn"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/selector_border"
+            app:srcCompat="@drawable/ic_color_wheel" />
+
         <com.like.LikeButton
             android:id="@+id/star_button"
             android:layout_width="70dp"
