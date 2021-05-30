@@ -108,11 +108,13 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
             @Override
             public void onClick(View v) {
                 Note note = null;
-                if(appStatus.isArchivedView()){
+                /*if(appStatus.isArchivedView()){
                     note = appStatus.getNoteArchivedByPosition(position);
+
                 }else{
                     note = appStatus.getNoteByPosition(position);
-                }
+                }*/
+                note = localNoteSet.get(position);
                 Intent intent = new Intent(v.getContext(), NotaActivity.class);
                 intent.putExtra("note", note);
                 v.getContext().startActivity(intent);

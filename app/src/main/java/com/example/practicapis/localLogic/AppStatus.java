@@ -9,6 +9,7 @@ public class AppStatus {
 
     private ArrayList<Note> archivedNotes = new ArrayList<>();
     private ArrayList<Note> notesList = new ArrayList<>();
+    //private ArrayList<Note>
     private boolean archivedView;
 
     public AppStatus(){
