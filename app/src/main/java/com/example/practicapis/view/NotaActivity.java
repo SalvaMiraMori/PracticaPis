@@ -77,7 +77,6 @@ public class NotaActivity extends AppCompatActivity {
     public static final String TAG = "NotaActivity";
     private AppStatus appStatus;
     private RecyclerView recyclerViewImages;
-    private ArrayList<Image> imageList;
     private Image image;
     private AddFileAdapter addFileAdapter;
 
@@ -101,7 +100,7 @@ public class NotaActivity extends AppCompatActivity {
 
         }
 
-        addFileAdapter = new AddFileAdapter(this, imageList);
+
         recyclerViewImages.setAdapter(addFileAdapter);
 
         initializeButtons();
@@ -124,6 +123,8 @@ public class NotaActivity extends AppCompatActivity {
 
             }
         });
+
+        addFileAdapter = new AddFileAdapter(this, note.getFileList());
 
     }
 
@@ -366,10 +367,12 @@ public class NotaActivity extends AppCompatActivity {
                     //imageView.setImageBitmap(bitmap);
                     Image image = new Image(bitmap);
                     //addImageView(imageView, 150, 150);
-                    imageList.add(image);
-                    addFileAdapter.setFileList(imageList);
+                    //imageList.add(image);
+                    Log.d(TAG, String.valueOf(note.getFileList().size()));
+                    note.addFile(image);
+                    addFileAdapter.setFileList(note.getFileList());
                     recyclerViewImages.setAdapter(addFileAdapter);
-                    note.setFileList(imageList);
+                    //note.setFileList(imageList);
 
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
@@ -406,8 +409,8 @@ public class NotaActivity extends AppCompatActivity {
         if(note.getBody() != null){ text.setText(note.getBody()); }
         if(note.isFavorite()){ favBtn.setLiked(true); }
         if(appStatus.isArchivedView()){ disableButtons(); }
-        if(note.getFileList() != null) {
-            imageList = note.getFileList();
+        if(note.getFileList() == null){
+            note.initializeFileList();
         }
     }
 

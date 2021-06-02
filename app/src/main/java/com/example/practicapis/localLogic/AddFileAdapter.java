@@ -34,7 +34,7 @@ public class AddFileAdapter extends RecyclerView.Adapter<AddFileAdapter.ViewHold
         private ImageView imageView;
         public ViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
-            imageView = imageView.findViewById(R.id.imageItemView);
+            imageView = itemView.findViewById(R.id.imageItemView);
         }
 
         public ImageView getImageView(){ return imageView; }

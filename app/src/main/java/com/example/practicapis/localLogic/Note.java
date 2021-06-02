@@ -39,11 +39,13 @@ public class Note implements Parcelable, Comparable<Note> {
         this.title = title;
         this.body = body;
         tags = new ArrayList<>();
+        fileList = new ArrayList<>();
         color = "#F3C22E";
     }
 
     public Note(){
         tags = new ArrayList<>();
+        fileList = new ArrayList<>();
         favorite = false;
         color = "#F3C22E";
     }
@@ -55,6 +57,7 @@ public class Note implements Parcelable, Comparable<Note> {
         this.date = date;
         favorite = false;
         tags = new ArrayList<>();
+        fileList = new ArrayList<>();
         color = "#F3C22E";
     }
 
@@ -74,7 +77,6 @@ public class Note implements Parcelable, Comparable<Note> {
         }
         color = in.readString();
         tags = new ArrayList(Arrays.asList(in.readArray(getClass().getClassLoader())));
-
     }
 
     public boolean isFavorite() {
@@ -143,6 +145,10 @@ public class Note implements Parcelable, Comparable<Note> {
         if(fileList != null) {
             this.fileList = fileList;
         }
+    }
+
+    public void addFile(Image image){
+        fileList.add(image);
     }
 
     @Override
@@ -235,4 +241,6 @@ public class Note implements Parcelable, Comparable<Note> {
         }
         return false;
     }
+
+    public void initializeFileList(){ fileList = new ArrayList<>(); }
 }
