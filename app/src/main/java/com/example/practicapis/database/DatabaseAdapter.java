@@ -55,6 +55,7 @@ public class DatabaseAdapter extends AppCompatActivity {
     public static RegisterInterface registerActivityListener;
     public static DrawingInterface drawingInterfaceListener;
     public static DatabaseAdapter databaseAdapter;
+
     private FirebaseStorage storage;
     private StorageReference storageRef;
 
@@ -423,5 +424,14 @@ public class DatabaseAdapter extends AppCompatActivity {
                 Log.d(TAG, "failed drawing recovery");
             }
         });
+    }
+
+    public void saveImages(ByteArrayOutputStream baos, String imageId){
+        /*byte[] data = baos.toByteArray();
+
+        imageId = imageId + ".png";
+        StorageReference imageRef = storageRef.child("images/" + imageId);
+
+        UploadTask uploadTask = imageRef.putBytes()*/
     }
 }

@@ -8,11 +8,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
 import android.graphics.Color;
+
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -21,21 +27,33 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+
+import android.widget.ImageView;
+
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.practicapis.localLogic.AddFileAdapter;
 import com.example.practicapis.localLogic.AppStatus;
+import com.example.practicapis.localLogic.Image;
 import com.example.practicapis.localLogic.Note;
 import com.example.practicapis.viewModel.NoteActivityViewModel;
 import com.example.practicapis.R;
 import com.google.android.gms.maps.model.LatLng;
+
+
 import com.like.LikeButton;
 import com.like.OnLikeListener;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Objects;
 
 import java.time.LocalDateTime;
@@ -51,12 +69,17 @@ public class NotaActivity extends AppCompatActivity {
     private ImageButton tagBtn;
     private ImageButton backgroundColorBtn;
     private LikeButton favBtn;
+    private ImageButton addFileBtn;
     private Toolbar toolbar;
     private EditText title, text;
     private Note note;
     private NoteActivityViewModel viewModel;
     public static final String TAG = "NotaActivity";
     private AppStatus appStatus;
+    private RecyclerView recyclerViewImages;
+    private ArrayList<Image> imageList;
+    private Image image;
+    private AddFileAdapter addFileAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +91,8 @@ public class NotaActivity extends AppCompatActivity {
         title = findViewById(R.id.noteTitle);
         text = findViewById(R.id.noteBody);
 
+        recyclerViewImages = findViewById(R.id.recyclerViewFiles);
+
         viewModel = new ViewModelProvider(this).get(NoteActivityViewModel.class);
         appStatus = AppStatus.getInstance();
         if(appStatus.isArchivedView()){
@@ -75,6 +100,9 @@ public class NotaActivity extends AppCompatActivity {
             text.setEnabled(false);
 
         }
+
+        addFileAdapter = new AddFileAdapter(this, imageList);
+        recyclerViewImages.setAdapter(addFileAdapter);
 
         initializeButtons();
 
@@ -183,6 +211,25 @@ public class NotaActivity extends AppCompatActivity {
             }
         });
 
+        addFileBtn = findViewById(R.id.addFileBtn);
+        addFileBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showBtnInfo(addFileBtn.getId(), addFileBtn);
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("*/*"); //TODO Especificar que tipo de archivos
+                startActivityForResult(intent, 3);
+              }
+        });
+      addFileBtn.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                showBtnInfo(addFileBtn.getId(), addFileBtn);
+                return true;
+            }
+        });
+
+
         backgroundColorBtn = findViewById(R.id.changeColorBtn);
         backgroundColorBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -195,6 +242,7 @@ public class NotaActivity extends AppCompatActivity {
             public boolean onLongClick(View v) {
                 showBtnInfo(backgroundColorBtn.getId(), backgroundColorBtn);
                 return true;
+
             }
         });
     }
@@ -307,6 +355,26 @@ public class NotaActivity extends AppCompatActivity {
                 note.setDrawingId(data.getStringExtra("drawingId"));
                 Log.d(TAG, note.getDrawingId());
             }
+        }else if(requestCode == 3){
+            if(resultCode == RESULT_OK){
+                /*String path = data.getData().getPath();
+                text.setText(path);*/
+                try {
+                    InputStream inputStream = getApplicationContext().getContentResolver().openInputStream(data.getData());
+                    ImageView imageView = new ImageView(NotaActivity.this);
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                    //imageView.setImageBitmap(bitmap);
+                    Image image = new Image(bitmap);
+                    //addImageView(imageView, 150, 150);
+                    imageList.add(image);
+                    addFileAdapter.setFileList(imageList);
+                    recyclerViewImages.setAdapter(addFileAdapter);
+                    note.setFileList(imageList);
+
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -338,6 +406,9 @@ public class NotaActivity extends AppCompatActivity {
         if(note.getBody() != null){ text.setText(note.getBody()); }
         if(note.isFavorite()){ favBtn.setLiked(true); }
         if(appStatus.isArchivedView()){ disableButtons(); }
+        if(note.getFileList() != null) {
+            imageList = note.getFileList();
+        }
     }
 
     public void goToMapa(){
@@ -396,6 +467,24 @@ public class NotaActivity extends AppCompatActivity {
         intentDraw.putExtra("drawingId", note.getDrawingId());
         startActivityForResult(intentDraw, 2);
     }
+
+
+    public void addImageView(ImageView imageView, int width, int height){
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(width, height);
+        layoutParams.setMargins(0, 10, 0, 10);
+
+        imageView.setLayoutParams(layoutParams);
+
+    }
+
+    public String BitMapToString(Bitmap bitmap){
+        ByteArrayOutputStream baos = new  ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG,100, baos);
+        byte [] b=baos.toByteArray();
+        String temp= Base64.encodeToString(b, Base64.DEFAULT);
+        return temp;
+    }
+
 
     private void addTag(){
         AlertDialog.Builder addTagDialog = new AlertDialog.Builder(this);
@@ -475,4 +564,5 @@ public class NotaActivity extends AppCompatActivity {
         .setColumns(5)
         .show();
     }
+
 }
