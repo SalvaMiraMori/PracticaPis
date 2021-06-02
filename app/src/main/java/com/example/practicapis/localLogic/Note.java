@@ -1,15 +1,22 @@
 package com.example.practicapis.localLogic;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Base64;
+import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.io.ByteArrayOutputStream;
 import java.time.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Note implements Parcelable, Comparable<Note> {
@@ -20,6 +27,7 @@ public class Note implements Parcelable, Comparable<Note> {
     private boolean favorite;
     private LatLng location;
     private String drawingId;
+    private ArrayList<Image> fileList;
 
     public Note(String title, String body) {
         this.title = title;
@@ -52,6 +60,7 @@ public class Note implements Parcelable, Comparable<Note> {
         if(!drawingIdFromParcel.equals("null")){
             drawingId = drawingIdFromParcel;
         }
+
     }
 
     public boolean isFavorite() {
@@ -91,6 +100,8 @@ public class Note implements Parcelable, Comparable<Note> {
 
     public String getDrawingId(){ return drawingId; }
 
+    public ArrayList<Image> getFileList(){ return fileList; }
+
     public void setDrawingId(String drawingId){ this.drawingId = drawingId; }
 
     public void setTitle(String title) {
@@ -104,6 +115,12 @@ public class Note implements Parcelable, Comparable<Note> {
     public void setDate(LocalDateTime date){ this.date = date; }
 
     public void setLocation(LatLng location){ this.location = location; }
+
+    public void setFileList(ArrayList<Image> fileList){
+        if(fileList != null) {
+            this.fileList = fileList;
+        }
+    }
 
     @Override
     public int describeContents() {
@@ -151,5 +168,16 @@ public class Note implements Parcelable, Comparable<Note> {
         double latitude = Double.parseDouble(lat[1]);
         double longitude = Double.parseDouble(lng[0]);
         return new LatLng(latitude, longitude);
+    }
+
+    public Bitmap StringToBitMap(String encodedString){
+        try {
+            byte [] encodeByte=Base64.decode(encodedString,Base64.DEFAULT);
+            Bitmap bitmap= BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+            return bitmap;
+        } catch(Exception e) {
+            e.getMessage();
+            return null;
+        }
     }
 }
