@@ -2,6 +2,9 @@ package com.example.practicapis.localLogic;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +43,8 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
             favorite = view.findViewById(R.id.imageView);
             title = view.findViewById(R.id.NotaNoteTitle);
             noteLayout = view.findViewById(R.id.noteLayout);
+            noteLayout.getBackground().setColorFilter(Color.parseColor("#F3C22E"), PorterDuff.Mode.SRC_ATOP);
+            //noteLayout.getDrawingCacheBackgroundColor();
             body = view.findViewById(R.id.NotaBodyText);
         }
 
@@ -74,7 +79,8 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         // Create a new view, which defines the UI of the list item
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.note_item, null, false);
+        View view = LayoutInflater.from(viewGroup.getContext())
+                .inflate(R.layout.note_item, null, false);
         return new ViewHolder(view);
     }
 
@@ -86,24 +92,29 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
         // contents of the view with that element
         viewHolder.getTitleNote().setText(localNoteSet.get(position).getTitle());
         viewHolder.getBodyNote().setText(localNoteSet.get(position).getBody());
-        System.out.println("Note " + localNoteSet.get(position).getTitle() + " OnCustomAdapter: isFavorite " + localNoteSet.get(position).isFavorite());
         if (localNoteSet.get(position).isFavorite())
             viewHolder.getFavorite().setVisibility(View.VISIBLE);
         else
             viewHolder.getFavorite().setVisibility(View.INVISIBLE);
 
-
-        // TODO Ir al notaActivity en concreto
         LinearLayout layout =viewHolder.getLayout();
+        try{
+            layout.getBackground().setColorFilter(Color.parseColor(localNoteSet.get(position).getColor()), PorterDuff.Mode.SRC_ATOP);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
         layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Note note = null;
-                if(appStatus.isArchivedView()){
+                /*if(appStatus.isArchivedView()){
                     note = appStatus.getNoteArchivedByPosition(position);
+
                 }else{
                     note = appStatus.getNoteByPosition(position);
-                }
+                }*/
+                note = localNoteSet.get(position);
                 Intent intent = new Intent(v.getContext(), NotaActivity.class);
                 intent.putExtra("note", note);
                 v.getContext().startActivity(intent);

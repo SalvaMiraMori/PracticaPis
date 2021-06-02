@@ -186,6 +186,7 @@ public class DatabaseAdapter extends AppCompatActivity {
                         String id = document.getId();
                         String location = document.getString("location");
                         LocalDateTime datetime = LocalDateTime.parse(document.getString("datetime"));
+
                         Note note = new Note(title, body, id, datetime);
                         note.setFavorite(favorite);
                         if(location != null){
@@ -196,6 +197,18 @@ public class DatabaseAdapter extends AppCompatActivity {
                             if(drawingId != null){
                                 note.setDrawingId(drawingId);
                             }
+                        }catch(Exception e){
+                            e.printStackTrace();
+                        }
+                        try{
+                            ArrayList<String> tags = (ArrayList<String>) document.get("tags");
+                            note.setTags(tags);
+                        }catch(Exception e){
+                            e.printStackTrace();
+                        }
+                        try{
+                            String color = document.getString("color");
+                            note.setColor(color);
                         }catch(Exception e){
                             e.printStackTrace();
                         }
@@ -237,6 +250,18 @@ public class DatabaseAdapter extends AppCompatActivity {
                         }catch(Exception e){
                             e.printStackTrace();
                         }
+                        try{
+                            ArrayList<String> tags = (ArrayList<String>) document.get("tags");
+                            note.setTags(tags);
+                        }catch(Exception e){
+                            e.printStackTrace();
+                        }
+                        try{
+                            String color = document.getString("color");
+                            note.setColor(color);
+                        }catch(Exception e){
+                            e.printStackTrace();
+                        }
                         retrieved_notes.add(note);
                         Log.d(TAG, "Getting documents: " + title + body + datetime.toString());
                     }
@@ -255,6 +280,8 @@ public class DatabaseAdapter extends AppCompatActivity {
         noteDbMap.put("datetime", note.getDate().toString());
         noteDbMap.put("serverTime", FieldValue.serverTimestamp());
         noteDbMap.put("favorite", note.isFavorite());
+        noteDbMap.put("tags", note.getTags());
+        noteDbMap.put("color", note.getColor());
         if(note.getLocation() != null){
             noteDbMap.put("location", note.getLocation().toString());
         }
@@ -285,6 +312,8 @@ public class DatabaseAdapter extends AppCompatActivity {
         noteDbMap.put("body", note.getBody());
         noteDbMap.put("datetime", note.getDate().toString());
         noteDbMap.put("serverTime", FieldValue.serverTimestamp());
+        noteDbMap.put("tags", note.getTags());
+        noteDbMap.put("color", note.getColor());
         if(note.getLocation() != null){
             noteDbMap.put("location", note.getLocation().toString());
         }
@@ -329,6 +358,8 @@ public class DatabaseAdapter extends AppCompatActivity {
         noteDbMap.put("datetime", note.getDate().toString());
         noteDbMap.put("serverTime", FieldValue.serverTimestamp());
         noteDbMap.put("favorite", note.isFavorite());
+        noteDbMap.put("tags", note.getTags());
+        noteDbMap.put("color", note.getColor());
         if(note.getLocation() != null){
             noteDbMap.put("location" ,note.getLocation().toString());
         }

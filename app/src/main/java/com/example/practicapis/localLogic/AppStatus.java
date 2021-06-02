@@ -9,8 +9,8 @@ public class AppStatus {
 
     private ArrayList<Note> archivedNotes = new ArrayList<>();
     private ArrayList<Note> notesList = new ArrayList<>();
+    //private ArrayList<Note>
     private boolean archivedView;
-    private boolean notesView;
 
     public AppStatus(){
         start = true;
@@ -47,13 +47,11 @@ public class AppStatus {
 
     public void setArchivedView(){
         archivedView = true;
-        notesView = false;
     }
 
     public boolean isArchivedView(){ return archivedView; }
 
     public void setNotesView(){
-        notesView = true;
         archivedView = false;
     }
 
