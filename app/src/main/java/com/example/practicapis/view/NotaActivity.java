@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,6 +17,7 @@ import android.graphics.Color;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.CalendarContract;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
@@ -54,6 +56,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Objects;
 
 import java.time.LocalDateTime;
@@ -151,7 +155,12 @@ public class NotaActivity extends AppCompatActivity {
                 return true;
             }
         });
-
+        reminderBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onReminderPressed();
+            }
+        });
         drawableBtn = findViewById(R.id.drawBtn);
         drawableBtn.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -247,6 +256,28 @@ public class NotaActivity extends AppCompatActivity {
         });
     }
 
+    private void onReminderPressed() {
+        addEventToCalendar(this);
+    }
+    private void addEventToCalendar(Activity activity){
+        Calendar cal = Calendar.getInstance();
+
+        Intent intent = new Intent(Intent.ACTION_EDIT);
+        intent.setType("vnd.android.cursor.item/event");
+
+        intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, cal.getTimeInMillis());
+        intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, cal.getTimeInMillis()+60*60*1000);
+
+        intent.putExtra(CalendarContract.Events.ALL_DAY, false);
+        intent.putExtra(CalendarContract.Events.TITLE, title.getText().toString());
+        intent.putExtra(CalendarContract.Events.DESCRIPTION, text.getText().toString());
+
+        if (note.getLocation() != null)
+            intent.putExtra(CalendarContract.Events.EVENT_LOCATION,note.getLocation().latitude +", "+ note.getLocation().longitude);
+
+
+        activity.startActivity(intent);
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -439,7 +470,7 @@ public class NotaActivity extends AppCompatActivity {
                 toast = Toast.makeText(this, "Add file", Toast.LENGTH_SHORT);
                 break;
             case R.id.addReminderBtn:
-                toast = Toast.makeText(this, "Add reminder", Toast.LENGTH_SHORT);
+                toast = Toast.makeText(this, "Add to Calendar", Toast.LENGTH_SHORT);
                 break;
             case R.id.addTagBtn:
                 toast = Toast.makeText(this, "Add tag", Toast.LENGTH_SHORT);
