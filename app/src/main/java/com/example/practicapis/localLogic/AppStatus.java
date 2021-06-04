@@ -9,7 +9,6 @@ public class AppStatus {
 
     private ArrayList<Note> archivedNotes = new ArrayList<>();
     private ArrayList<Note> notesList = new ArrayList<>();
-    //private ArrayList<Note>
     private boolean archivedView;
 
     public AppStatus(){
@@ -31,14 +30,6 @@ public class AppStatus {
         if(notesList != null){
             this.notesList = notesList;
         }
-    }
-
-    public Note getNoteByPosition(int position){
-      return notesList.get(position);
-    }
-
-    public Note getNoteArchivedByPosition(int position){
-        return archivedNotes.get(position);
     }
 
     public void setArchivedNotes(ArrayList<Note> archivedNotes){ this.archivedNotes = archivedNotes; }

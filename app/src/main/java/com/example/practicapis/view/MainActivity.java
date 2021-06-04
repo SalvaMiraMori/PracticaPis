@@ -40,9 +40,6 @@ public class MainActivity extends AppCompatActivity {
         // Configure activity elements
         appStatus = AppStatus.getInstance();
         addNotebtn = findViewById(R.id.addNoteBtn);
-        Context parentContext = this.getBaseContext();
-
-        setLiveDataObservers();
 
         addNotebtn.setOnClickListener(v -> addNote());
     }
@@ -52,10 +49,6 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
     }
 
-    public void setLiveDataObservers() {
-        // Subscribe the activity to the observable
-        MainActivityViewModel viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
-    }
 
     public void addNote() {
         goToNotaActivity();
@@ -119,6 +112,4 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
         this.finish();
     }
-
-
 }

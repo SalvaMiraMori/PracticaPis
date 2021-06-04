@@ -96,7 +96,6 @@ public class MainArchive extends Fragment {
     private void filterTag(){
         AlertDialog.Builder filterTagDialog = new AlertDialog.Builder(this.getContext());
         filterTagDialog.setTitle("Filter notes by tag");
-        //addTagDialog.setMessage("Add a tag to your note");
 
         final EditText input = new EditText(this.getContext());
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(

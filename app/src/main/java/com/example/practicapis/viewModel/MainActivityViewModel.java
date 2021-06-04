@@ -33,13 +33,7 @@ public class MainActivityViewModel extends ViewModel implements DatabaseAdapter.
     @Override
     public void setArchivedNotes(ArrayList<Note> archivedNotes) { mArchivedNotes.setValue(archivedNotes); }
 
-    @Override
-    public void setToast(String s) {
-        mToast.setValue(s);
-    }
-
     public MutableLiveData<ArrayList<Note>> getNotes(){
         return mNotes;
     }
-    public MutableLiveData<ArrayList<Note>> getArchivedNotes(){ return mArchivedNotes; }
 }

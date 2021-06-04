@@ -76,14 +76,12 @@ public class NotaActivity extends AppCompatActivity {
     private ImageButton backgroundColorBtn;
     private LikeButton favBtn;
     private ImageButton addFileBtn;
-    private Toolbar toolbar;
     private EditText title, text;
     private Note note;
     private NoteActivityViewModel viewModel;
     public static final String TAG = "NotaActivity";
     private AppStatus appStatus;
     private RecyclerView recyclerViewImages;
-    private Image image;
     private AddFileAdapter addFileAdapter;
 
     @Override
@@ -112,9 +110,6 @@ public class NotaActivity extends AppCompatActivity {
         initializeButtons();
 
         getNoteDataBundle();
-
-        //viewModel.recoverFile(note.getFileListID());
-
 
         title.addTextChangedListener(new TextWatcher() {
             @Override
@@ -352,10 +347,21 @@ public class NotaActivity extends AppCompatActivity {
 
     private void onSharePressed() {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        String toShare = title.getText().toString()+"\n"+text.getText().toString();
+        String toShare = title.getText().toString()+"\n"+text.getText().toString()+"\n";
+        try{
+            toShare = toShare + "Etiquetes: \n";
+            for(String tag: note.getTags()){
+                toShare = toShare + tag + "\n";
+            }
+        }catch(Exception e){}
+
+
+        try{
+            toShare = toShare + "Localització: " + note.getDate().toString();
+        }catch(Exception e){}
+
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_TEXT, toShare);
-        //TODO put maps and files of the note
         startActivity(Intent.createChooser(shareIntent, "Share using..."));
     }
 
@@ -533,24 +539,6 @@ public class NotaActivity extends AppCompatActivity {
         startActivityForResult(intentDraw, 2);
     }
 
-
-    public void addImageView(ImageView imageView, int width, int height){
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(width, height);
-        layoutParams.setMargins(0, 10, 0, 10);
-
-        imageView.setLayoutParams(layoutParams);
-
-    }
-
-    public String BitMapToString(Bitmap bitmap){
-        ByteArrayOutputStream baos = new  ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG,100, baos);
-        byte [] b=baos.toByteArray();
-        String temp= Base64.encodeToString(b, Base64.DEFAULT);
-        return temp;
-    }
-
-
     private void addTag(){
         AlertDialog.Builder addTagDialog = new AlertDialog.Builder(this);
         addTagDialog.setTitle("Add tag");
@@ -603,12 +591,10 @@ public class NotaActivity extends AppCompatActivity {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onChooseColor(int position,int color) {
-                //Color colorA = Color(color);
                 color = 16777215 + color;
                 Log.d(TAG, String.valueOf(color));
                 String hexColor = "#" + Integer.toHexString(color);
                 note.setColor(hexColor);
-                //Log.d(TAG, Color.parseColor("#f84c44"))
                 colorPicker.dismissDialog();
             }
 
@@ -620,7 +606,6 @@ public class NotaActivity extends AppCompatActivity {
         .addListenerButton("Default", new ColorPicker.OnButtonListener() {
             @Override
             public void onClick(View v, int position, int color) {
-                // put code
                 note.setColor("#F3C22E");
                 colorPicker.dismissDialog();
             }

@@ -81,11 +81,9 @@ public class DatabaseAdapter extends AppCompatActivity {
     public interface MainInterface {
         void setNotes(ArrayList<Note> notes);
         void setArchivedNotes(ArrayList<Note> archivedNotes);
-        void setToast(String s);
     }
 
     public interface NotaActivityInterface {
-        void setImageBitmapList(ArrayList<Bitmap> bitmapList);
         void addImageBitmap(Bitmap bitmap);
     }
 
@@ -117,11 +115,9 @@ public class DatabaseAdapter extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "createUserWithEmail:success");
-                            //FirebaseUser user = mAuth.getCurrentUser();
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            //Toast.makeText(DatabaseAdapter.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -232,7 +228,6 @@ public class DatabaseAdapter extends AppCompatActivity {
                         retrieved_notes.add(note);
                         Log.d(TAG, "Getting documents: " + title + body + datetime.toString());
                     }
-                    //Collections.reverse(retrieved_notes);
                     mainActivityListener.setNotes(retrieved_notes);
                 } else{
                     Log.d(TAG, "Error getting documents: ", task.getException());

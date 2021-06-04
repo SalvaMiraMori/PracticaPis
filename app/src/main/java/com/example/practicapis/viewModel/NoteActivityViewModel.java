@@ -62,11 +62,6 @@ public class NoteActivityViewModel extends ViewModel implements DatabaseAdapter.
     }
 
     @Override
-    public void setImageBitmapList(ArrayList<Bitmap> bitmapList) {
-        this.mBitmapList.setValue(bitmapList);
-    }
-
-    @Override
     public void addImageBitmap(Bitmap bitmap) {
         Log.d(TAG, "Adding bitmap image");
         bitmapList.add(bitmap);

@@ -165,8 +165,6 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //loadingProgressBar.setVisibility(View.VISIBLE);
-                //loginViewModel.login(usernameEditText.getText().toString(),passwordEditText.getText().toString());
                 loginUser(usernameEditText.getText().toString(), passwordEditText.getText().toString());
             }
         });
@@ -185,7 +183,6 @@ public class LoginActivity extends AppCompatActivity {
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if(!appStatus.isStart() && account != null){
             signOut();
-            //signInButtonGoogle.setEnabled(false);
             Log.d("E-mail: ", account.getEmail());
         }
         appStatus.startApp();
@@ -245,8 +242,6 @@ public class LoginActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d(TAG, "signInWithCredential:success");
-                        //FirebaseUser user = mAuth.getCurrentUser();
-                        //viewModel.setUser(user);
                         goToMainActivity();
                     } else {
                         // If sign in fails, display a message to the user.

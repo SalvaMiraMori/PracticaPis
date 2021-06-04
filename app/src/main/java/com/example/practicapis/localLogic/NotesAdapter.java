@@ -44,7 +44,6 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
             title = view.findViewById(R.id.NotaNoteTitle);
             noteLayout = view.findViewById(R.id.noteLayout);
             noteLayout.getBackground().setColorFilter(Color.parseColor("#F3C22E"), PorterDuff.Mode.SRC_ATOP);
-            //noteLayout.getDrawingCacheBackgroundColor();
             body = view.findViewById(R.id.NotaBodyText);
         }
 
@@ -107,14 +106,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
         layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Note note = null;
-                /*if(appStatus.isArchivedView()){
-                    note = appStatus.getNoteArchivedByPosition(position);
-
-                }else{
-                    note = appStatus.getNoteByPosition(position);
-                }*/
-                note = localNoteSet.get(position);
+                Note note = localNoteSet.get(position);
                 Intent intent = new Intent(v.getContext(), NotaActivity.class);
                 intent.putExtra("note", note);
                 v.getContext().startActivity(intent);

@@ -33,11 +33,6 @@ public class MainArchiveViewModel extends ViewModel implements DatabaseAdapter.M
     @Override
     public void setArchivedNotes(ArrayList<Note> archivedNotes) { mArchivedNotes.setValue(archivedNotes); }
 
-    @Override
-    public void setToast(String s) {
-        mToast.setValue(s);
-    }
-
     public MutableLiveData<ArrayList<Note>> getNotes(){
         //IGNORE
         return null;

@@ -58,7 +58,6 @@ public class MainNotes extends Fragment {
         appStatus = AppStatus.getInstance();
         // Configure recycler view
         mRecyclerViewNotes = getView().findViewById(R.id.recyclerViewNotes);
-        //mRecyclerViewNotes.setLayoutManager(new GridLayoutManager(getContext(), 2));
         mRecyclerViewNotes.setLayoutManager(new StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL));
         notesAdapter = new NotesAdapter(getActivity(), appStatus.getAllNotes());
         mRecyclerViewNotes.setAdapter(notesAdapter);
@@ -115,7 +114,6 @@ public class MainNotes extends Fragment {
     private void filterTag(){
         AlertDialog.Builder filterTagDialog = new AlertDialog.Builder(this.getContext());
         filterTagDialog.setTitle("Filter notes by tag");
-        //addTagDialog.setMessage("Add a tag to your note");
 
         final EditText input = new EditText(this.getContext());
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(

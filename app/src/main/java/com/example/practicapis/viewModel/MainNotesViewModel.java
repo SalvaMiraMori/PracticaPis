@@ -35,16 +35,7 @@ public class MainNotesViewModel extends ViewModel implements DatabaseAdapter.Mai
                 //IGNORE
         }
 
-        @Override
-        public void setToast(String s) {
-                mToast.setValue(s);
-        }
-
         public MutableLiveData<ArrayList<Note>> getNotes(){
                 return mNotes;
-        }
-        public MutableLiveData<ArrayList<Note>> getArchivedNotes(){
-                //IGNORE
-                return null;
         }
 }

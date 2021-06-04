@@ -150,10 +150,6 @@ public class DrawView extends View {
 
     public void setCanvasBitmap(Bitmap bitmap, FrameLayout drawingLayout){
         Drawable d = new BitmapDrawable(Resources.getSystem(), bitmap);
-        Log.d("drawingLayout", String.valueOf(drawingLayout.getTop()) + ", " + String.valueOf(drawingLayout.getLeft()) + ", " + String.valueOf(drawingLayout.getRight()) + ", " + String.valueOf(drawingLayout.getBottom()) + "\n");
-        Log.d("drawView", String.valueOf(getTop()) + ", " + String.valueOf(getLeft()) + ", " + String.valueOf(getRight()) + ", " + String.valueOf(getBottom()) + "\n");
-        //d.setBounds(getLeft(), getTop(), getRight(), getBottom());
-        // TODO: poner drawing dentro de un framelayout
         d.setBounds(drawingLayout.getLeft(), this.getTop(), drawingLayout.getRight(), this.getBottom());
         d.draw(drawCanvas);
     }
