@@ -37,6 +37,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -112,11 +113,8 @@ public class NotaActivity extends AppCompatActivity {
 
         getNoteDataBundle();
 
-        for(String fileID : note.getFileListID()){
-            if(fileID != null){
-                viewModel.recoverFile(fileID);
-            }
-        }
+        //viewModel.recoverFile(note.getFileListID());
+
 
         title.addTextChangedListener(new TextWatcher() {
             @Override
@@ -137,6 +135,25 @@ public class NotaActivity extends AppCompatActivity {
 
         addFileAdapter = new AddFileAdapter(this, note.getFileList());
 
+        recyclerViewImages.setAdapter(addFileAdapter);
+
+        setLiveDataObservers();
+
+        viewModel.recoverFile(note.getFileListID());
+    }
+
+    private void setLiveDataObservers(){
+        final Observer<ArrayList<Bitmap>> observerBitmapImageList = new Observer<ArrayList<Bitmap>>() {
+            @Override
+            public void onChanged(ArrayList<Bitmap> bitmaps) {
+                Log.d(TAG, "Bitmap list content: " + String.valueOf(bitmaps.size()));
+                note.initializeFileList();
+                for(Bitmap bitmap: bitmaps){
+                    addImageToView(bitmap);
+                }
+            }
+        };
+        viewModel.getBitmapImageList().observe(this, observerBitmapImageList);
     }
 
     private void initializeButtons(){
@@ -378,6 +395,7 @@ public class NotaActivity extends AppCompatActivity {
             Toast.makeText(this, "At least put a title to the note please.", Toast.LENGTH_SHORT).show();
             return;
         }
+
         onBackPressed();
     }
 
@@ -398,33 +416,30 @@ public class NotaActivity extends AppCompatActivity {
             if(resultCode == RESULT_OK){
                 try {
                     InputStream inputStream = getApplicationContext().getContentResolver().openInputStream(data.getData());
-                    ImageView imageView = new ImageView(NotaActivity.this);
                     Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                    //imageView.setImageBitmap(bitmap);
-                    Image image = new Image(bitmap);
-                    imageView.setDrawingCacheEnabled(true);
-                    imageView.buildDrawingCache();
-                    //addImageView(imageView, 150, 150);
-                    //imageList.add(image);
-                    Log.d(TAG, String.valueOf(note.getFileList().size()));
-                    addFileAdapter.setFileList(note.getFileList());
-                    recyclerViewImages.setAdapter(addFileAdapter);
+                    Log.d(TAG, bitmap.toString());
+                    addImageToView(bitmap);
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    Bitmap bit = imageView.getDrawingCache();
-                    bit.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                    note.addFile(image);
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                     String fileId = UUID.randomUUID().toString();
+                    viewModel.saveToDB(baos, fileId);
                     note.addFileListId(fileId);
-
-                    for(String fileID : note.getFileListID()){
-                        viewModel.saveToDB(baos, fileID);
-                    }
-
+                    Log.d(TAG, String.valueOf(note.getFileList().size()));
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
             }
         }
+    }
+
+    private void addImageToView(Bitmap bitmap){
+        ImageView imageView = new ImageView(NotaActivity.this);
+        Image image = new Image(bitmap);
+        imageView.setDrawingCacheEnabled(true);
+        imageView.buildDrawingCache();
+        note.addFile(image);
+        addFileAdapter.setFileList(note.getFileList());
+        recyclerViewImages.setAdapter(addFileAdapter);
     }
 
     public void onDeletePressed(){
@@ -458,6 +473,7 @@ public class NotaActivity extends AppCompatActivity {
         if(note.getFileList() == null){
             note.initializeFileList();
         }
+        Log.d(TAG, "Size of fileid list " + String.valueOf(note.getFileListID().size()));
     }
 
     public void goToMapa(){

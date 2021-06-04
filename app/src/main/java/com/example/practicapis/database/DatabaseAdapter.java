@@ -35,6 +35,7 @@ import com.google.firebase.storage.UploadTask;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
+import java.lang.reflect.Array;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,6 +56,7 @@ public class DatabaseAdapter extends AppCompatActivity {
     public static RegisterInterface registerActivityListener;
     public static DrawingInterface drawingInterfaceListener;
     public static DatabaseAdapter databaseAdapter;
+    public static NotaActivityInterface notaActivityInterface;
 
     private FirebaseStorage storage;
     private StorageReference storageRef;
@@ -82,6 +84,11 @@ public class DatabaseAdapter extends AppCompatActivity {
         void setToast(String s);
     }
 
+    public interface NotaActivityInterface {
+        void setImageBitmapList(ArrayList<Bitmap> bitmapList);
+        void addImageBitmap(Bitmap bitmap);
+    }
+
     public interface RegisterInterface {
         void onExistsEmailSucceed(boolean exists);
     }
@@ -96,6 +103,10 @@ public class DatabaseAdapter extends AppCompatActivity {
 
     public void setDrawingInterfaceListener(DrawingInterface drawingInterface){
         this.drawingInterfaceListener = drawingInterface;
+    }
+
+    public void setNotaActivityInterface(NotaActivityInterface notaActivityInterface){
+        this.notaActivityInterface = notaActivityInterface;
     }
 
     public void signUpUser(String email, String password){
@@ -462,19 +473,21 @@ public class DatabaseAdapter extends AppCompatActivity {
         });
     }
 
-    public void recoverImage(String imageID){
-        StorageReference drawingRef = storageRef.child("images/" + imageID + ".jpeg");
-        drawingRef.getBytes(160 * 160).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-            @Override
-            public void onSuccess(byte[] bytes) {
-                drawingInterfaceListener.setDrawingBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
-                Log.d(TAG, "image recovered");
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull @NotNull Exception e) {
-                Log.d(TAG, "failed image recovery");
-            }
-        });
+    public void recoverImage(ArrayList<String> fileIDList){
+        for(String imageID : fileIDList){
+            StorageReference drawingRef = storageRef.child("images/" + imageID + ".jpeg");
+            drawingRef.getBytes(2048 * 2048).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                @Override
+                public void onSuccess(byte[] bytes) {
+                    notaActivityInterface.addImageBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
+                    Log.d(TAG, "image recovered");
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull @NotNull Exception e) {
+                    Log.d(TAG, "failed image recovery");
+                }
+            });
+        }
     }
 }
