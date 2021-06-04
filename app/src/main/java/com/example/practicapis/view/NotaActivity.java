@@ -61,6 +61,7 @@ import java.util.Date;
 import java.util.Objects;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import petrov.kristiyan.colorpicker.ColorPicker;
 
@@ -110,6 +111,12 @@ public class NotaActivity extends AppCompatActivity {
         initializeButtons();
 
         getNoteDataBundle();
+
+        for(String fileID : note.getFileListID()){
+            if(fileID != null){
+                viewModel.recoverFile(fileID);
+            }
+        }
 
         title.addTextChangedListener(new TextWatcher() {
             @Override
@@ -389,21 +396,29 @@ public class NotaActivity extends AppCompatActivity {
             }
         }else if(requestCode == 3){
             if(resultCode == RESULT_OK){
-                /*String path = data.getData().getPath();
-                text.setText(path);*/
                 try {
                     InputStream inputStream = getApplicationContext().getContentResolver().openInputStream(data.getData());
                     ImageView imageView = new ImageView(NotaActivity.this);
                     Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
                     //imageView.setImageBitmap(bitmap);
                     Image image = new Image(bitmap);
+                    imageView.setDrawingCacheEnabled(true);
+                    imageView.buildDrawingCache();
                     //addImageView(imageView, 150, 150);
                     //imageList.add(image);
                     Log.d(TAG, String.valueOf(note.getFileList().size()));
-                    note.addFile(image);
                     addFileAdapter.setFileList(note.getFileList());
                     recyclerViewImages.setAdapter(addFileAdapter);
-                    //note.setFileList(imageList);
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    Bitmap bit = imageView.getDrawingCache();
+                    bit.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                    note.addFile(image);
+                    String fileId = UUID.randomUUID().toString();
+                    note.addFileListId(fileId);
+
+                    for(String fileID : note.getFileListID()){
+                        viewModel.saveToDB(baos, fileID);
+                    }
 
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();

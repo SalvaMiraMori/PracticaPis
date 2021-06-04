@@ -18,12 +18,15 @@ import org.jetbrains.annotations.NotNull;
 import com.example.practicapis.view.NotaActivity;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 
 public class AddFileAdapter extends RecyclerView.Adapter<AddFileAdapter.ViewHolder> {
 
     private ArrayList<Image> fileList;
     private final Context pareContext;
+    private Note note;
+
 
     public AddFileAdapter(Context context, ArrayList<Image> fileList){
         this.fileList = fileList;

@@ -212,6 +212,12 @@ public class DatabaseAdapter extends AppCompatActivity {
                         }catch(Exception e){
                             e.printStackTrace();
                         }
+                        try {
+                            ArrayList<String> fileListID = (ArrayList<String>) document.get("files");
+                            note.setFileListID(fileListID);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
                         retrieved_notes.add(note);
                         Log.d(TAG, "Getting documents: " + title + body + datetime.toString());
                     }
@@ -262,6 +268,12 @@ public class DatabaseAdapter extends AppCompatActivity {
                         }catch(Exception e){
                             e.printStackTrace();
                         }
+                        try {
+                            ArrayList<String> fileListID = (ArrayList<String>) document.get("files");
+                            note.setFileListID(fileListID);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
                         retrieved_notes.add(note);
                         Log.d(TAG, "Getting documents: " + title + body + datetime.toString());
                     }
@@ -282,6 +294,7 @@ public class DatabaseAdapter extends AppCompatActivity {
         noteDbMap.put("favorite", note.isFavorite());
         noteDbMap.put("tags", note.getTags());
         noteDbMap.put("color", note.getColor());
+        noteDbMap.put("files", note.getFileListID());
         if(note.getLocation() != null){
             noteDbMap.put("location", note.getLocation().toString());
         }
@@ -314,6 +327,7 @@ public class DatabaseAdapter extends AppCompatActivity {
         noteDbMap.put("serverTime", FieldValue.serverTimestamp());
         noteDbMap.put("tags", note.getTags());
         noteDbMap.put("color", note.getColor());
+        noteDbMap.put("files", note.getFileListID());
         if(note.getLocation() != null){
             noteDbMap.put("location", note.getLocation().toString());
         }
@@ -360,12 +374,14 @@ public class DatabaseAdapter extends AppCompatActivity {
         noteDbMap.put("favorite", note.isFavorite());
         noteDbMap.put("tags", note.getTags());
         noteDbMap.put("color", note.getColor());
+        noteDbMap.put("files", note.getFileListID());
         if(note.getLocation() != null){
             noteDbMap.put("location" ,note.getLocation().toString());
         }
         if(note.getDrawingId() != null){
             noteDbMap.put("drawingId", note.getDrawingId());
         }
+
 
         db.collection("users").document(user.getUid()).collection("notes").document(note.getId()).update(noteDbMap);
     }
@@ -427,11 +443,38 @@ public class DatabaseAdapter extends AppCompatActivity {
     }
 
     public void saveImages(ByteArrayOutputStream baos, String imageId){
-        /*byte[] data = baos.toByteArray();
+        byte[] data = baos.toByteArray();
 
-        imageId = imageId + ".png";
+        imageId = imageId + ".jpeg";
         StorageReference imageRef = storageRef.child("images/" + imageId);
 
-        UploadTask uploadTask = imageRef.putBytes()*/
+        UploadTask uploadTask = imageRef.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+            }
+        });
+    }
+
+    public void recoverImage(String imageID){
+        StorageReference drawingRef = storageRef.child("images/" + imageID + ".jpeg");
+        drawingRef.getBytes(160 * 160).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                drawingInterfaceListener.setDrawingBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
+                Log.d(TAG, "image recovered");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull @NotNull Exception e) {
+                Log.d(TAG, "failed image recovery");
+            }
+        });
     }
 }

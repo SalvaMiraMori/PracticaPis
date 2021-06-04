@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel;
 import com.example.practicapis.database.DatabaseAdapter;
 import com.example.practicapis.localLogic.Note;
 
+import java.io.ByteArrayOutputStream;
+
 public class NoteActivityViewModel extends ViewModel {
     private final DatabaseAdapter adapter = DatabaseAdapter.databaseAdapter;
 
@@ -38,5 +40,13 @@ public class NoteActivityViewModel extends ViewModel {
     public void deleteArchivedNote(Note note) {
         Log.d(TAG, "Deleting archived note.");
         adapter.deleteArchivedNote(note);
+    }
+
+    public void saveToDB(ByteArrayOutputStream baos, String fileID){
+        adapter.saveImages(baos, fileID);
+    }
+
+    public void recoverFile(String fileID){
+        adapter.recoverImage(fileID);
     }
 }
