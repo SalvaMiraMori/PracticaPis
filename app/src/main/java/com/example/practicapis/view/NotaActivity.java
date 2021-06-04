@@ -37,6 +37,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -61,6 +62,7 @@ import java.util.Date;
 import java.util.Objects;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import petrov.kristiyan.colorpicker.ColorPicker;
 
@@ -81,7 +83,6 @@ public class NotaActivity extends AppCompatActivity {
     public static final String TAG = "NotaActivity";
     private AppStatus appStatus;
     private RecyclerView recyclerViewImages;
-    private ArrayList<Image> imageList;
     private Image image;
     private AddFileAdapter addFileAdapter;
 
@@ -105,12 +106,15 @@ public class NotaActivity extends AppCompatActivity {
 
         }
 
-        addFileAdapter = new AddFileAdapter(this, imageList);
+
         recyclerViewImages.setAdapter(addFileAdapter);
 
         initializeButtons();
 
         getNoteDataBundle();
+
+        //viewModel.recoverFile(note.getFileListID());
+
 
         title.addTextChangedListener(new TextWatcher() {
             @Override
@@ -129,6 +133,27 @@ public class NotaActivity extends AppCompatActivity {
             }
         });
 
+        addFileAdapter = new AddFileAdapter(this, note.getFileList());
+
+        recyclerViewImages.setAdapter(addFileAdapter);
+
+        setLiveDataObservers();
+
+        viewModel.recoverFile(note.getFileListID());
+    }
+
+    private void setLiveDataObservers(){
+        final Observer<ArrayList<Bitmap>> observerBitmapImageList = new Observer<ArrayList<Bitmap>>() {
+            @Override
+            public void onChanged(ArrayList<Bitmap> bitmaps) {
+                Log.d(TAG, "Bitmap list content: " + String.valueOf(bitmaps.size()));
+                note.initializeFileList();
+                for(Bitmap bitmap: bitmaps){
+                    addImageToView(bitmap);
+                }
+            }
+        };
+        viewModel.getBitmapImageList().observe(this, observerBitmapImageList);
     }
 
     private void initializeButtons(){
@@ -370,6 +395,7 @@ public class NotaActivity extends AppCompatActivity {
             Toast.makeText(this, "At least put a title to the note please.", Toast.LENGTH_SHORT).show();
             return;
         }
+
         onBackPressed();
     }
 
@@ -388,25 +414,32 @@ public class NotaActivity extends AppCompatActivity {
             }
         }else if(requestCode == 3){
             if(resultCode == RESULT_OK){
-                /*String path = data.getData().getPath();
-                text.setText(path);*/
                 try {
                     InputStream inputStream = getApplicationContext().getContentResolver().openInputStream(data.getData());
-                    ImageView imageView = new ImageView(NotaActivity.this);
                     Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                    //imageView.setImageBitmap(bitmap);
-                    Image image = new Image(bitmap);
-                    //addImageView(imageView, 150, 150);
-                    imageList.add(image);
-                    addFileAdapter.setFileList(imageList);
-                    recyclerViewImages.setAdapter(addFileAdapter);
-                    note.setFileList(imageList);
-
+                    Log.d(TAG, bitmap.toString());
+                    addImageToView(bitmap);
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                    String fileId = UUID.randomUUID().toString();
+                    viewModel.saveToDB(baos, fileId);
+                    note.addFileListId(fileId);
+                    Log.d(TAG, String.valueOf(note.getFileList().size()));
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
             }
         }
+    }
+
+    private void addImageToView(Bitmap bitmap){
+        ImageView imageView = new ImageView(NotaActivity.this);
+        Image image = new Image(bitmap);
+        imageView.setDrawingCacheEnabled(true);
+        imageView.buildDrawingCache();
+        note.addFile(image);
+        addFileAdapter.setFileList(note.getFileList());
+        recyclerViewImages.setAdapter(addFileAdapter);
     }
 
     public void onDeletePressed(){
@@ -437,9 +470,10 @@ public class NotaActivity extends AppCompatActivity {
         if(note.getBody() != null){ text.setText(note.getBody()); }
         if(note.isFavorite()){ favBtn.setLiked(true); }
         if(appStatus.isArchivedView()){ disableButtons(); }
-        if(note.getFileList() != null) {
-            imageList = note.getFileList();
+        if(note.getFileList() == null){
+            note.initializeFileList();
         }
+        Log.d(TAG, "Size of fileid list " + String.valueOf(note.getFileListID().size()));
     }
 
     public void goToMapa(){

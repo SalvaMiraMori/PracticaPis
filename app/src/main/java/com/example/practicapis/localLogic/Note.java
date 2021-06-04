@@ -34,18 +34,23 @@ public class Note implements Parcelable, Comparable<Note> {
     private ArrayList<Image> fileList;
     private String color;
     private ArrayList<String> tags;
+    private ArrayList<String> fileListID;
 
     public Note(String title, String body) {
         this.title = title;
         this.body = body;
         tags = new ArrayList<>();
+        fileList = new ArrayList<>();
         color = "#F3C22E";
+        fileListID = new ArrayList<>();
     }
 
     public Note(){
         tags = new ArrayList<>();
+        fileList = new ArrayList<>();
         favorite = false;
         color = "#F3C22E";
+        fileListID = new ArrayList<>();
     }
 
     public Note(String title, String body, String id, LocalDateTime date) {
@@ -55,7 +60,9 @@ public class Note implements Parcelable, Comparable<Note> {
         this.date = date;
         favorite = false;
         tags = new ArrayList<>();
+        fileList = new ArrayList<>();
         color = "#F3C22E";
+        fileListID = new ArrayList<>();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
@@ -74,7 +81,7 @@ public class Note implements Parcelable, Comparable<Note> {
         }
         color = in.readString();
         tags = new ArrayList(Arrays.asList(in.readArray(getClass().getClassLoader())));
-
+        fileListID = new ArrayList(Arrays.asList((in.readArray(getClass().getClassLoader()))));
     }
 
     public boolean isFavorite() {
@@ -114,8 +121,9 @@ public class Note implements Parcelable, Comparable<Note> {
 
     public String getDrawingId(){ return drawingId; }
 
-
     public ArrayList<Image> getFileList(){ return fileList; }
+
+    public ArrayList<String> getFileListID(){ return fileListID; }
 
     public ArrayList<String> getTags() { return tags; }
 
@@ -145,6 +153,21 @@ public class Note implements Parcelable, Comparable<Note> {
         }
     }
 
+    public void setFileListID(ArrayList<String> fileListID){
+        if(fileListID != null){
+            this.fileListID = fileListID;
+        }
+    }
+
+    public void addFileListId(String fileId){
+        fileListID.add(fileId);
+    }
+
+
+    public void addFile(Image image){
+        fileList.add(image);
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -172,6 +195,10 @@ public class Note implements Parcelable, Comparable<Note> {
         dest.writeString(color);
         try{
             dest.writeArray(tags.toArray());
+        }catch(Exception e){}
+
+        try{
+            dest.writeArray(fileListID.toArray());
         }catch(Exception e){}
 
     }
@@ -235,4 +262,6 @@ public class Note implements Parcelable, Comparable<Note> {
         }
         return false;
     }
+
+    public void initializeFileList(){ fileList = new ArrayList<>(); }
 }

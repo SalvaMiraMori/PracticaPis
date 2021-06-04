@@ -3,114 +3,119 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     tools:context=".view.NotaActivity">
 
     <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="409dp"
-        android:layout_height="51dp"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/noteTitle"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <ImageButton
-            android:id="@+id/addReminderBtn"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/selector_border"
-            app:srcCompat="@drawable/ic_calendar" />
-
-        <ImageButton
-            android:id="@+id/drawBtn"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/selector_border"
-            app:srcCompat="@drawable/ic_pencil" />
-
-        <ImageButton
-            android:id="@+id/addTagBtn"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/selector_border"
-            app:srcCompat="@drawable/ic_tag" />
-
-        <ImageButton
-            android:id="@+id/addFileBtn"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/selector_border"
-            app:srcCompat="@drawable/ic_add_file" />
-
-        <ImageButton
-            android:id="@+id/addLocationBtn"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/selector_border"
-            app:srcCompat="@drawable/ic_add_location" />
-
-        <ImageButton
-            android:id="@+id/changeColorBtn"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/selector_border"
-            app:srcCompat="@drawable/ic_color_wheel" />
-
-        <com.like.LikeButton
-            android:id="@+id/star_button"
-            android:layout_width="70dp"
-            android:layout_height="match_parent"
-            app:icon_size="10dp"
-            app:icon_type="heart"
-            app:anim_scale_factor="6" />
-
-    </LinearLayout>
-
-    <EditText
-        android:focusedByDefault="true"
-        android:id="@+id/noteTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        android:orientation="vertical"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <EditText
-        android:id="@+id/noteBody"
-        style="@style/Widget.AppCompat.AutoCompleteTextView"
-        android:layout_width="405dp"
-        android:layout_height="wrap_content"
-        android:background="@null"
-        android:ems="10"
-        android:gravity="start|top"
-        android:hint="Enter Details"
-        android:inputType="textMultiLine"
-        android:textColorHighlight="#FFFFFF"
-        android:textColorLink="#FFFFFF"
-        app:layout_constraintBottom_toTopOf="@+id/recyclerViewFiles"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/noteTitle" />
+        <LinearLayout
+            android:id="@+id/linearLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="51dp"
+            android:orientation="horizontal">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewFiles"
-        android:layout_width="403dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/noteBody" />
+            <ImageButton
+                android:id="@+id/addReminderBtn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/selector_border"
+                app:srcCompat="@drawable/ic_calendar" />
+
+            <ImageButton
+                android:id="@+id/drawBtn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/selector_border"
+                app:srcCompat="@drawable/ic_pencil" />
+
+            <ImageButton
+                android:id="@+id/addTagBtn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/selector_border"
+                app:srcCompat="@drawable/ic_tag" />
+
+            <ImageButton
+                android:id="@+id/addFileBtn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/selector_border"
+                app:srcCompat="@drawable/ic_add_file" />
+
+            <ImageButton
+                android:id="@+id/addLocationBtn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/selector_border"
+                app:srcCompat="@drawable/ic_add_location" />
+
+            <ImageButton
+                android:id="@+id/changeColorBtn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/selector_border"
+                app:srcCompat="@drawable/ic_color_wheel" />
+
+            <com.like.LikeButton
+                android:id="@+id/star_button"
+                android:layout_width="70dp"
+                android:layout_height="match_parent"
+                app:anim_scale_factor="6"
+                app:icon_size="10dp"
+                app:icon_type="heart" />
+
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/noteTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:ems="10"
+            android:focusedByDefault="true"
+            android:inputType="textPersonName"
+            android:textSize="27sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/noteBody"
+            style="@style/Widget.AppCompat.AutoCompleteTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@null"
+            android:ems="10"
+            android:gravity="start|top"
+            android:hint="Enter Details"
+            android:inputType="textMultiLine"
+            android:textColorHighlight="#FFFFFF"
+            android:textColorLink="#FFFFFF" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewFiles"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager">
+
+        </androidx.recyclerview.widget.RecyclerView>
+    </LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

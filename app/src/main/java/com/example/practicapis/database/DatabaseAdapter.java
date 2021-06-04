@@ -35,6 +35,7 @@ import com.google.firebase.storage.UploadTask;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
+import java.lang.reflect.Array;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,6 +56,7 @@ public class DatabaseAdapter extends AppCompatActivity {
     public static RegisterInterface registerActivityListener;
     public static DrawingInterface drawingInterfaceListener;
     public static DatabaseAdapter databaseAdapter;
+    public static NotaActivityInterface notaActivityInterface;
 
     private FirebaseStorage storage;
     private StorageReference storageRef;
@@ -82,6 +84,11 @@ public class DatabaseAdapter extends AppCompatActivity {
         void setToast(String s);
     }
 
+    public interface NotaActivityInterface {
+        void setImageBitmapList(ArrayList<Bitmap> bitmapList);
+        void addImageBitmap(Bitmap bitmap);
+    }
+
     public interface RegisterInterface {
         void onExistsEmailSucceed(boolean exists);
     }
@@ -96,6 +103,10 @@ public class DatabaseAdapter extends AppCompatActivity {
 
     public void setDrawingInterfaceListener(DrawingInterface drawingInterface){
         this.drawingInterfaceListener = drawingInterface;
+    }
+
+    public void setNotaActivityInterface(NotaActivityInterface notaActivityInterface){
+        this.notaActivityInterface = notaActivityInterface;
     }
 
     public void signUpUser(String email, String password){
@@ -212,6 +223,12 @@ public class DatabaseAdapter extends AppCompatActivity {
                         }catch(Exception e){
                             e.printStackTrace();
                         }
+                        try {
+                            ArrayList<String> fileListID = (ArrayList<String>) document.get("files");
+                            note.setFileListID(fileListID);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
                         retrieved_notes.add(note);
                         Log.d(TAG, "Getting documents: " + title + body + datetime.toString());
                     }
@@ -262,6 +279,12 @@ public class DatabaseAdapter extends AppCompatActivity {
                         }catch(Exception e){
                             e.printStackTrace();
                         }
+                        try {
+                            ArrayList<String> fileListID = (ArrayList<String>) document.get("files");
+                            note.setFileListID(fileListID);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
                         retrieved_notes.add(note);
                         Log.d(TAG, "Getting documents: " + title + body + datetime.toString());
                     }
@@ -282,6 +305,7 @@ public class DatabaseAdapter extends AppCompatActivity {
         noteDbMap.put("favorite", note.isFavorite());
         noteDbMap.put("tags", note.getTags());
         noteDbMap.put("color", note.getColor());
+        noteDbMap.put("files", note.getFileListID());
         if(note.getLocation() != null){
             noteDbMap.put("location", note.getLocation().toString());
         }
@@ -314,6 +338,7 @@ public class DatabaseAdapter extends AppCompatActivity {
         noteDbMap.put("serverTime", FieldValue.serverTimestamp());
         noteDbMap.put("tags", note.getTags());
         noteDbMap.put("color", note.getColor());
+        noteDbMap.put("files", note.getFileListID());
         if(note.getLocation() != null){
             noteDbMap.put("location", note.getLocation().toString());
         }
@@ -360,12 +385,14 @@ public class DatabaseAdapter extends AppCompatActivity {
         noteDbMap.put("favorite", note.isFavorite());
         noteDbMap.put("tags", note.getTags());
         noteDbMap.put("color", note.getColor());
+        noteDbMap.put("files", note.getFileListID());
         if(note.getLocation() != null){
             noteDbMap.put("location" ,note.getLocation().toString());
         }
         if(note.getDrawingId() != null){
             noteDbMap.put("drawingId", note.getDrawingId());
         }
+
 
         db.collection("users").document(user.getUid()).collection("notes").document(note.getId()).update(noteDbMap);
     }
@@ -427,11 +454,40 @@ public class DatabaseAdapter extends AppCompatActivity {
     }
 
     public void saveImages(ByteArrayOutputStream baos, String imageId){
-        /*byte[] data = baos.toByteArray();
+        byte[] data = baos.toByteArray();
 
-        imageId = imageId + ".png";
+        imageId = imageId + ".jpeg";
         StorageReference imageRef = storageRef.child("images/" + imageId);
 
-        UploadTask uploadTask = imageRef.putBytes()*/
+        UploadTask uploadTask = imageRef.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+            }
+        });
+    }
+
+    public void recoverImage(ArrayList<String> fileIDList){
+        for(String imageID : fileIDList){
+            StorageReference drawingRef = storageRef.child("images/" + imageID + ".jpeg");
+            drawingRef.getBytes(2048 * 2048).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                @Override
+                public void onSuccess(byte[] bytes) {
+                    notaActivityInterface.addImageBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
+                    Log.d(TAG, "image recovered");
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull @NotNull Exception e) {
+                    Log.d(TAG, "failed image recovery");
+                }
+            });
+        }
     }
 }
